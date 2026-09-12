@@ -35,7 +35,7 @@ const navItems = [
         v-for="item in navItems"
         :key="item.label"
         :to="item.to"
-        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-(--color-text-secondary) transition hover:bg-(--color-background-mute) hover:text-(--color-heading)"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-(--color-text-secondary) transition duration-600 hover:bg-(--color-background-mute) hover:text-(--color-heading)"
         active-class="bg-(--color-background-mute)! text-(--color-heading)!"
       >
         <svg
