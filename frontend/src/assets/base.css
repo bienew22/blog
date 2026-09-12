@@ -1,8 +1,8 @@
 /* light mode: ivory background, black text */
 :root {
   --color-background: #ffffff;
-  --color-background-soft: #efebd8;
-  --color-background-mute: #e6e0c8;
+  --color-background-soft: #e8eff6;
+  --color-background-mute: #eff4f7;
 
   --color-border: rgba(26, 22, 15, 0.12);
   --color-border-hover: rgba(26, 22, 15, 0.24);

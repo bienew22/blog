@@ -19,13 +19,15 @@ const navItems = [
   >
     <RouterLink
       to="/"
-      class="flex flex-col items-center text-center border-b border-(--color-border) pb-4"
+      class="group flex flex-col items-center text-center border-b border-(--color-border) pb-4"
     >
-      <img
-        src="/avatar.png"
-        alt="bienew"
-        class="h-20 w-20 rounded-full border border-(--color-border) object-cover"
-      />
+      <span class="h-20 w-20 overflow-hidden rounded-full border border-(--color-border)">
+        <img
+          src="/avatar.png"
+          alt="bienew"
+          class="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+        />
+      </span>
       <h1 class="mt-4 text-lg font-bold text-(--color-heading)">bienew</h1>
       <p class="mt-1 text-sm text-(--color-text-secondary)">Never Stop Becoming Better</p>
     </RouterLink>
@@ -35,8 +37,8 @@ const navItems = [
         v-for="item in navItems"
         :key="item.label"
         :to="item.to"
-        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-(--color-text-secondary) transition duration-600 hover:bg-(--color-background-mute) hover:text-(--color-heading)"
-        active-class="bg-(--color-background-mute)! text-(--color-heading)!"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-(--color-text-secondary) transition-colors duration-500 ease-in-out hover:bg-(--color-background-mute) hover:text-(--color-heading)"
+        active-class="bg-(--color-background-mute)! text-(--color-heading)! transition-colors! duration-500! ease-in-out!"
       >
         <svg
           v-if="item.icon === 'home'"
@@ -111,7 +113,7 @@ const navItems = [
     <div class="flex items-center justify-center gap-2 border-t border-(--color-border) pt-6">
       <button
         type="button"
-        class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-600 hover:text-(--color-heading) hover:cursor-pointer"
+        class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-heading) hover:cursor-pointer"
         aria-label="Toggle theme"
         @click="theme.toggleTheme"
       >
@@ -133,7 +135,7 @@ const navItems = [
           <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
         </svg>
         <span
-          class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-2 py-1 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-600 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
+          class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-2 py-1 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
         >
           Theme
         </span>
@@ -143,7 +145,7 @@ const navItems = [
         href="https://github.com"
         target="_blank"
         rel="noopener noreferrer"
-        class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-600 hover:text-(--color-heading)"
+        class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-heading)"
         aria-label="GitHub"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -152,7 +154,7 @@ const navItems = [
           />
         </svg>
         <span
-          class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-2 py-1 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-600 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
+          class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-2 py-1 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
         >
           GitHub
         </span>
@@ -160,7 +162,7 @@ const navItems = [
       <span class="text-3xl text-(--color-border-hover)">·</span>
       <a
         href="/rss.xml"
-        class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-600 hover:text-(--color-heading)"
+        class="group relative flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-heading)"
         aria-label="RSS"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -172,7 +174,7 @@ const navItems = [
           <circle cx="5" cy="19" r="1.5" fill="currentColor" stroke="none" />
         </svg>
         <span
-          class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-2 py-1 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-600 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
+          class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-2 py-1 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
         >
           RSS
         </span>
