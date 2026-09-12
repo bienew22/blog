@@ -10,6 +10,29 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/posts',
+      name: 'posts',
+      component: () => import('../views/PostsView.vue'),
+    },
+    {
+      path: '/categories',
+      name: 'categories',
+      component: () => import('../views/PlaceholderView.vue'),
+      props: { title: 'Categories' },
+    },
+    {
+      path: '/tags',
+      name: 'tags',
+      component: () => import('../views/PlaceholderView.vue'),
+      props: { title: 'Tags' },
+    },
+    {
+      path: '/archives',
+      name: 'archives',
+      component: () => import('../views/PlaceholderView.vue'),
+      props: { title: 'Archives' },
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
