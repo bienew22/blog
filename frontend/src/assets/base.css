@@ -12,6 +12,8 @@
   --color-text-secondary: #6b6558;
 
   --section-gap: 160px;
+
+  --sidebar-width: 14rem; /* 256px */
 }
 
 /* dark mode: charcoal background, white text */
@@ -28,12 +30,14 @@
   --color-text-secondary: #a3a3a3;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    font-weight: normal;
+  }
 }
 
 /* scales all rem-based Tailwind sizes (text, icons, spacing) like a 120% browser zoom */

@@ -5,8 +5,8 @@ import BlogSidebar from './BlogSidebar.vue'
 <template>
   <div class="flex min-h-screen bg-(--color-background) text-(--color-text)">
     <BlogSidebar />
-    <main class="flex min-h-screen flex-1 flex-col">
-      <div class="mx-auto w-full max-w-3xl flex-1 px-8 py-10">
+    <main class="flex min-h-screen flex-1 flex-col px-8">
+      <div class="mx-auto w-full flex-1 px-8 py-8 ml-4">
         <slot />
       </div>
     </main>
