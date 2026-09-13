@@ -1,51 +1,52 @@
 <script setup lang="ts">
-defineProps<{
-  title: string
-  description: string
-  date: string
-  tags: string[]
-}>()
+import type { Component } from 'vue'
+import { NotebookText } from 'lucide-vue-next'
+
+withDefaults(
+  defineProps<{
+    title: string
+    description: string
+    date: string
+    tags: string[]
+    icon?: Component
+    href?: string
+  }>(),
+  {
+    icon: () => NotebookText,
+    href: '#',
+  },
+)
 </script>
 
 <template>
   <a
-    href="#"
-    class="block rounded-xl border border-(--color-border) bg-(--color-background-soft) p-6 transition hover:border-(--color-border-hover)"
+    :href="href"
+    class="post-card group flex w-full items-start gap-10 rounded-xl px-1 py-2 transition-colors duration-300 hover:bg-(--color-background-mute)"
   >
-    <h2 class="text-lg font-bold text-(--color-heading)">{{ title }}</h2>
-    <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-(--color-text-secondary)">
-      {{ description }}
-    </p>
-    <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-(--color-text-secondary)">
-      <span class="flex items-center gap-1.5">
-        <svg
-          class="h-3.5 w-3.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <rect x="3" y="4" width="18" height="18" rx="2" />
-          <path stroke-linecap="round" d="M16 2v4M8 2v4M3 10h18" />
-        </svg>
-        {{ date }}
+    <div class="flex min-w-0 flex-1 items-start gap-1">
+      <span class="flex h-6.5 w-7 shrink-0 items-center justify-center text-(--color-heading)">
+        <component :is="icon" class="h-4 w-4" />
       </span>
-      <span class="flex items-center gap-1.5">
-        <svg
-          class="h-3.5 w-3.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
+
+      <div class="min-w-0 max-w-200">
+        <span
+          class="text-[0.9rem] font-bold text-(--color-heading) underline-offset-3 transition-colors duration-300 group-hover:text-(--color-hover-title) group-hover:underline group-hover:decoration-(--color-hover-title)"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"
-          />
-        </svg>
-        {{ tags.join(', ') }}
-      </span>
+          {{ title }}
+        </span>
+
+        <p class="mt-2 text-xs text-(--color-text-secondary)">{{ date }}</p>
+      </div>
     </div>
+
+    <ul class="hidden max-w-64 pr-3 flex-wrap justify-end gap-1 overflow-hidden md:flex">
+      <li
+        v-for="tag in tags"
+        :key="tag"
+        class="rounded-lg border border-(--color-border) px-2.5 py-1 text-xs font-medium text-(--color-text-secondary)"
+      >
+        #{{ tag }}
+      </li>
+    </ul>
   </a>
 </template>

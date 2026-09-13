@@ -11,7 +11,7 @@ export const posts: Post[] = [
         description:
             'Dynamic Programming? DP(Dynamic Programming, 동적 계획법)는 복잡한 문제를 여러 개의 작은 하위 문제(Subproblem)로 나누어 해결한 뒤, 그 결과를 재사용하여 전체 문제를 효율적으로 해결…',
         date: 'Jun 23, 2026',
-        tags: ['Concept Notes', 'Algorithm'],
+        tags: ['Algorithm', 'Git', 'Github', 'Git', 'Github', 'Git', 'Github'],
     },
     {
         title: '[Git] Interactive rebase?',
@@ -28,7 +28,7 @@ export const posts: Post[] = [
         tags: ['Concept Notes', 'Git', 'Github'],
     },
     {
-        title: '[Algorithm] Linear Sieve',
+        title: '[Algorithm] Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve Linear Sieve',
         description:
             '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
         date: 'May 12, 2026',

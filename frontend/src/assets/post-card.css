@@ -1,0 +1,7 @@
+.post-card {
+  --color-hover-title: #1e90ff;
+}
+
+.dark .post-card {
+  --color-hover-title: #ffcc13;
+}

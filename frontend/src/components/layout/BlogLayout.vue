@@ -38,7 +38,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
         v-if="showScrollTop"
         type="button"
         aria-label="맨 위로 이동"
-        class="fixed right-6 bottom-6 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-(--color-border) bg-(--color-background-soft) text-(--color-text) shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-(--color-border-hover) hover:bg-(--color-background-mute)"
+        class="fixed right-6 bottom-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-(--color-background-soft) text-(--color-text) shadow-md transition-all duration-300 hover:-translate-y-1 hover:bg-(--color-background-mute)"
         @click="scrollToTop"
       >
         <ChevronUp class="h-5 w-5" />
