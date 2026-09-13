@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
+import { House } from 'lucide-vue-next'
+import { CategoryIcon, PostIcon } from '@/components/icon'
 
 const theme = useThemeStore()
 
 const navItems = [
-  { label: 'HOME', to: '/', icon: 'home' },
-  { label: 'POSTS', to: '/posts', icon: 'posts' },
-  { label: 'CATEGORIES', to: '/categories', icon: 'categories' },
-  { label: 'TAGS', to: '/tags', icon: 'tags' },
-  { label: 'ARCHIVES', to: '/archives', icon: 'archives' },
+  { label: 'HOME', to: '/', icon: House },
+  { label: 'POSTS', to: '/posts', icon: PostIcon },
+  { label: 'CATEGORIES', to: '/categories', icon: CategoryIcon },
 ]
 </script>
 
 <template>
   <aside
-    class="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-(--color-border) bg-(--color-background) px-6 py-8"
+    class="sticky top-0 flex h-screen min-w-(--sidebar-width) shrink-0 flex-col border-r border-(--color-border) bg-(--color-background) px-6 py-8"
   >
     <RouterLink
       to="/"
@@ -29,83 +29,18 @@ const navItems = [
         />
       </span>
       <h1 class="mt-4 text-lg font-bold text-(--color-heading)">bienew</h1>
-      <p class="mt-1 text-sm text-(--color-text-secondary)">Never Stop Becoming Better</p>
+      <p class="mt-1 text-xs text-(--color-text-secondary)">Never Stop Becoming Better</p>
     </RouterLink>
 
-    <nav class="flex flex-1 flex-col justify-center -translate-y-10 gap-1">
+    <nav class="flex flex-1 flex-col justify-center -translate-y-20 gap-1">
       <RouterLink
         v-for="item in navItems"
         :key="item.label"
         :to="item.to"
-        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-(--color-text-secondary) transition-colors duration-500 ease-in-out hover:bg-(--color-background-mute) hover:text-(--color-heading)"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-bold text-(--color-text-secondary) transition-colors duration-500 ease-in-out hover:bg-(--color-background-mute) hover:text-(--color-heading)"
         active-class="bg-(--color-background-mute)! text-(--color-heading)! transition-colors! duration-500! ease-in-out!"
       >
-        <svg
-          v-if="item.icon === 'home'"
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M3 11l9-7 9 7" />
-          <path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" />
-        </svg>
-        <svg
-          v-else-if="item.icon === 'posts'"
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        >
-          <line x1="4" y1="6" x2="20" y2="6" />
-          <line x1="4" y1="12" x2="20" y2="12" />
-          <line x1="4" y1="18" x2="20" y2="18" />
-        </svg>
-        <svg
-          v-else-if="item.icon === 'categories'"
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <rect x="3" y="3" width="7" height="7" rx="1" />
-          <rect x="14" y="3" width="7" height="7" rx="1" />
-          <rect x="3" y="14" width="7" height="7" rx="1" />
-          <rect x="14" y="14" width="7" height="7" rx="1" />
-        </svg>
-        <svg
-          v-else-if="item.icon === 'tags'"
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M3 3h7l11 11-7 7L3 10V3z" />
-          <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none" />
-        </svg>
-        <svg
-          v-else-if="item.icon === 'archives'"
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <rect x="3" y="4" width="18" height="4" rx="1" />
-          <path d="M5 8v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8" />
-          <line x1="10" y1="12" x2="14" y2="12" />
-        </svg>
+        <component :is="item.icon" class="h-4 w-4" />
         {{ item.label }}
       </RouterLink>
     </nav>
