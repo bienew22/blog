@@ -14,7 +14,7 @@ export default defineConfig({
   ],
   server: {
     host: '0.0.0.0',
-    allowedHosts: ['frontend', 'localhost', '.trycloudflare.com'],
+    allowedHosts: ['frontend', 'localhost', '.bienew.me'],
   },
   resolve: {
     alias: {
