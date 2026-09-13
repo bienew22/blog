@@ -34,6 +34,111 @@ export const posts: Post[] = [
         date: 'May 12, 2026',
         tags: ['Concept Notes', 'Algorithm'],
     },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2025',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
+    {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    }, {
+        title: '[Algorithm] Linear Sieve',
+        description:
+            '기존의 에라토스테네스의 체(Sieve of Eratosthenes)는 O(N log log N)의 시간 복잡도를 갖지만, Linear Sieve를 사용하면 O(N)에 소수를 판별할 수 있습니다…',
+        date: 'May 12, 2026',
+        tags: ['Concept Notes', 'Algorithm'],
+    },
 ]
 
 export const trendingTags = [
