@@ -5,18 +5,13 @@ export interface Post {
     tags: string[]
 }
 
-interface PostsResponse {
-    content: Post[]
-}
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-
 export async function fetchPosts(): Promise<Post[]> {
-    const response = await fetch(`${API_BASE_URL}/posts`)
+    const response = await fetch(`/api/articles`)
     if (!response.ok) {
         throw new Error(`Failed to fetch posts: ${response.status}`)
     }
 
-    const data: PostsResponse = await response.json()
-    return data.content
+    const data: Post[] = await response.json()
+
+    return data
 }
