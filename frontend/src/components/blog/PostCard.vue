@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { NotebookText } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 
 withDefaults(
   defineProps<{
     title: string
-    description: string
     date: string
     tags: string[]
     icon?: Component
@@ -19,11 +19,10 @@ withDefaults(
 </script>
 
 <template>
-  <a
-    :href="href"
+  <div
     class="post-card group flex w-full items-start gap-10 rounded-xl px-1 py-2 transition-colors duration-300 hover:bg-(--color-background-mute)"
   >
-    <div class="flex min-w-0 flex-1 items-start gap-1">
+    <RouterLink :to="`/post/${href}`" class="flex min-w-0 flex-1 items-start gap-1">
       <span class="flex h-6.5 w-7 shrink-0 items-center justify-center text-(--color-heading)">
         <component :is="icon" class="h-4 w-4" />
       </span>
@@ -37,16 +36,17 @@ withDefaults(
 
         <p class="mt-2 text-xs text-(--color-text-secondary)">{{ date }}</p>
       </div>
-    </div>
+    </RouterLink>
 
     <ul class="hidden max-w-64 pr-3 flex-wrap justify-end gap-1 overflow-hidden md:flex">
-      <li
-        v-for="tag in tags"
-        :key="tag"
-        class="rounded-lg border border-(--color-border) px-2.5 py-1 text-xs font-medium text-(--color-text-secondary)"
-      >
-        #{{ tag }}
+      <li v-for="tag in tags" :key="tag">
+        <RouterLink
+          :to="`/tag/${tag}`"
+          class="rounded-lg border border-(--color-border) px-2.5 py-1 text-xs font-medium text-(--color-text-secondary) transition-colors duration-300 hover:text-(--color-hover-title)"
+        >
+          #{{ tag }}
+        </RouterLink>
       </li>
     </ul>
-  </a>
+  </div>
 </template>

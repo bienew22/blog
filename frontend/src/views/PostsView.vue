@@ -1,16 +1,41 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import { Book } from 'lucide-vue-next'
-import { posts, type Post } from '@/data/posts'
+import { fetchPosts, type Post } from '@/api/posts'
 import PostCard from '@/components/blog/PostCard.vue'
 
-const postsByYear = Object.entries(
-  posts.reduce<Record<string, Post[]>>((groups, post) => {
-    const year = post.date.split(', ').pop()!
-    ;(groups[year] ??= []).push(post)
-    return groups
-  }, {}),
-).sort(([a], [b]) => Number(b) - Number(a))
+const posts = ref<Post[]>([])
+const isLoading = ref(true)
+const error = ref<string | null>(null)
+
+function formatDate(createAt: string) {
+  return new Date(createAt.replace(' ', 'T')).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+const postsByYear = computed(() =>
+  Object.entries(
+    posts.value.reduce<Record<string, Post[]>>((groups, post) => {
+      const year = String(new Date(post.createAt.replace(' ', 'T')).getFullYear())
+      ;(groups[year] ??= []).push(post)
+      return groups
+    }, {}),
+  ).sort(([a], [b]) => Number(b) - Number(a)),
+)
+
+onMounted(async () => {
+  try {
+    posts.value = await fetchPosts()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : '게시글을 불러오지 못했습니다.'
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <template>
@@ -25,6 +50,13 @@ const postsByYear = Object.entries(
       </p>
     </header>
 
+    <div v-if="isLoading" class="flex min-h-[50vh] items-center justify-center">
+      <div
+        class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
+      ></div>
+    </div>
+    <p v-else-if="error" class="text-sm text-red-500">{{ error }}</p>
+
     <section v-for="([year, yearPosts], index) in postsByYear" :key="year" class="mb-10 w-full">
       <div class="mb-2 flex items-center gap-3">
         <h2 class="text-2xl font-black text-(--color-heading) text-center">{{ year }}</h2>
@@ -36,12 +68,12 @@ const postsByYear = Object.entries(
       </div>
 
       <ul class="flex flex-col">
-        <li v-for="post in yearPosts" :key="post.title" class="flex items-start">
+        <li v-for="post in yearPosts" :key="post.slug" class="flex items-start">
           <PostCard
             :title="post.title"
-            :description="post.description"
-            :date="post.date"
+            :date="formatDate(post.createAt)"
             :tags="post.tags"
+            :href="post.slug"
           />
         </li>
       </ul>
