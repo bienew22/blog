@@ -63,7 +63,7 @@ onMounted(async () => {
         <span
           class="rounded-full border border-(--color-border) px-2.5 py-0.5 translate-y-0.5 text-xs text-center font-medium text-(--color-text-secondary)"
         >
-          {{ yearPosts.length }} posts
+          {{ yearPosts.length }} Posts
         </span>
       </div>
 
