@@ -11,6 +11,8 @@
   --color-text: #1a1a1a;
   --color-text-secondary: #6b6558;
 
+  --color-hover-title: #1e90ff;
+
   --section-gap: 160px;
 
   --sidebar-width: 14rem; /* 256px */
@@ -24,6 +26,8 @@
 
   --color-border: rgba(255, 255, 255, 0.12);
   --color-border-hover: rgba(191, 202, 36, 0.24);
+
+  --color-hover-title: #ffcc13;
 
   --color-heading: #ffffff;
   --color-text: #ffffff;

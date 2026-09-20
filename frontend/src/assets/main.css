@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @import './base.css';
-@import './post-card.css';
 
 /* dark mode is toggled explicitly via a `.dark` class on <html> (see stores/theme.ts) */
 @custom-variant dark (&:where(.dark, .dark *));
