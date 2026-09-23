@@ -1,4 +1,4 @@
-package bienew.blog.backend.article.entity;
+package bienew.blog.backend.post.entity;
 
 
 import jakarta.persistence.*;
@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "articles")
-public class Article {
+@Table(name = "posts")
+public class Post {
 
     @Id
     @Column(name = "id", nullable = false)
