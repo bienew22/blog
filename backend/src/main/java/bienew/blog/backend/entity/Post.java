@@ -1,4 +1,4 @@
-package bienew.blog.backend.post.entity;
+package bienew.blog.backend.entity;
 
 
 import jakarta.persistence.*;

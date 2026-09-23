@@ -1,7 +1,7 @@
 package bienew.blog.backend.post.repository;
 
 
-import bienew.blog.backend.post.entity.Post;
+import bienew.blog.backend.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

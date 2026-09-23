@@ -1,6 +1,6 @@
 package bienew.blog.backend.post.dto;
 
-import bienew.blog.backend.post.entity.Post;
+import bienew.blog.backend.entity.Post;
 
 import java.time.LocalDateTime;
 import java.util.List;
