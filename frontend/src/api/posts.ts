@@ -6,7 +6,7 @@ export interface Post {
 }
 
 export async function fetchPosts(): Promise<Post[]> {
-    const response = await fetch(`/api/articles`)
+    const response = await fetch(`/api/v1/posts`)
     if (!response.ok) {
         throw new Error(`Failed to fetch posts: ${response.status}`)
     }
