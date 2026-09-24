@@ -15,7 +15,8 @@ public class PostService {
     private final PostRepository postRepository;
 
     public List<PostSummaryResponse> getPosts() {
-        return postRepository.findAll().stream()
+
+        return postRepository.findAllWithTags().stream()
                 .map(PostSummaryResponse::of)
                 .toList();
     }

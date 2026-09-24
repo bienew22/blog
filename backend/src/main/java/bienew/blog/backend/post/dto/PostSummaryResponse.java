@@ -12,12 +12,15 @@ public record PostSummaryResponse(
         String slug,
         List<String> tags
 ) {
-    public static PostSummaryResponse of(Post article) {
+    public static PostSummaryResponse of(Post post) {
         return new PostSummaryResponse(
-                article.getTitle(),
-                article.getAuthor(),
-                article.getCreateAt(),
-                article.getSlug(),
-                List.of("h1", "h2", "h3"));
+                post.getTitle(),
+                post.getAuthor(),
+                post.getCreateAt(),
+                post.getSlug(),
+                post.getPostTags().stream()
+                        .map(postTag -> postTag.getTag().getTagName())
+                        .toList()
+        );
     }
 }

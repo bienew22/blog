@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -26,6 +28,9 @@ public class Tag {
 
     @Column(name = "post_cnt", nullable = false, columnDefinition = "int default 0")
     Integer postCnt;
+
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostTag> postTags = new HashSet<>();
 
     @Column(name = "create_at", updatable = false, insertable = false)
     LocalDateTime createdAt;
