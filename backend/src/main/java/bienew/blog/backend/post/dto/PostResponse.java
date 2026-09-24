@@ -5,15 +5,15 @@ import bienew.blog.backend.entity.Post;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record PostSummaryResponse(
+public record PostResponse(
         String title,
         String author,
         LocalDateTime createAt,
         String slug,
         List<String> tags
 ) {
-    public static PostSummaryResponse of(Post post) {
-        return new PostSummaryResponse(
+    public static PostResponse of(Post post) {
+        return new PostResponse(
                 post.getTitle(),
                 post.getAuthor(),
                 post.getCreateAt(),

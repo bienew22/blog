@@ -1,7 +1,7 @@
 package bienew.blog.backend.post.controller;
 
 
-import bienew.blog.backend.post.dto.PostSummaryResponse;
+import bienew.blog.backend.post.dto.PostResponse;
 import bienew.blog.backend.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("")
-    public List<PostSummaryResponse> getPosts() {
+    public List<PostResponse> getPosts() {
         return postService.getPosts();
     }
 }
