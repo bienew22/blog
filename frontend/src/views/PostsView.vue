@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import BlogHeader from '@/components/layout/BlogHeader.vue'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import { Book } from 'lucide-vue-next'
 import { fetchPosts, type Post } from '@/api/posts'
@@ -40,15 +41,11 @@ onMounted(async () => {
 
 <template>
   <BlogLayout>
-    <header class="mb-10">
-      <h1 class="flex items-center text-center gap-3 text-4xl font-bold text-(--color-heading)">
-        <Book class="h-9 w-9" />
-        POSTS
-      </h1>
-      <p class="mt-2 text-sm text-(--color-text-secondary)">
-        &nbsp;배우고, 만들고, 고민한 것들을 기록합니다.
-      </p>
-    </header>
+    <BlogHeader
+      :icon="Book"
+      title="POSTS"
+      description="배우고, 만들고, 고민한 것들을 기록합니다."
+    />
 
     <div v-if="isLoading" class="flex min-h-[50vh] items-center justify-center">
       <div
