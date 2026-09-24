@@ -1,8 +1,9 @@
 /* light mode: ivory background, black text */
 :root {
   --color-background: #ffffff;
-  --color-background-soft: #e8eff6;
-  --color-background-mute: #eff4f7;
+  --color-background-soft: #eff4f7;
+  --color-background-mute: #e8eff6;
+  /* e8eff6 */
 
   --color-border: rgba(26, 22, 15, 0.12);
   --color-border-hover: rgba(26, 22, 15, 0.24);
@@ -10,6 +11,8 @@
   --color-heading: #1a1a1a;
   --color-text: #1a1a1a;
   --color-text-secondary: #6b6558;
+
+  --color-hover-title: #1e90ff;
 
   --section-gap: 160px;
 
@@ -23,7 +26,9 @@
   --color-background-mute: #353538;
 
   --color-border: rgba(255, 255, 255, 0.12);
-  --color-border-hover: rgba(191, 202, 36, 0.24);
+  --color-border-hover: rgba(255, 255, 255, 0.24);
+
+  --color-hover-title: #ffcc13;
 
   --color-heading: #ffffff;
   --color-text: #ffffff;

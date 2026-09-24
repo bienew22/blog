@@ -38,7 +38,7 @@ withDefaults(
       </div>
     </RouterLink>
 
-    <ul class="hidden max-w-64 pr-3 flex-wrap justify-end gap-1 overflow-hidden md:flex">
+    <ul class="hidden max-w-64 pr-3 flex-wrap justify-end gap-1 md:flex">
       <li v-for="tag in tags" :key="tag">
         <RouterLink
           :to="`/tag/${tag}`"

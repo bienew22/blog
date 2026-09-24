@@ -76,11 +76,11 @@ const navItems = [
     <div class="flex items-center justify-center gap-2 border-t border-(--color-border) pt-4">
       <button
         type="button"
-        class="group relative flex h-7 w-7 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-heading) hover:cursor-pointer"
+        class="group relative flex h-7 w-7 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-hover-title) hover:cursor-pointer"
         aria-label="Toggle theme"
         @click="theme.toggleTheme"
       >
-        <component :is="theme.isDark ? DarkThemeIcon : LightThemeIcon" class="h-4 w-4" />
+        <component :is="theme.isDark ? LightThemeIcon : DarkThemeIcon" class="h-4 w-4" />
 
         <span
           class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-1.5 py-0.5 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
