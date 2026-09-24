@@ -1,4 +1,4 @@
-package bienew.blog.backend.article.entity;
+package bienew.blog.backend.entity;
 
 
 import jakarta.persistence.*;
@@ -6,12 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "articles")
-public class Article {
+@Table(name = "posts")
+public class Post {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -32,6 +34,9 @@ public class Article {
 
     @Column(name = "author", nullable = false)
     String author;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostTag> postTags = new HashSet<>();
 
     @Column(name = "create_at", nullable = false)
     LocalDateTime createAt;
