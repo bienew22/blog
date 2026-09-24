@@ -25,18 +25,15 @@ export async function fetchTags(): Promise<Tag[]> {
 }
 
 export async function fetchTagPosts(tagName: string): Promise<TagPosts | null> {
-    // const response = await fetch(`/api/v1/tags/${tagName}`)
-    // if (response.status === 404) {
-    //     return null
-    // }
-    // if (!response.ok) {
-    //     throw new Error(`Failed to fetch tag posts: ${response.status}`)
-    // }
+    const response = await fetch(`/api/v1/tags/${tagName}`)
+    if (response.status !== 200) {
+        return null
+    }
+    if (!response.ok) {
+        throw new Error(`Failed to fetch tag posts: ${response.status}`)
+    }
 
-    // const data: TagPosts = await response.json()
-    const data: TagPosts = tagPosts
-
-    console.log(tagName);
+    const data: TagPosts = await response.json()
 
     return data
 }
