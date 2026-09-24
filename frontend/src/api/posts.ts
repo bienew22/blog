@@ -5,6 +5,12 @@ export interface Post {
     tags: string[]
 }
 
+export interface PostSummary {
+    title: string
+    slug: string
+    createAt: string
+}
+
 export async function fetchPosts(): Promise<Post[]> {
     const response = await fetch(`/api/v1/posts`)
     if (!response.ok) {
