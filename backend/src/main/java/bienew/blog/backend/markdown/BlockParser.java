@@ -1,23 +1,32 @@
 package bienew.blog.backend.markdown;
 
 import bienew.blog.backend.markdown.ast.ASTNode;
-import bienew.blog.backend.markdown.ast.Default;
-import bienew.blog.backend.markdown.ast.Document;
+import bienew.blog.backend.markdown.ast.block.Default;
+import bienew.blog.backend.markdown.ast.block.Document;
 import bienew.blog.backend.markdown.parser.AbstractBlockParser;
-import bienew.blog.backend.markdown.parser.HeadingParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
+import bienew.blog.backend.markdown.parser.block.HeadingParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockParser {
+public enum BlockParser {
+
+    INSTANCE;
 
     private final List<AbstractBlockParser> abstractBlockParsers;
 
-    public BlockParser() {
+    BlockParser() {
         abstractBlockParsers = new ArrayList<>();
-
         abstractBlockParsers.add(new HeadingParser());
+    }
+
+    public static BlockParser getInstance() {
+        return INSTANCE;
+    }
+
+    public void addBlockParser(AbstractBlockParser abstractBlockParser) {
+        abstractBlockParsers.add(abstractBlockParser);
     }
 
     public ASTNode parse(String markdown) {
@@ -38,12 +47,12 @@ public class BlockParser {
             boolean parsed = false;
 
             for (AbstractBlockParser abstractBlockParser : abstractBlockParsers) {
-                if (abstractBlockParser.canParse(line)) {
-                    ParseResult result = abstractBlockParser.parse(lines, remainingLines);
+                ParseResult result = abstractBlockParser.parse(lines, remainingLines);
 
+                if (result.isParsed()) {
                     now.setNext(result.node());
                     now = result.node();
-                    remainingLines = result.nextLineIndex();
+                    remainingLines = result.nextIndex();
 
                     parsed = true;
                     break;
