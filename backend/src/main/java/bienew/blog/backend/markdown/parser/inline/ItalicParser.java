@@ -34,6 +34,6 @@ public class ItalicParser extends AbstractInlineParser {
             return new ParseResult(new Italic(italicText), endItalicIndex + 1, true);
         }
 
-        return new ParseResult(null, startIndex, false);
+        return ParseResult.notParsed();
     }
 }

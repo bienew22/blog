@@ -11,4 +11,10 @@ public record ParseResult(
         int nextIndex,
         boolean isParsed
 ) {
+    private static final ParseResult NOT_PARSED = new ParseResult(null, -1, false);
+
+
+    public static ParseResult notParsed() {
+        return NOT_PARSED;
+    }
 }

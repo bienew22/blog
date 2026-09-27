@@ -27,6 +27,6 @@ public class BoldParser extends AbstractInlineParser {
             return new ParseResult(new Bold(boldText), endBoldIndex + 2, true);
         }
 
-        return new ParseResult(null, startIndex, false);
+        return ParseResult.notParsed();
     }
 }
