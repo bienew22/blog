@@ -9,11 +9,11 @@ class MarkDownParserTest {
 
     private final MarkDownParser parser = new MarkDownParser();
 
-    private final BlockParser blockParser = new BlockParser();
+    private final BlockParser blockParser = BlockParser.getInstance();
 
     @Test
     void block_parser_test() {
-        ASTNode astNode = blockParser.parse("#Hello\nhello world\nis there");
+        ASTNode astNode = blockParser.parse("# Hel**l**o\n** **hello world\nis there");
 
         System.out.println("=============after parse=============");
         while (astNode != null) {

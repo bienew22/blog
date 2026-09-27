@@ -1,8 +1,5 @@
 package bienew.blog.backend;
 
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 import org.junit.jupiter.api.Test;
 
 class BackendApplicationTests {
@@ -150,14 +147,14 @@ class BackendApplicationTests {
                 * <https://wikidocs.net/130632>
                 """;
 
-        Parser parser = Parser.builder().build();
-
-        Node document = parser.parse(markdown);
-
-        HtmlRenderer renderer = HtmlRenderer.builder().build();
-
-        String html = renderer.render(document);
-
-        System.out.println(html);
+//        Parser parser = Parser.builder().build();
+//
+//        Node document = parser.parse(markdown);
+//
+//        HtmlRenderer renderer = HtmlRenderer.builder().build();
+//
+//        String html = renderer.render(document);
+//
+//        System.out.println(html);
     }
 }

@@ -1,15 +1,18 @@
-package bienew.blog.backend.markdown.parser;
+package bienew.blog.backend.markdown.parser.block;
 
 
-import bienew.blog.backend.markdown.ast.Heading;
+import bienew.blog.backend.markdown.InlineParser;
+import bienew.blog.backend.markdown.ast.block.Heading;
+import bienew.blog.backend.markdown.parser.AbstractBlockParser;
+import bienew.blog.backend.markdown.parser.ParseResult;
 
-public class HeadingParser implements AbstractBlockParser {
+public class HeadingParser extends AbstractBlockParser {
 
     private Heading heading;
 
 
     @Override
-    public boolean canParse(String line) {
+    protected boolean canParse(String line) {
         if (line == null || line.isEmpty()) {
             return false;
         }
@@ -23,14 +26,19 @@ public class HeadingParser implements AbstractBlockParser {
     }
 
     @Override
-    public ParseResult parse(String[] lines, int startLineIndex) {
+    protected ParseResult parseNode(String[] lines, int startLineIndex) {
 
         String line = lines[startLineIndex];
         int level = getLevel(line);
+
         String text = line.substring(level).trim();
 
-        heading = new Heading(level, text);
-        return new ParseResult(heading, startLineIndex + 1);
+        heading = new Heading(level);
+
+        InlineParser.getInstance().parse(text.substring(level))
+                .forEach(block -> heading.addChild(block));
+
+        return new ParseResult(heading, startLineIndex + 1, true);
     }
 
     private int getLevel(String line) {
