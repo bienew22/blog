@@ -1,15 +1,11 @@
 package bienew.blog.backend.markdown.parser.block;
 
 
-import bienew.blog.backend.markdown.InlineParser;
 import bienew.blog.backend.markdown.ast.block.Heading;
 import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class HeadingParser extends AbstractBlockParser {
-
-    private Heading heading;
-
 
     @Override
     protected boolean canParse(String line) {
@@ -21,8 +17,9 @@ public class HeadingParser extends AbstractBlockParser {
         }
 
         int count = getLevel(line);
+        int length = line.trim().length();
 
-        return count > 0 && count <= 6;
+        return count > 0 && count <= 6 && length > count;
     }
 
     @Override
@@ -33,10 +30,7 @@ public class HeadingParser extends AbstractBlockParser {
 
         String text = line.substring(level).trim();
 
-        heading = new Heading(level);
-
-        InlineParser.getInstance().parse(text.substring(level))
-                .forEach(block -> heading.addChild(block));
+        Heading heading = new Heading(level, text);
 
         return new ParseResult(heading, startLineIndex + 1, true);
     }

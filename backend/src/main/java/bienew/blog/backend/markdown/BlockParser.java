@@ -25,10 +25,6 @@ public enum BlockParser {
         return INSTANCE;
     }
 
-    public void addBlockParser(AbstractBlockParser abstractBlockParser) {
-        abstractBlockParsers.add(abstractBlockParser);
-    }
-
     public ASTNode parse(String markdown) {
         // Implement the parsing logic here
         String[] lines = markdown
@@ -68,8 +64,17 @@ public enum BlockParser {
                 remainingLines++;
             }
         }
-
+        processInlineParser(document);
         return document;
     }
 
+    private void processInlineParser(ASTNode document) {
+
+        ASTNode now = document.getNext();
+
+        while (now != null) {
+            InlineParser.getInstance().parse(now);
+            now = now.getNext();
+        }
+    }
 }

@@ -11,8 +11,9 @@ import lombok.Getter;
 public class Heading extends ASTNode {
     int level;
 
-    public Heading(int level) {
+    public Heading(int level, String source) {
         this.level = level;
+        this.source = source;
     }
 
 }

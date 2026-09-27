@@ -8,9 +8,8 @@ import bienew.blog.backend.markdown.ast.ASTNode;
  * blockParser에서 처리되지 않은 블록을 나타낼 때 사용될 수 있습니다.
  */
 public class Default extends ASTNode {
-    String content;
 
-    public Default(String content) {
-        this.content = content;
+    public Default(String source) {
+        this.source = source;
     }
 }

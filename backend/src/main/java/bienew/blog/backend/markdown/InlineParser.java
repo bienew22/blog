@@ -23,8 +23,12 @@ public enum InlineParser {
         return INSTANCE;
     }
 
-    public void addParser(AbstractInlineParser parser) {
-        parsers.add(parser);
+    public void parse(ASTNode node) {
+        if (node == null) {
+            return;
+        }
+
+        parse(node.getSource()).forEach(node::addChild);
     }
 
     public List<ASTNode> parse(String text) {

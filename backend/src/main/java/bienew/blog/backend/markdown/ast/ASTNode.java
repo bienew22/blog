@@ -18,6 +18,8 @@ public abstract class ASTNode {
     protected ASTNode prev;
     protected ASTNode next;
 
+    protected String source;
+
     public void addChild(ASTNode child) {
         if (children == null) {
             children = new ArrayList<>();

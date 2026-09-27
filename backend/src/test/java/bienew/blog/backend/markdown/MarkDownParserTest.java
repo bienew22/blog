@@ -13,14 +13,13 @@ class MarkDownParserTest {
 
     @Test
     void block_parser_test() {
-        ASTNode astNode = blockParser.parse("# Hel**l**o\n** **hello world\nis there");
+        ASTNode astNode = blockParser.parse("# Hel**l**o\n** **hello world\nis there\n## \n## admin");
 
         System.out.println("=============after parse=============");
         while (astNode != null) {
             System.out.println(astNode);
             astNode = astNode.getNext();
         }
-        System.out.println(astNode);
         System.out.println("=====================================");
     }
 

@@ -9,6 +9,7 @@ public class BoldParser extends AbstractInlineParser {
     protected boolean canParse(String text, int startIndex) {
         if (text.startsWith("**", startIndex)) {
             int endIndex = text.indexOf("**", startIndex + 2);
+            // 최소 한 글자 이상이 있어야 굵은 텍스트로 인식
             return endIndex != -1 && endIndex > startIndex + 2;
         }
         return false;
@@ -20,7 +21,6 @@ public class BoldParser extends AbstractInlineParser {
         int startBoldIndex = startIndex + 2;
         int endBoldIndex = text.indexOf("**", startBoldIndex);
 
-        System.out.println("BoldParser.parseNode: startIndex=" + startIndex + ", startBoldIndex=" + startBoldIndex + ", endBoldIndex=" + endBoldIndex);
         // parsing
         if (endBoldIndex != -1) {
             String boldText = text.substring(startBoldIndex, endBoldIndex);
