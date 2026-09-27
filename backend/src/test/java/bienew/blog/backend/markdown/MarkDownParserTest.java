@@ -14,8 +14,8 @@ class MarkDownParserTest {
     @Test
     void block_parser_test() {
         ASTNode astNode = blockParser.parse("""
-                he^{h2}_{h1} or ^{h2}
-                he_{he} or _{wo} here_{**h2**}
+                __**_a_**__
+                ___**a**___
                 """);
 
         System.out.println("=============after parse=============");
