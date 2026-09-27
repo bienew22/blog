@@ -1,4 +1,6 @@
-package bienew.blog.backend.markdown.ast;
+package bienew.blog.backend.markdown.ast.block;
+
+import bienew.blog.backend.markdown.ast.ASTNode;
 
 /**
  * Markdown 문서의 최상위 루트 노드를 나타내는 클래스입니다.

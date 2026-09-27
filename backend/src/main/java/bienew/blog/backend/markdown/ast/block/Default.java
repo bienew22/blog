@@ -1,4 +1,6 @@
-package bienew.blog.backend.markdown.ast;
+package bienew.blog.backend.markdown.ast.block;
+
+import bienew.blog.backend.markdown.ast.ASTNode;
 
 /**
  * Default 클래스는 마크다운 문서의 기본 블록을 나타내는 ASTNode의 하위 클래스입니다.
