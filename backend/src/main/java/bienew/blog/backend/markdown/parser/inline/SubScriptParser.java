@@ -1,10 +1,10 @@
 package bienew.blog.backend.markdown.parser.inline;
 
-import bienew.blog.backend.markdown.ast.inline.Subscript;
+import bienew.blog.backend.markdown.ast.inline.SubScript;
 import bienew.blog.backend.markdown.parser.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
-public class SubscriptParser extends AbstractInlineParser {
+public class SubScriptParser extends AbstractInlineParser {
     @Override
     protected boolean canParse(String text, int startIndex) {
         if (startIndex >= text.length()) {
@@ -29,7 +29,7 @@ public class SubscriptParser extends AbstractInlineParser {
         // parsing
         if (endSubscriptIndex != -1) {
             String subscriptText = text.substring(startSubscriptIndex, endSubscriptIndex);
-            return new ParseResult(new Subscript(subscriptText), endSubscriptIndex + 1, true);
+            return new ParseResult(new SubScript(subscriptText), endSubscriptIndex + 1, true);
         }
 
         return ParseResult.notParsed();
