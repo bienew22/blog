@@ -5,6 +5,7 @@ import bienew.blog.backend.markdown.ast.inline.Text;
 import bienew.blog.backend.markdown.parser.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 import bienew.blog.backend.markdown.parser.inline.BoldParser;
+import bienew.blog.backend.markdown.parser.inline.ItalicParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,8 @@ public enum InlineParser {
 
     InlineParser() {
         parsers = new ArrayList<>();
-        parsers.add(new BoldParser());  // **some** or __some__ 을 파싱하는 BoldParser를 추가
+        parsers.add(new BoldParser());  // **some**을 파싱하여 BoldParser를 추가
+        parsers.add(new ItalicParser()); // _some_ 을 파싱하여 ItalicParser를 추가
     }
 
     public static InlineParser getInstance() {
@@ -68,6 +70,9 @@ public enum InlineParser {
                 }
 
                 nodes.add(result.node());
+
+                parse(result.node());
+
                 index = result.nextIndex();
             }
         }
