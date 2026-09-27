@@ -16,7 +16,7 @@ public enum InlineParser {
 
     InlineParser() {
         parsers = new ArrayList<>();
-        parsers.add(new BoldParser());
+        parsers.add(new BoldParser());  // **some** or __some__ 을 파싱하는 BoldParser를 추가
     }
 
     public static InlineParser getInstance() {
@@ -32,8 +32,11 @@ public enum InlineParser {
     }
 
     public List<ASTNode> parse(String text) {
-        List<ASTNode> nodes = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return new ArrayList<>();
+        }
 
+        List<ASTNode> nodes = new ArrayList<>();
 
         int index = 0;
         StringBuilder sb = new StringBuilder();
