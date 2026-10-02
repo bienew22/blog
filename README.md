@@ -14,7 +14,7 @@ my blog
 - 개발 브랜치
 - main으로 부터 파생됨.
 - 배포 대상인 feature 브랜치들의 merge 대상이 됨.
-- 향후 : PR 만 허용
+- PR 만 허용
 
 #### ci-cd
 - CI/CD 작업 브랜치
