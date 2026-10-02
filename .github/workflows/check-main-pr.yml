@@ -1,0 +1,28 @@
+name: Check Main PR
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  check-source-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check source branch
+        run: |
+          SOURCE_BRANCH="${{ github.head_ref }}"
+
+          if [[ "$SOURCE_BRANCH" != "develop" && "$SOURCE_BRANCH" != "ci-cd" ]]; then
+            echo "❌ main으로 PR할 수 없는 브랜치입니다."
+            echo "허용 브랜치: develop, ci-cd"
+            echo "현재 브랜치: $SOURCE_BRANCH"
+            exit 1
+          fi
+
+          echo "✅ 허용된 브랜치입니다."
