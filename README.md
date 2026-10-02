@@ -12,14 +12,15 @@ my blog
 
 #### develop
 - 개발 브랜치
-- 배포 대상인 feature 브랜치들의 merge 대상이 됨.
 - main으로 부터 파생됨.
+- 배포 대상인 feature 브랜치들의 merge 대상이 됨.
 - 향후 : PR 만 허용
 
 #### ci-cd
 - CI/CD 작업 브랜치
-- main으로 부터 파생되어야 함.
-- 현재 `.github` 폴더에 대한 작업만 허용함.
+- main으로 부터 파생됨.
+- 관리자에 의해서 관리 됨.
+- 변경 사항은 `main` 및 `develop` 브랜치에 적용 됨.
 
 #### feature
 - 기능 개발 브랜치
