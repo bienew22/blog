@@ -1,0 +1,111 @@
+name: Docs to Develop
+
+on:
+  push:
+    branches:
+      - docs
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docs-to-develop
+  cancel-in-progress: false
+
+env:
+  SOURCE_BRANCH: docs
+  TARGET_BRANCH: develop
+
+jobs:
+  docs-to-develop:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # --------------------------------------------------
+      # 1. 소스 체크아웃
+      # --------------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # --------------------------------------------------
+      # 2. 최신 브랜치 가져오기
+      # --------------------------------------------------
+      - name: Fetch branches
+        run: |
+          git fetch origin "$TARGET_BRANCH"
+          git fetch origin "$SOURCE_BRANCH"
+
+      # --------------------------------------------------
+      # 3. Markdown 파일만 변경되었는지 검사
+      # --------------------------------------------------
+      - name: Check markdown only
+        id: check
+        run: |
+          bash .github/scripts/docs-to-develop/check-markdown.sh
+
+      # --------------------------------------------------
+      # 4. 기존 PR 확인
+      # --------------------------------------------------
+      - name: Find existing PR
+        if: steps.check.outputs.has_changes == 'true'
+        id: existing-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash .github/scripts/docs-to-develop/find-pr.sh
+
+      # --------------------------------------------------
+      # 5. PR 생성
+      # --------------------------------------------------
+      - name: Create Pull Request
+        if: |
+          steps.check.outputs.has_changes == 'true' &&
+          steps.existing-pr.outputs.PR_NUMBER == ''
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash .github/scripts/docs-to-develop/create-pr.sh
+
+      # --------------------------------------------------
+      # 6. PR 번호 결정
+      # --------------------------------------------------
+      - name: Get PR number
+        if: steps.check.outputs.has_changes == 'true'
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "${{ steps.existing-pr.outputs.PR_NUMBER }}" ]; then
+            echo "PR_NUMBER=${{ steps.existing-pr.outputs.PR_NUMBER }}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          PR_NUMBER=$(gh pr list \
+            --base "$TARGET_BRANCH" \
+            --head "$SOURCE_BRANCH" \
+            --state open \
+            --json number \
+            --jq '.[0].number')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "❌ PR을 찾을 수 없습니다."
+            exit 1
+          fi
+
+          echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      # --------------------------------------------------
+      # 7. PR 자동 Merge
+      # --------------------------------------------------
+      - name: Enable Auto Merge
+        if: steps.pr.outputs.PR_NUMBER != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash .github/scripts/docs-to-develop/merge-pr.sh \
+            "${{ steps.pr.outputs.PR_NUMBER }}"
