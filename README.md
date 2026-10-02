@@ -20,7 +20,7 @@ my blog
 - CI/CD 작업 브랜치
 - main으로 부터 파생됨.
 - 관리자에 의해서 관리 됨.
-- 변경 사항은 `main` 및 `develop` 브랜치에 적용 됨.
+- 변경 사항은 `main`, `develop` 및 필요한 브랜치에 적용 됨.
 
 #### feature
 - 기능 개발 브랜치
