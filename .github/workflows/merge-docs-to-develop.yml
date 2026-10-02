@@ -1,3 +1,4 @@
+```yaml
 name: Docs to Develop
 
 on:
@@ -6,7 +7,7 @@ on:
       - docs
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 concurrency:
@@ -45,16 +46,23 @@ jobs:
         run: |
           echo "=== docs → develop 변경 파일 ==="
 
-          git diff \
+          CHANGED_FILES=$(git diff \
             --name-only \
-            origin/develop...origin/docs
+            origin/develop...origin/docs)
+
+          echo "$CHANGED_FILES"
 
           echo ""
 
-          INVALID_FILES=$(git diff \
-            --name-only \
-            origin/develop...origin/docs \
-            | grep -v '\.md$' || true)
+          # 변경사항 없음
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "변경사항이 없습니다."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # .md가 아닌 파일 검색
+          INVALID_FILES=$(echo "$CHANGED_FILES" | grep -v '\.md$' || true)
 
           if [ -n "$INVALID_FILES" ]; then
             echo "❌ .md 이외의 파일이 포함되어 있습니다."
@@ -63,59 +71,100 @@ jobs:
             exit 1
           fi
 
-          CHANGED_FILES=$(git diff \
-            --name-only \
-            origin/develop...origin/docs)
-
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "변경사항이 없습니다."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
           echo "has_changes=true" >> "$GITHUB_OUTPUT"
 
           echo ""
           echo "✅ 모든 변경 파일이 .md입니다."
 
       # --------------------------------------------------
-      # 4. docs → develop PR 생성
+      # 4. 기존 docs → develop PR 확인
+      # --------------------------------------------------
+      - name: Check existing PR
+        if: steps.check.outputs.has_changes == 'true'
+        id: existing-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER=$(gh pr list \
+            --base develop \
+            --head docs \
+            --state open \
+            --json number \
+            --jq '.[0].number')
+
+          echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      # --------------------------------------------------
+      # 5. docs → develop PR 생성
       # --------------------------------------------------
       - name: Create Pull Request
-        if: steps.check.outputs.has_changes == 'true'
+        if: |
+          steps.check.outputs.has_changes == 'true' &&
+          steps.existing-pr.outputs.PR_NUMBER == ''
         id: create-pr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ github.token }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_URL=$(gh pr create \
+            --base develop \
+            --head docs \
+            --title "docs → develop 자동 반영" \
+            --body "## 자동 생성 PR
 
-          base: develop
-          branch: docs-to-develop
+          \`docs\` 브랜치의 Markdown 변경사항을
+          \`develop\` 브랜치에 자동 반영합니다.
 
-          title: "docs → develop 자동 반영"
-          body: |
-            ## 자동 생성 PR
+          ### 검사 결과
 
-            `docs` 브랜치의 Markdown 변경사항을
-            `develop` 브랜치에 자동 반영합니다.
+          - 변경 파일: \`.md\`만 허용
+          - 대상 브랜치: \`develop\`
+          - 소스 브랜치: \`docs\`
 
-            ### 검사 결과
+          이 PR은 GitHub Actions에 의해 자동 생성되었습니다.")
 
-            - 변경 파일: `.md`만 허용
-            - 대상 브랜치: `develop`
-
-            이 PR은 GitHub Actions에 의해 자동 생성되었습니다.
-
-          delete-branch: false
+          echo "PR_URL=$PR_URL" >> "$GITHUB_OUTPUT"
 
       # --------------------------------------------------
-      # 5. PR 자동 Merge 활성화
+      # 6. PR 번호 결정
+      #    새로 생성했으면 새 PR
+      #    기존 PR이 있으면 기존 PR
+      # --------------------------------------------------
+      - name: Get PR number
+        if: steps.check.outputs.has_changes == 'true'
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ steps.existing-pr.outputs.PR_NUMBER }}"
+
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER=$(gh pr list \
+              --base develop \
+              --head docs \
+              --state open \
+              --json number \
+              --jq '.[0].number')
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "❌ PR을 찾을 수 없습니다."
+            exit 1
+          fi
+
+          echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+          echo "PR #$PR_NUMBER"
+
+      # --------------------------------------------------
+      # 7. PR 자동 Merge
       # --------------------------------------------------
       - name: Enable Auto Merge
-        if: steps.create-pr.outputs.pull-request-number != ''
+        if: steps.pr.outputs.PR_NUMBER != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr merge \
-            ${{ steps.create-pr.outputs.pull-request-number }} \
+            "${{ steps.pr.outputs.PR_NUMBER }}" \
             --auto \
             --merge
+```
