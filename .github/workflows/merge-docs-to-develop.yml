@@ -15,7 +15,7 @@ concurrency:
 
 env:
   SOURCE_BRANCH: docs
-  TARGET_BRANCH: ci-cd
+  TARGET_BRANCH: develop
 
 jobs:
   docs-to-develop:
