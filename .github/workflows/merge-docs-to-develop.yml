@@ -1,0 +1,121 @@
+name: Docs to Develop
+
+on:
+  push:
+    branches:
+      - docs
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docs-to-develop
+  cancel-in-progress: false
+
+jobs:
+  docs-to-develop:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # --------------------------------------------------
+      # 1. 소스 체크아웃
+      # --------------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # --------------------------------------------------
+      # 2. develop / docs 최신 상태 가져오기
+      # --------------------------------------------------
+      - name: Fetch branches
+        run: |
+          git fetch origin develop
+          git fetch origin docs
+
+      # --------------------------------------------------
+      # 3. docs → develop 변경사항 확인
+      #    모든 변경 파일이 .md인지 검사
+      # --------------------------------------------------
+      - name: Check markdown only
+        id: check
+        shell: bash
+        run: |
+          echo "=== docs → develop 변경 파일 ==="
+
+          git diff \
+            --name-only \
+            origin/develop...origin/docs
+
+          echo ""
+
+          INVALID_FILES=$(git diff \
+            --name-only \
+            origin/develop...origin/docs \
+            | grep -v '\.md$' || true)
+
+          if [ -n "$INVALID_FILES" ]; then
+            echo "❌ .md 이외의 파일이 포함되어 있습니다."
+            echo ""
+            echo "$INVALID_FILES"
+            exit 1
+          fi
+
+          CHANGED_FILES=$(git diff \
+            --name-only \
+            origin/develop...origin/docs)
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "변경사항이 없습니다."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+          echo ""
+          echo "✅ 모든 변경 파일이 .md입니다."
+
+      # --------------------------------------------------
+      # 4. docs → develop PR 생성
+      # --------------------------------------------------
+      - name: Create Pull Request
+        if: steps.check.outputs.has_changes == 'true'
+        id: create-pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+
+          base: develop
+          branch: docs-to-develop
+
+          title: "docs → develop 자동 반영"
+          body: |
+            ## 자동 생성 PR
+
+            `docs` 브랜치의 Markdown 변경사항을
+            `develop` 브랜치에 자동 반영합니다.
+
+            ### 검사 결과
+
+            - 변경 파일: `.md`만 허용
+            - 대상 브랜치: `develop`
+
+            이 PR은 GitHub Actions에 의해 자동 생성되었습니다.
+
+          delete-branch: false
+
+      # --------------------------------------------------
+      # 5. PR 자동 Merge 활성화
+      # --------------------------------------------------
+      - name: Enable Auto Merge
+        if: steps.create-pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge \
+            ${{ steps.create-pr.outputs.pull-request-number }} \
+            --auto \
+            --merge
