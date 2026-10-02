@@ -1,6 +1,9 @@
 # TODO
-- 백엔드으로 부터 게시글 목록 데이터 조회하기
-- Tags 화면 구현
+- 게시글 화면 css 수정
+- md-coverter-v1 구현 목록 정리
+    - link : inline
+    - code block : block
+    - ol, ul : block
 
 ---
 
