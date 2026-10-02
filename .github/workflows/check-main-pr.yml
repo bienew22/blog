@@ -18,9 +18,9 @@ jobs:
         run: |
           SOURCE_BRANCH="${{ github.head_ref }}"
 
-          if [[ "$SOURCE_BRANCH" != "develop" && "$SOURCE_BRANCH" != "ci-cd" ]]; then
+          if [[ "$SOURCE_BRANCH" != "develop" ]]; then
             echo "❌ main으로 PR할 수 없는 브랜치입니다."
-            echo "허용 브랜치: develop, ci-cd"
+            echo "허용 브랜치: develop"
             echo "현재 브랜치: $SOURCE_BRANCH"
             exit 1
           fi
