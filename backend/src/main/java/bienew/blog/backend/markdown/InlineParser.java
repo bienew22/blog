@@ -17,10 +17,11 @@ public enum InlineParser {
     InlineParser() {
         parsers = new ArrayList<>();
         parsers.add(new BoldParser());  // **some**을 파싱하는 BoldParser를 추가
-        parsers.add(new SubScriptParser()); // _{some} 을 파싱하는 SubscriptParser를 추가
-        parsers.add(new SupScriptParser()); // ^{some} 을 파싱하는 SupscriptParser를 추가
+        parsers.add(new SubScriptParser()); // _{some} 을 파싱하는 SubScriptParser를 추가
+        parsers.add(new SupScriptParser()); // ^{some} 을 파싱하는 SupScriptParser를 추가
         parsers.add(new UnderLineParser()); // __some__ 을 파싱하는 UnderLineParser를 추가
         parsers.add(new ItalicParser()); // _some_ 을 파싱하는 ItalicParser를 추가
+        parsers.add(new LinkParser()); // [some](url) 을 파싱하는 LinkParser를 추가
     }
 
     public static InlineParser getInstance() {

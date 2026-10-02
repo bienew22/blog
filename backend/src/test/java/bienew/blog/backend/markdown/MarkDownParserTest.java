@@ -11,8 +11,10 @@ class MarkDownParserTest {
     @Test
     void block_parser_test() {
         ASTNode astNode = blockParser.parse("""
-                __**_a_**__
-                ___**a**___
+                [TEXT](https://www.naver.com)
+                [_TEXT_](https://www.naver.com)
+                [__TEXT__](https://www.naver.com)
+                [**TEXT**](https://www.naver.com)
                 """);
 
         System.out.println("=============after parse=============");
