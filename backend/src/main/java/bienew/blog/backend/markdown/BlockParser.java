@@ -5,9 +5,11 @@ import bienew.blog.backend.markdown.ast.block.Default;
 import bienew.blog.backend.markdown.ast.block.Document;
 import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
+import bienew.blog.backend.markdown.parser.block.FencedCodeBlockParser;
 import bienew.blog.backend.markdown.parser.block.HeadingParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public enum BlockParser {
@@ -18,7 +20,8 @@ public enum BlockParser {
 
     BlockParser() {
         abstractBlockParsers = new ArrayList<>();
-        abstractBlockParsers.add(new HeadingParser());
+        abstractBlockParsers.add(new HeadingParser());  // #{1, 6} 시작하는 HeadingParser를 추가
+        abstractBlockParsers.add(new FencedCodeBlockParser());  // ``` 시작하는 FencedCodeBlockParser를 추가
     }
 
     public static BlockParser getInstance() {
@@ -31,6 +34,8 @@ public enum BlockParser {
                 .replace("\r\n", "\n")
                 .replace("\r", "")
                 .split("\n", -1);
+
+        System.out.println(Arrays.toString(lines));
 
         int remainingLines = 0;
 

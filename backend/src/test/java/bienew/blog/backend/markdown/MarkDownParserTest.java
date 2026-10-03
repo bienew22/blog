@@ -24,4 +24,27 @@ class MarkDownParserTest {
         }
         System.out.println("=====================================");
     }
+
+    @Test
+    void fenced_code_block_parser_test() {
+        ASTNode astNode = blockParser.parse("""
+                ```java
+                public class HelloWorld {
+                    public static void main(String[] args) {
+                        System.out.println("Hello, World!");
+                    }
+                }
+                ```
+                
+                ```java
+                ```java
+                """);
+
+        System.out.println("=============after parse=============");
+        while (astNode != null) {
+            System.out.println(astNode);
+            astNode = astNode.getNext();
+        }
+        System.out.println("=====================================");
+    }
 }
