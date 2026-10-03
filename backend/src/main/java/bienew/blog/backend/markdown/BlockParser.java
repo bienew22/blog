@@ -9,7 +9,6 @@ import bienew.blog.backend.markdown.parser.block.FencedCodeBlockParser;
 import bienew.blog.backend.markdown.parser.block.HeadingParser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public enum BlockParser {
@@ -34,8 +33,6 @@ public enum BlockParser {
                 .replace("\r\n", "\n")
                 .replace("\r", "")
                 .split("\n", -1);
-
-        System.out.println(Arrays.toString(lines));
 
         int remainingLines = 0;
 

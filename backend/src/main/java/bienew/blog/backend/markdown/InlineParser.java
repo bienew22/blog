@@ -22,6 +22,7 @@ public enum InlineParser {
         parsers.add(new UnderLineParser()); // __some__ 을 파싱하는 UnderLineParser를 추가
         parsers.add(new ItalicParser()); // _some_ 을 파싱하는 ItalicParser를 추가
         parsers.add(new LinkParser()); // [some](url) 을 파싱하는 LinkParser를 추가
+        parsers.add(new InlineCodeParser()); // `some` 을 파싱하는 InlineCodeParser를 추가
     }
 
     public static InlineParser getInstance() {

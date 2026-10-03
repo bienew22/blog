@@ -47,4 +47,22 @@ class MarkDownParserTest {
         }
         System.out.println("=====================================");
     }
+
+    @Test
+    void inline_code_block_parser_test() {
+        ASTNode astNode = blockParser.parse("""
+                `public class HelloWorld {`
+                `public **static** void main(String[] args) {`
+                `System.out.println("Hello, World!");`
+                `}`
+                **`}`**
+                """);
+
+        System.out.println("=============after parse=============");
+        while (astNode != null) {
+            System.out.println(astNode);
+            astNode = astNode.getNext();
+        }
+        System.out.println("=====================================");
+    }
 }
