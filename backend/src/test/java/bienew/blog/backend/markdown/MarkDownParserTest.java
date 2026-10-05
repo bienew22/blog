@@ -65,4 +65,25 @@ class MarkDownParserTest {
         }
         System.out.println("=====================================");
     }
+
+    @Test
+    void list_parser_test() {
+        ASTNode astNode = blockParser.parse("""
+                - Item 1
+                \t1. Subitem 1.1
+                \t2. Subitem 1.2
+                \t\t1. Subsubitem 1.2.1 **bold**
+                \t\t2. Subsubitem 1.2.2
+                - Item 2
+                \t- Subitem 2.1
+                \t- Subitem 2.2
+                - Item 3
+                """);
+        System.out.println("=============after parse=============");
+        while (astNode != null) {
+            System.out.println(astNode);
+            astNode = astNode.getNext();
+        }
+        System.out.println("=====================================");
+    }
 }

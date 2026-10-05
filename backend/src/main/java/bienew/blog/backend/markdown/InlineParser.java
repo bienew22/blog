@@ -34,6 +34,12 @@ public enum InlineParser {
             return;
         }
 
+        if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                parse(child);
+            }
+        }
+
         parse(node.getSource()).forEach(node::addChild);
     }
 

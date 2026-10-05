@@ -7,6 +7,7 @@ import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 import bienew.blog.backend.markdown.parser.block.FencedCodeBlockParser;
 import bienew.blog.backend.markdown.parser.block.HeadingParser;
+import bienew.blog.backend.markdown.parser.block.ListNodeParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,15 @@ public enum BlockParser {
 
     BlockParser() {
         abstractBlockParsers = new ArrayList<>();
-        abstractBlockParsers.add(new HeadingParser());  // #{1, 6} 시작하는 HeadingParser를 추가
-        abstractBlockParsers.add(new FencedCodeBlockParser());  // ``` 시작하는 FencedCodeBlockParser를 추가
+
+        // #{1, 6} 시작하는 HeadingParser를 추가
+        abstractBlockParsers.add(new HeadingParser());
+
+        // ``` 시작하는 FencedCodeBlockParser를 추가
+        abstractBlockParsers.add(new FencedCodeBlockParser());
+
+        // - 또는 * 시작하는 ListParser를 추가
+        abstractBlockParsers.add(new ListNodeParser());
     }
 
     public static BlockParser getInstance() {
