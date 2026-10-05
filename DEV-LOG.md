@@ -1,3 +1,14 @@
+# 2026-10-05 개발 로그
+- front
+    - 게시글 상세(`post/{slug}`) 화면 추가
+    - 코드 블럭은 Prismjs을 통하여 parsing하고 디자인 직접 추가
+- back
+    - slug기반 게시글 조회 API 구현
+- html-rendeerer (markdown to AST)
+    - V1 구현 완료
+    - block : ol, ul, code-block
+    - inline : inline-code, link 
+
 # 2026-09-27 개발 로그
 - front
     - view에서 공통으로 사용되던 상단 header을 component으로 관리되도록 수정
