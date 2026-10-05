@@ -33,6 +33,11 @@ const router = createRouter({
       component: () => import('../views/TagPostsView.vue'),
     },
     {
+      path: '/post/:slug',
+      name: 'post',
+      component: () => import('../views/PostView.vue'),
+    },
+    {
       path: '/404',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),

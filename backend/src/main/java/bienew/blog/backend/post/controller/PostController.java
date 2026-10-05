@@ -1,10 +1,12 @@
 package bienew.blog.backend.post.controller;
 
 
+import bienew.blog.backend.post.dto.PostDetailResponse;
 import bienew.blog.backend.post.dto.PostResponse;
 import bienew.blog.backend.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +22,10 @@ public class PostController {
     @GetMapping("")
     public List<PostResponse> getPosts() {
         return postService.getPosts();
+    }
+
+    @GetMapping("/{slug}")
+    public PostDetailResponse getPost(@PathVariable String slug) {
+        return postService.getPost(slug);
     }
 }

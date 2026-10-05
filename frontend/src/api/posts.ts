@@ -11,6 +11,14 @@ export interface PostSummary {
     createAt: string
 }
 
+export interface PostDetail {
+    title: string
+    slug: string
+    createAt: string
+    content: string
+    tags: string[]
+}
+
 export async function fetchPosts(): Promise<Post[]> {
     const response = await fetch(`/api/v1/posts`)
     if (!response.ok) {
@@ -18,6 +26,17 @@ export async function fetchPosts(): Promise<Post[]> {
     }
 
     const data: Post[] = await response.json()
+
+    return data
+}
+
+export async function fetchPostDetail(slug: string): Promise<PostDetail> {
+    const response = await fetch(`/api/v1/posts/${slug}`)
+    if (!response.ok) {
+        throw new Error(`Failed to fetch post detail: ${response.status}`)
+    }
+
+    const data: PostDetail = await response.json()
 
     return data
 }

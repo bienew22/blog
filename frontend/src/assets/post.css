@@ -1,0 +1,453 @@
+/* Styles for post HTML rendered via v-html, scoped under .post-content */
+
+.post-content {
+  --post-code-bg: #f6f8fa;
+  --post-code-text: #24292f;
+  --post-inline-code-bg: #eef1f5;
+  --post-inline-code-text: #c7254e;
+  --post-line-number: #9aa3af;
+  --post-line-number-border: rgba(26, 22, 15, 0.12);
+
+  --token-comment: #8b949e;
+  --token-punctuation: #57606a;
+  --token-keyword: #cf222e;
+  --token-string: #0a3069;
+  --token-number: #0550ae;
+  --token-function: #8250df;
+  --token-class: #953800;
+  --token-property: #0550ae;
+  --token-operator: #cf222e;
+  --token-variable: #953800;
+  --token-inserted: #116329;
+  --token-deleted: #82071e;
+
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.8;
+  word-break: break-word;
+}
+
+:root.dark .post-content {
+  --post-code-bg: #16161a;
+  --post-code-text: #e6edf3;
+  --post-inline-code-bg: #34343a;
+  --post-inline-code-text: #ffa657;
+  --post-line-number: #6e7681;
+  --post-line-number-border: rgba(255, 255, 255, 0.12);
+
+  --token-comment: #8b949e;
+  --token-punctuation: #c9d1d9;
+  --token-keyword: #ff7b72;
+  --token-string: #a5d6ff;
+  --token-number: #79c0ff;
+  --token-function: #d2a8ff;
+  --token-class: #ffa657;
+  --token-property: #79c0ff;
+  --token-operator: #ff7b72;
+  --token-variable: #ffa657;
+  --token-inserted: #7ee787;
+  --token-deleted: #ffa198;
+}
+
+.post-content > :first-child {
+  margin-top: 0;
+}
+
+.post-content > :last-child {
+  margin-bottom: 0;
+}
+
+/* headings */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  color: var(--color-heading);
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 2em 0 0.75em;
+}
+
+.post-content h1 {
+  font-size: 1.75rem;
+}
+
+.post-content h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.3em;
+}
+
+.post-content h3 {
+  font-size: 1.25rem;
+}
+
+.post-content h4 {
+  font-size: 1.1rem;
+}
+
+.post-content h5,
+.post-content h6 {
+  font-size: 1rem;
+}
+
+/* text */
+.post-content p {
+  margin: 0 0 1.25em;
+}
+
+.post-content strong,
+.post-content b {
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.post-content em,
+.post-content i {
+  font-style: italic;
+}
+
+.post-content del,
+.post-content s {
+  color: var(--color-text-secondary);
+}
+
+.post-content mark {
+  background-color: color-mix(in srgb, var(--color-hover-title) 25%, transparent);
+  color: inherit;
+  border-radius: 0.2em;
+  padding: 0 0.2em;
+}
+
+/* links */
+.post-content a {
+  color: var(--color-hover-title);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.post-content a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* lists */
+.post-content ul,
+.post-content ol {
+  margin: 0 0 1.25em;
+  padding-left: 1.5em;
+}
+
+.post-content ul {
+  list-style: disc;
+}
+
+.post-content ol {
+  list-style: decimal;
+}
+
+.post-content li {
+  margin-bottom: 0.4em;
+}
+
+.post-content li > ul,
+.post-content li > ol {
+  margin-top: 0.4em;
+  margin-bottom: 0;
+}
+
+/* blockquote */
+.post-content blockquote {
+  margin: 0 0 1.25em;
+  padding: 0.6em 1.2em;
+  border-left: 4px solid var(--color-hover-title);
+  background-color: var(--color-background-soft);
+  color: var(--color-text-secondary);
+  border-radius: 0 0.4em 0.4em 0;
+}
+
+.post-content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* horizontal rule */
+.post-content hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* images */
+.post-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5em auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5em;
+}
+
+.post-content figure {
+  margin: 0 0 1.25em;
+}
+
+.post-content figcaption {
+  margin-top: 0.5em;
+  text-align: center;
+  font-size: 0.875em;
+  color: var(--color-text-secondary);
+}
+
+/* tables */
+.post-content table {
+  display: block;
+  width: 100%;
+  margin: 0 0 1.25em;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.9375em;
+}
+
+.post-content th,
+.post-content td {
+  padding: 0.6em 1em;
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.post-content th {
+  background-color: var(--color-background-soft);
+  color: var(--color-heading);
+  font-weight: 700;
+}
+
+.post-content tbody tr:nth-child(even) {
+  background-color: var(--color-background-soft);
+}
+
+/* inline code */
+.post-content code {
+  font-family:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+  background-color: var(--post-inline-code-bg);
+  color: var(--post-inline-code-text);
+}
+
+/* code block window (created in PostView.vue) */
+.post-content .code-window {
+  margin: 1.5em 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 0.6rem;
+  background-color: var(--post-code-bg);
+}
+
+.post-content .code-window__toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.75rem;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.post-content .code-window__lights {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.post-content .code-window__light {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+
+.post-content .code-window__light--red {
+  background-color: #ed6a5e;
+}
+
+.post-content .code-window__light--yellow {
+  background-color: #f4bf4f;
+}
+
+.post-content .code-window__light--green {
+  background-color: #61c554;
+}
+
+.post-content .code-window__title {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transform: translateX(-50%);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.post-content .code-window__title > span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+.post-content .code-window__copy {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.post-content .code-window__copy:hover {
+  color: var(--color-heading);
+}
+
+/* code block */
+.post-content pre {
+  margin: 1.5em 0;
+  padding: 1rem;
+  overflow: auto;
+  background-color: var(--post-code-bg);
+  color: var(--post-code-text);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  tab-size: 4;
+  white-space: pre;
+}
+
+.post-content .code-window > pre {
+  margin: 0;
+  background-color: transparent;
+}
+
+.post-content pre > code {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* line numbers (Prism line-numbers plugin markup) */
+.post-content pre.line-numbers {
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
+
+.post-content pre.line-numbers > code {
+  position: relative;
+}
+
+.post-content pre.line-numbers .line-numbers-rows {
+  position: absolute;
+  top: 0;
+  left: -3.8em;
+  width: 3em;
+  font-size: 100%;
+  border-right: 1px solid var(--post-line-number-border);
+  letter-spacing: -1px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.post-content pre.line-numbers .line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+
+.post-content pre.line-numbers .line-numbers-rows > span::before {
+  content: counter(linenumber);
+  display: block;
+  padding-right: 0.8em;
+  color: var(--post-line-number);
+  text-align: right;
+}
+
+/* syntax tokens (classes added by Prism) */
+.post-content .token.comment,
+.post-content .token.prolog,
+.post-content .token.doctype,
+.post-content .token.cdata {
+  color: var(--token-comment);
+  font-style: italic;
+}
+
+.post-content .token.punctuation {
+  color: var(--token-punctuation);
+}
+
+.post-content .token.keyword,
+.post-content .token.atrule,
+.post-content .token.selector,
+.post-content .token.important {
+  color: var(--token-keyword);
+}
+
+.post-content .token.string,
+.post-content .token.char,
+.post-content .token.attr-value,
+.post-content .token.regex,
+.post-content .token.url {
+  color: var(--token-string);
+}
+
+.post-content .token.number,
+.post-content .token.boolean,
+.post-content .token.constant,
+.post-content .token.symbol {
+  color: var(--token-number);
+}
+
+.post-content .token.function {
+  color: var(--token-function);
+}
+
+.post-content .token.class-name,
+.post-content .token.builtin,
+.post-content .token.tag {
+  color: var(--token-class);
+}
+
+.post-content .token.property,
+.post-content .token.attr-name {
+  color: var(--token-property);
+}
+
+.post-content .token.operator,
+.post-content .token.entity {
+  color: var(--token-operator);
+}
+
+.post-content .token.variable,
+.post-content .token.parameter {
+  color: var(--token-variable);
+}
+
+.post-content .token.inserted {
+  color: var(--token-inserted);
+}
+
+.post-content .token.deleted {
+  color: var(--token-deleted);
+}
+
+.post-content .token.bold {
+  font-weight: 700;
+}
+
+.post-content .token.italic {
+  font-style: italic;
+}
+
+.post-content .token.namespace {
+  opacity: 0.7;
+}
