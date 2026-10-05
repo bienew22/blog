@@ -1,5 +1,3 @@
-import { dummyPost } from "@/data/post"
-
 export interface Post {
     title: string
     slug: string
@@ -33,13 +31,12 @@ export async function fetchPosts(): Promise<Post[]> {
 }
 
 export async function fetchPostDetail(slug: string): Promise<PostDetail> {
-    // const response = await fetch(`/api/v1/posts/${slug}`)
-    // if (!response.ok) {
-    //     throw new Error(`Failed to fetch post detail: ${response.status}`)
-    // }
+    const response = await fetch(`/api/v1/posts/${slug}`)
+    if (!response.ok) {
+        throw new Error(`Failed to fetch post detail: ${response.status}`)
+    }
 
-    // const data: PostDetail = await response.json()
-    const data: PostDetail = dummyPost;
+    const data: PostDetail = await response.json()
 
     return data
 }
