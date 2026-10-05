@@ -1,19 +1,12 @@
 export const dummyPost = {
-    'title': 'Dynamic Programming?',
+    'title': '동적계획법이란?',
     'slug': 'dynamic-programming',
     'createAt': '2024-06-01',
-    'content': `<h1>Hello</h1>
-    <h1>Hello</h1>
-    <h1 class="title">Hello</h1>
-    <p>============================</p>
-<p>world\nis\nthere</p>
-    <p>============================</p>
-<p class="title">&lt;button onclick=&quot;alert('Button clicked!')&quot;&gt;Click me&lt;/button&gt;</p>
-    <script>alert(1)</script>
-<p class="title">a&lt;br&gt;</p><h2><strong>Dynamic Programming?</strong></h2>
+    'content': `
+<h2><strong>Dynamic Programming?</strong></h2>
 <p>DP(Dynamic Programming, 동적 계획법)는 복잡한 문제를 여러 개의 작은 하위 문제(Subproblem)로 나누어 해결한 뒤, 그 <strong>결과를 재사용</strong>하여 전체 문제를 효율적으로 해결하는 알고리즘입니다.</p>
 <p>대표적인 예로 피보나치 수열을 생각해 보겠습니다.</p>
-<pre><code class="language-java">int fib(int n) {
+<pre class="line-numbers"><code class="language-java">int fib(int n) {
     if (n &lt;= 1) return n;
     return fib(n - 1) + fib(n - 2);
 }
@@ -82,7 +75,7 @@ int fib(int n) {
 <p><code>fib(5)</code>를 호출하면 필요한 하위 문제인 <code>fib(4)</code>, <code>fib(3)</code> 등을 재귀적으로 계산합니다. 이후 동일한 상태가 다시 등장하면 저장된 값을 사용하므로 중복 계산을 방지할 수 있습니다.</p>
 <h4><strong>Bottom-Up (Tabulation)</strong></h4>
 <p>Bottom-Up 방식은 가장 작은 문제부터 차례대로 해결하면서 큰 문제의 답을 만들어 가는 방법입니다. 재귀 호출을 사용하지 않고 반복문을 통해 DP 테이블을 채워 나갑니다.</p>
-<pre><code class="language-java">int fib(int n) {
+<pre class="line-numbers"><code class="language-java">int fib(int n) {
     if (n &lt;= 1) {
         return n;
     }
@@ -107,5 +100,5 @@ int fib(int n) {
 <li><a href="https://sam0308.tistory.com/80">https://sam0308.tistory.com/80</a></li>
 <li><a href="https://wikidocs.net/130632">https://wikidocs.net/130632</a></li>
 </ul>`,
-    'tags': ['programming', 'dynamic-programming'],
+    'tags': ['Java', 'Spring'],
 }
