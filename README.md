@@ -32,14 +32,14 @@ my blog
 #### b-feature
 - 백엔드 기능 개발 브랜치
 - feature으로 부터 파생되어야 함.
-- 이는 로컬 브랜치으로 레포지토리에 push X.
 - 개발 완료 후에 feature 브랜치에 merge 되어야 함. (no fastforword)
+- feature 브랜치에 merge 후 삭제 함.
 
 #### f-feature
 - 프론트 기능 개발 브랜치
 - feature으로 부터 파생되어야 함.
-- 이는 로컬 브랜치으로 레포지토레어 push X
 - 개발 완료 후에 feature 브랜치에 merge 되어야 함. (no fastforword)
+- feature 브랜치에 merge 후 삭제 함.
 
 #### docs
 - 문서 작업 브랜치
