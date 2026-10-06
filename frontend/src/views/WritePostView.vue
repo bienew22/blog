@@ -10,8 +10,10 @@ const availableTags = ref([...trendingTags])
 const selectedTags = ref<string[]>([])
 const isPreview = ref(false)
 const tagSearch = ref('')
+const isTagListOpen = ref(false)
 const isTagDialogOpen = ref(false)
 const newTagName = ref('')
+const tagPicker = ref<HTMLElement | null>(null)
 
 const filteredTags = computed(() => {
   const query = tagSearch.value.trim().toLocaleLowerCase()
@@ -25,10 +27,19 @@ function toggleTag(tagName: string) {
     ? selectedTags.value.filter((tag) => tag !== tagName)
     : [...selectedTags.value, tagName]
   tagSearch.value = ''
+  isTagListOpen.value = false
+}
+
+function closeTagListOnFocusout(event: FocusEvent) {
+  const nextTarget = event.relatedTarget
+  if (!(nextTarget instanceof Node) || !tagPicker.value?.contains(nextTarget)) {
+    isTagListOpen.value = false
+  }
 }
 
 function openTagDialog(tagName = '') {
   newTagName.value = tagName
+  isTagListOpen.value = false
   isTagDialogOpen.value = true
 }
 
@@ -45,6 +56,7 @@ function createTag() {
   if (!selectedTags.value.includes(tagToSelect)) selectedTags.value.push(tagToSelect)
 
   tagSearch.value = ''
+  isTagListOpen.value = false
   isTagDialogOpen.value = false
 }
 </script>
@@ -93,10 +105,14 @@ function createTag() {
           />
         </section>
 
-        <fieldset>
-          <legend class="mb-3 text-sm font-semibold text-(--color-heading)">태그</legend>
-          <div class="flex items-start gap-2">
-            <div class="relative min-w-0 flex-1">
+        <section>
+          <div class="flex items-center gap-3">
+            <h2 class="shrink-0 text-sm font-semibold text-(--color-heading)">태그</h2>
+            <div
+              ref="tagPicker"
+              class="relative min-w-0 flex-1"
+              @focusout="closeTagListOnFocusout"
+            >
               <label class="relative block">
                 <span class="sr-only">태그 검색</span>
                 <Search
@@ -106,13 +122,21 @@ function createTag() {
                   v-model="tagSearch"
                   type="search"
                   placeholder="태그 검색"
+                  aria-label="태그 검색"
+                  :aria-expanded="isTagListOpen"
+                  aria-controls="available-tag-list"
+                  role="combobox"
+                  aria-autocomplete="list"
                   class="h-11 w-full rounded-md border border-(--color-border) bg-(--color-background) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
+                  @focus="isTagListOpen = true"
+                  @keydown.esc="isTagListOpen = false"
                 />
               </label>
               <ul
-                v-if="tagSearch.trim()"
+                v-if="isTagListOpen"
+                id="available-tag-list"
                 role="listbox"
-                aria-label="태그 검색 결과"
+                aria-label="태그 목록"
                 class="absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-(--color-border-hover) bg-(--color-background) py-1 shadow-lg dark:bg-[#29292f]"
               >
                 <li v-for="tag in filteredTags" :key="tag">
@@ -157,7 +181,7 @@ function createTag() {
             </button>
           </div>
           <p v-else class="mt-3 text-sm text-(--color-text-secondary)">선택된 태그가 없습니다.</p>
-        </fieldset>
+        </section>
 
         <section>
           <div class="mb-3 flex items-center justify-between">
