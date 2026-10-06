@@ -141,31 +141,7 @@ function createTag() {
                 </li>
               </ul>
             </div>
-            <button
-              type="button"
-              class="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute)"
-              @click="openTagDialog"
-            >
-              <Plus class="h-4 w-4" />
-              신규
-            </button>
           </div>
-
-          <ul v-if="filteredTags.length" class="mt-3 flex flex-wrap gap-2" aria-label="태그 목록">
-            <li v-for="tag in filteredTags" :key="tag">
-              <button
-                type="button"
-                :aria-pressed="selectedTags.includes(tag)"
-                class="rounded-md border border-(--color-border) px-2.5 py-1 text-xs text-(--color-heading) transition-colors hover:border-(--color-border-hover) dark:border-(--color-border-hover)"
-                @click="toggleTag(tag)"
-              >
-                #{{ tag }}
-              </button>
-            </li>
-          </ul>
-          <p v-else-if="tagSearch.trim()" class="mt-3 text-sm text-(--color-text-secondary)">
-            검색 결과가 없습니다.
-          </p>
 
           <div v-if="selectedTags.length" class="mt-4 flex flex-wrap items-center gap-2">
             <span class="mr-1 text-xs text-(--color-text-secondary)">선택됨</span>
