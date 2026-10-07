@@ -1,0 +1,101 @@
+<script setup lang="ts">
+import { nextTick, ref } from 'vue'
+
+const content = defineModel<string>({ required: true })
+
+const editor = ref<HTMLTextAreaElement | null>(null)
+
+
+/**
+ * tab 입려 시 처리
+ *
+ * - tab 선택된 모든 줄 앞에 들여쓰기 
+ * - shift + tab : 선택된 모든 줄 내어쓰기
+ */
+function handleTab (e: KeyboardEvent) {
+    const textarea = e.target as HTMLTextAreaElement
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+
+    const value =  textarea.value
+
+    // 선택 영역의 시작 위치
+    const lineStart = value.lastIndexOf('\n', start - 1) + 1
+
+    // 선택 영역의 마지막 줄의 끝 위치
+    let lineEnd = value.indexOf('\n', end)
+
+    // 선택한게 한 줄인 경우
+    if (lineEnd == -1) {
+        lineEnd = value.length
+    }
+
+    // 선택된 모든 줄
+    const selectedText = value.slice(lineStart, lineEnd)
+
+    const lines = selectedText.split('\n')
+
+    // 내어쓰기
+    if (e.shiftKey) {
+
+        // 기존 라인에서 앞에 있는 '\t' 제거
+        const newLines = lines.map(line => {
+            if (line.startsWith('\t')) {
+                return line.substring(1)
+            }
+
+            return line
+        })
+
+        const newText = newLines.join('\n')
+
+        textarea.setRangeText(
+            newText,
+            lineStart,
+            lineEnd,
+            'select'
+        )
+
+        content.value = textarea.value
+
+        // 선택 영역 유지
+        textarea.selectionStart = start
+        textarea.selectionEnd = start + newText.length
+    }
+    // 들여쓰기
+    else {
+        const newText = lines
+            .map(line => '\t' + line)
+            .join('\n')
+
+        textarea.setRangeText(
+            newText,
+            lineStart,
+            lineEnd,
+            'select'
+        )
+
+        content.value = textarea.value
+
+        textarea.selectionStart = start + 1
+        textarea.selectionEnd = end + lines.length
+    }
+}
+</script>
+
+<template>
+  <section>
+    <div class="mb-3 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-(--color-heading)">본문</h2>
+      <span class="text-xs text-(--color-text-secondary)">{{ content.length }}자</span>
+    </div>
+    <textarea
+      ref="editor"
+      v-model="content"
+      placeholder="본문을 작성하세요"
+      class="min-h-[55vh] w-full resize-y rounded-md border border-(--color-border) bg-(--color-background) p-4 leading-7 text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
+      @keydown.tab.prevent="handleTab"
+    ></textarea>
+  </section>
+</template>

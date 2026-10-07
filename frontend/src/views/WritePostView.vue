@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
+import PostContentEditor from '@/components/blog/PostContentEditor.vue'
 import { Eye, Plus, Save, Search, Send, X } from 'lucide-vue-next'
 import { trendingTags } from '@/data/posts'
 
@@ -8,7 +9,6 @@ const title = ref('')
 const content = ref('')
 const availableTags = ref([...trendingTags])
 const selectedTags = ref<string[]>([])
-const isPreview = ref(false)
 const tagSearch = ref('')
 const isTagListOpen = ref(false)
 const isTagDialogOpen = ref(false)
@@ -68,11 +68,8 @@ function createTag() {
         <button
           type="button"
           class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute)"
-          :aria-pressed="isPreview"
-          @click="isPreview = !isPreview"
         >
-          <Eye class="h-4 w-4" />
-          {{ isPreview ? '작성하기' : '미리보기' }}
+          <Eye class="h-4 w-4" />미리보기
         </button>
         <button
           type="button"
@@ -127,7 +124,7 @@ function createTag() {
                   aria-controls="available-tag-list"
                   role="combobox"
                   aria-autocomplete="list"
-                  class="h-11 w-full rounded-md border border-(--color-border) bg-(--color-background) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
+                  class="h-9 w-full rounded-md border border-(--color-border) bg-(--color-background) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
                   @focus="isTagListOpen = true"
                   @keydown.esc="isTagListOpen = false"
                 />
@@ -183,33 +180,9 @@ function createTag() {
           <p v-else class="mt-3 text-sm text-(--color-text-secondary)">선택된 태그가 없습니다.</p>
         </section>
 
-        <section>
-          <div class="mb-3 flex items-center justify-between">
-            <h2 class="text-sm font-semibold text-(--color-heading)">본문</h2>
-            <span class="text-xs text-(--color-text-secondary)">{{ content.length }}자</span>
-          </div>
-          <textarea
-            v-if="!isPreview"
-            v-model="content"
-            placeholder="본문을 작성하세요"
-            class="min-h-[55vh] w-full resize-y rounded-md border border-(--color-border) bg-(--color-background) p-4 leading-7 text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
-          ></textarea>
-          <div
-            v-else
-            class="min-h-[55vh] whitespace-pre-wrap rounded-md border border-(--color-border) bg-(--color-background-soft) p-4 leading-7 text-(--color-text) dark:border-(--color-border-hover) dark:bg-[#29292f]"
-          >
-            <h1 v-if="title" class="mb-4 text-2xl font-bold text-(--color-heading)">{{ title }}</h1>
-            <div v-if="selectedTags.length" class="mb-4 flex flex-wrap gap-2">
-              <span
-                v-for="tag in selectedTags"
-                :key="tag"
-                class="rounded-md border border-(--color-border) px-2.5 py-1 text-xs text-(--color-text-secondary)"
-              >#{{ tag }}</span>
-            </div>
-            <p v-if="content">{{ content }}</p>
-            <p v-else class="text-(--color-text-secondary)">본문 미리보기가 여기에 표시됩니다.</p>
-          </div>
-        </section>
+        <PostContentEditor
+          v-model="content"
+        />
       </section>
     </form>
 
