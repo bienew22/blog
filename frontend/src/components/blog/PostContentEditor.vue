@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 const content = defineModel<string>({ required: true })
 
 const editor = ref<HTMLTextAreaElement | null>(null)
+const lineNumberGutter = ref<HTMLDivElement | null>(null)
+const lineNumbers = computed(() => content.value.split('\n').map((_, index) => index + 1))
 
+function syncLineNumberScroll() {
+    if (editor.value && lineNumberGutter.value) {
+        lineNumberGutter.value.scrollTop = editor.value.scrollTop
+    }
+}
 
 /**
  * Tab / Shift+Tab 키 입력 처리
@@ -124,13 +131,29 @@ function handleEnter(e: KeyboardEvent) {
       <h2 class="text-sm font-semibold text-(--color-heading)">본문</h2>
       <span class="text-xs text-(--color-text-secondary)">{{ content.length }}자</span>
     </div>
+
+    <div class="relative flex h-[80vh] min-h-0 w-full overflow-hidden rounded-md border border-(--color-border) bg-(--color-background) dark:border-(--color-border-hover) dark:bg-[#29292f]">
+    <div
+        ref="lineNumberGutter"
+        aria-hidden="true"
+        class="pointer-events-none h-full w-12 shrink-0 select-none overflow-hidden border-r border-(--color-border) py-4 text-right font-mono text-sm leading-7 text-(--color-text-secondary) dark:border-(--color-border-hover)"
+    >
+        <div v-for="lineNumber in lineNumbers" :key="lineNumber" class="h-7 pr-2">
+            {{ lineNumber }}
+        </div>
+    </div>
+
+    <!-- 입력 영역 -->
     <textarea
-      ref="editor"
-      v-model="content"
-      placeholder="본문을 작성하세요"
-      class="min-h-[55vh] w-full resize-y rounded-md border border-(--color-border) bg-(--color-background) p-4 leading-7 text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
-      @keydown.tab.prevent="handleTab"
-      @keydown.enter="handleEnter"
+        ref="editor"
+        v-model="content"
+        placeholder="본문을 작성하세요"
+        wrap="off"
+        class="h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-auto bg-transparent py-4 pl-3 pr-4 font-mono text-sm leading-7 text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title)"
+        @scroll="syncLineNumberScroll"
+        @keydown.tab.prevent="handleTab"
+        @keydown.enter="handleEnter"
     ></textarea>
+</div>
   </section>
 </template>
