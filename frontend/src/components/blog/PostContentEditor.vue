@@ -83,6 +83,8 @@ function handleTab(e: KeyboardEvent) {
  * 바로 윗줄의 들여쓰기 수준을 그대로 가져옴
  */
 function handleEnter(e: KeyboardEvent) {
+    e.preventDefault()
+
     const textarea = e.target as HTMLTextAreaElement
 
     const value = textarea.value
@@ -91,28 +93,17 @@ function handleEnter(e: KeyboardEvent) {
     // 현재 줄 시작 위치
     const lineStart = value.lastIndexOf('\n', cursor - 1) + 1
 
-    // 바로 윗줄의 시작 위치
-    const previousLinedEnd = lineStart - 1
+    // 현재 줄 끝 위치
+    let lineEnd = value.indexOf('\n', lineStart)
 
-    // 첫 줄인 경우
-    if (previousLinedEnd < 0) {
-        return
+    if (lineEnd == -1) {
+        lineEnd = value.length
     }
 
-    const previousLineStart = value.lastIndexOf('\n', previousLinedEnd - 1) + 1
-
-    const previousLine = value.slice(previousLineStart, previousLinedEnd)
-
-    const match = previousLine.match(/^\t*/)
+    // 현재줄에 '\t' 시작 개수
+    const match = value.slice(lineStart, lineEnd).match(/^\t*/)
 
     const indent = match ? match[0] : ''
-
-    // 선택 영역이 존재하는 경우 기본 Enter 동작을 사용
-    if (textarea.selectionStart != textarea.selectionEnd) {
-        return
-    }
-
-    e.preventDefault()
 
     const insertText = '\n' + indent
 
