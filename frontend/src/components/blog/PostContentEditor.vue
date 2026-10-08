@@ -8,9 +8,34 @@ const lineNumberGutter = ref<HTMLDivElement | null>(null)
 const lineNumbers = computed(() => content.value.split('\n').map((_, index) => index + 1))
 
 function syncLineNumberScroll() {
-    if (editor.value && lineNumberGutter.value) {
-        lineNumberGutter.value.scrollTop = editor.value.scrollTop
+    nextTick(() => {
+        if (editor.value && lineNumberGutter.value) {
+            lineNumberGutter.value.scrollTop = editor.value.scrollTop
+        }
+    })
+}
+
+function scrollCaretIntoView(textarea: HTMLTextAreaElement) {
+    const style = window.getComputedStyle(textarea)
+    const lineHeight = Number.parseFloat(style.lineHeight)
+
+    if (!Number.isFinite(lineHeight)) return
+
+    const paddingTop = Number.parseFloat(style.paddingTop) || 0
+    const paddingBottom = Number.parseFloat(style.paddingBottom) || 0
+    const lineIndex = textarea.value.slice(0, textarea.selectionStart).split('\n').length - 1
+    const lineTop = paddingTop + lineIndex * lineHeight
+    const lineBottom = lineTop + lineHeight
+    const visibleTop = textarea.scrollTop + paddingTop
+    const visibleBottom = textarea.scrollTop + textarea.clientHeight - paddingBottom
+
+    if (lineBottom > visibleBottom) {
+        textarea.scrollTop = lineBottom - textarea.clientHeight + paddingBottom
+    } else if (lineTop < visibleTop) {
+        textarea.scrollTop = lineTop - paddingTop
     }
+
+    syncLineNumberScroll()
 }
 
 /**
@@ -122,6 +147,7 @@ function handleEnter(e: KeyboardEvent) {
     )
 
     content.value = textarea.value
+    nextTick(() => scrollCaretIntoView(textarea))
 }
 </script>
 
@@ -136,7 +162,7 @@ function handleEnter(e: KeyboardEvent) {
     <div
         ref="lineNumberGutter"
         aria-hidden="true"
-        class="pointer-events-none h-full w-12 shrink-0 select-none overflow-hidden border-r border-(--color-border) py-4 text-right font-mono text-sm leading-7 text-(--color-text-secondary) dark:border-(--color-border-hover)"
+        class="pointer-events-none h-full w-12 shrink-0 select-none overflow-hidden border-r border-(--color-border) pb-0 pt-4 text-right font-mono text-sm leading-7 text-(--color-text-secondary) dark:border-(--color-border-hover)"
     >
         <div v-for="lineNumber in lineNumbers" :key="lineNumber" class="h-7 pr-2">
             {{ lineNumber }}
@@ -149,8 +175,9 @@ function handleEnter(e: KeyboardEvent) {
         v-model="content"
         placeholder="본문을 작성하세요"
         wrap="off"
-        class="h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-auto bg-transparent py-4 pl-3 pr-4 font-mono text-sm leading-7 text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title)"
+        class="my-scroll h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-auto bg-transparent pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7 text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title)"
         @scroll="syncLineNumberScroll"
+        @input="syncLineNumberScroll"
         @keydown.tab.prevent="handleTab"
         @keydown.enter="handleEnter"
     ></textarea>
