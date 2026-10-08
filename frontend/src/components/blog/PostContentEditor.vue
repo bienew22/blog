@@ -7,83 +7,75 @@ const editor = ref<HTMLTextAreaElement | null>(null)
 
 
 /**
- * tab 입려 시 처리
- *
- * - tab 선택된 모든 줄 앞에 들여쓰기 
- * - shift + tab : 선택된 모든 줄 내어쓰기
+ * Tab / Shift+Tab 키 입력 처리
  */
-function handleTab (e: KeyboardEvent) {
+function handleTab(e: KeyboardEvent) {
     const textarea = e.target as HTMLTextAreaElement
-
     const start = textarea.selectionStart
     const end = textarea.selectionEnd
+    const value = textarea.value
 
-    const value =  textarea.value
 
-    // 선택 영역의 시작 위치
+    // 선택 영역이 포함하는 줄의 시작 인덱스와 끝 인덱스 계산
     const lineStart = value.lastIndexOf('\n', start - 1) + 1
-
-    // 선택 영역의 마지막 줄의 끝 위치
     let lineEnd = value.indexOf('\n', end)
 
-    // 마지막 줄 선택한 경우
-    if (lineEnd == -1) {
+    if (lineEnd === -1) {   // 마지막줄을 선택한 경우
         lineEnd = value.length
     }
 
-    // 선택된 모든 줄
+    // 선택된 줄 전체 텍스트
     const selectedText = value.slice(lineStart, lineEnd)
-
     const lines = selectedText.split('\n')
 
-    // 내어쓰기
-    if (e.shiftKey) {
+    // Case 1: 텍스트 선택 없는 경우 -> 단순 탭 삽입
+    if (start === end && !e.shiftKey) {
+        textarea.setRangeText('\t', start, end, 'end')
+        content.value = textarea.value
+        return
+    }
 
-        // 기존 라인에서 앞에 있는 '\t' 제거
-        const newLines = lines.map(line => {
+    // Case 2: Shift + Tab (내어쓰기)
+    if (e.shiftKey) {
+        let removedFirstLineTab = false // 첫 번째 라인에서 탭이 제거되었는지 여부
+        let totalRemovedTabs = 0        // 전체 제거된 탭 개수
+
+        const newLines = lines.map((line, index) => {
             if (line.startsWith('\t')) {
+                if (index === 0) removedFirstLineTab = true
+                totalRemovedTabs++
                 return line.substring(1)
             }
-
             return line
         })
 
         const newText = newLines.join('\n')
-
-        textarea.setRangeText(
-            newText,
-            lineStart,
-            lineEnd,
-            'select'
-        )
-
+        textarea.setRangeText(newText, lineStart, lineEnd, 'preserve')
         content.value = textarea.value
 
-        // 선택 영역 유지
-        textarea.selectionStart = start -1
-        textarea.selectionEnd = start - 1 + newText.length
+        // 실제 제거된 탭 개수만큼만 선택 영역 및 커서 보정
+        const newStart = Math.max(lineStart, start - (removedFirstLineTab ? 1 : 0))
+        const newEnd = Math.max(newStart, end - totalRemovedTabs)
+
+        nextTick(() => {
+            textarea.setSelectionRange(newStart, newEnd)
+        })
     }
-    // 들여쓰기
+    // Case 3: Tab (선택 영역 들여쓰기)
     else {
-        const newText = lines
-            .map(line => '\t' + line)
-            .join('\n')
-
-        textarea.setRangeText(
-            newText,
-            lineStart,
-            lineEnd,
-            'select'
-        )
-
+        const newText = lines.map(line => '\t' + line).join('\n')
+        textarea.setRangeText(newText, lineStart, lineEnd, 'preserve')
         content.value = textarea.value
 
-        //
-        textarea.selectionStart = start + 1
-        textarea.selectionEnd = end + lines.length
+        // 모든 줄마다 \t(1자)가 추가되었으므로 위치 보정
+        const newStart = start + 1
+        const newEnd = end + lines.length
+
+        nextTick(() => {
+            textarea.setSelectionRange(newStart, newEnd)
+        })
     }
 }
-
 
 /**
  * enter 키 입력 시 처리
