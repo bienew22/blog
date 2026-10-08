@@ -134,7 +134,7 @@ function createTag() {
                 id="available-tag-list"
                 role="listbox"
                 aria-label="태그 목록"
-                class="absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-(--color-border-hover) bg-(--color-background) py-1 shadow-lg dark:bg-[#29292f]"
+                class="my-scroll absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-(--color-border-hover) bg-(--color-background) py-1 shadow-lg dark:bg-[#29292f]"
               >
                 <li v-for="tag in filteredTags" :key="tag">
                   <button
