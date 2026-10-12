@@ -2,18 +2,22 @@
 import { computed, ref, onMounted } from 'vue'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import PostContentEditor from '@/components/blog/PostContentEditor.vue'
-import { Eye, Plus, Save, Search, Send, X } from 'lucide-vue-next'
-import { fetchTags, type Tag } from '@/api/tags'
+import { Eye, Plus, Save, Search, Send } from 'lucide-vue-next'
+import { fetchTags, createTag, type Tag } from '@/api/tags'
 
 const title = ref('')
 const content = ref('')
-const availableTags = ref<Tag[]>([])
 const selectedTags = ref<Tag[]>([])
+const availableTags = ref<Tag[]>([])
+
 const tagSearch = ref('')
 const isTagListOpen = ref(false)
-const isTagDialogOpen = ref(false)
-const newTagName = ref('')
 const tagPicker = ref<HTMLElement | null>(null)
+
+type ToastType = 'pending' | 'success' | 'error'
+const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
+const isCreatingTag = ref(false)  // 생성 완료전까지 중복 클릭 예방용
+let toastSeq = 0  // toast의 아이디
 
 const filteredTags = computed(() => {
   const query = tagSearch.value.trim().toLocaleLowerCase()
@@ -26,7 +30,7 @@ onMounted(async () => {
   try {
     availableTags.value = await fetchTags()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : '태그를 불러오지 못했습니다.'
+    showToast('태그를 불러오지 못했습니다.', 'error', 2000)
   }
 })
 
@@ -59,27 +63,38 @@ function closeTagListOnFocusout(event: FocusEvent) {
   }
 }
 
-function openTagDialog(tagName = '') {
-  newTagName.value = tagName
-  isTagListOpen.value = false
-  isTagDialogOpen.value = true
+function dismissToast(id: number) {
+  toasts.value = toasts.value.filter((t) => t.id !== id)
 }
 
-function createTag() {
-  const tagName = newTagName.value.trim()
-  if (!tagName) return
+function showToast(message: string, type: ToastType, duration: number) {
+  const id = ++toastSeq
+  toasts.value.push({ id, message, type })
+  if (duration) setTimeout(() => dismissToast(id), duration)
+  return id
+}
 
-  const existingTag = availableTags.value.find(
-    (tag) => tag.toLocaleLowerCase() === tagName.toLocaleLowerCase(),
-  )
-  const tagToSelect = existingTag ?? tagName
+async function addTag(rawName: string) {
+  const tagName = rawName.trim()
+  if (!tagName || isCreatingTag.value) return
 
-  if (!existingTag) availableTags.value.push(tagName)
-  if (!selectedTags.value.includes(tagToSelect)) selectedTags.value.push(tagToSelect)
-
-  tagSearch.value = ''
   isTagListOpen.value = false
-  isTagDialogOpen.value = false
+  isCreatingTag.value = true
+  const pendingId = showToast('태그 생성 중...', 'pending', 2000)
+
+  try {
+    const created = await createTag(tagName)
+
+    availableTags.value.push(created)
+    selectedTags.value.push(created)
+    tagSearch.value = ''
+
+    showToast('태그 생성 완료', 'success', 2000)
+  } catch (e) {
+    showToast(e instanceof Error ? e.message : '태그 생성에 실패했습니다.', 'error', 2000)
+  } finally {
+    isCreatingTag.value = false
+  }
 }
 </script>
 
@@ -176,7 +191,7 @@ function createTag() {
                   <button
                     type="button"
                     class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute)"
-                    @click="openTagDialog(tagSearch.trim())"
+                    @click="addTag(tagSearch)"
                   >
                     <Plus class="h-4 w-4" />
                     '{{ tagSearch.trim() }}' 태그 추가하기
@@ -208,60 +223,44 @@ function createTag() {
       </section>
     </form>
 
-    <div
-      v-if="isTagDialogOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"
-      @click.self="isTagDialogOpen = false"
-      @keydown.esc="isTagDialogOpen = false"
+    <TransitionGroup
+      name="toast"
+      tag="div"
+      class="pointer-events-none fixed bottom-20 right-8 z-50 flex flex-col items-end gap-2"
     >
-      <form
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="create-tag-title"
-        class="w-full max-w-md rounded-lg border border-(--color-border) bg-(--color-background) p-5 text-(--color-text) shadow-xl dark:border-(--color-border-hover)"
-        @submit.prevent="createTag"
+      <div
+        v-for="t in toasts"
+        :key="t.id"
+        role="status"
+        class="w-72 overflow-hidden rounded-md px-5 py-3 text-sm font-medium whitespace-nowrap text-ellipsis text-white shadow-lg"
+        :class="{
+          'bg-gray-500': t.type === 'pending',
+          'bg-green-600': t.type === 'success',
+          'bg-red-600': t.type === 'error',
+        }"
       >
-        <div class="mb-5 flex items-center justify-between">
-          <h2 id="create-tag-title" class="text-lg font-semibold text-(--color-heading)">
-            태그 추가
-          </h2>
-          <button
-            type="button"
-            aria-label="태그 생성 창 닫기"
-            class="rounded p-1 text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-heading)"
-            @click="isTagDialogOpen = false"
-          >
-            <X class="h-5 w-5" />
-          </button>
-        </div>
-        <label class="mb-5 block">
-          <span class="mb-2 block text-sm font-medium text-(--color-heading)">태그 이름</span>
-          <input
-            v-model="newTagName"
-            autofocus
-            maxlength="40"
-            type="text"
-            placeholder="새 태그 이름"
-            class="h-11 w-full rounded-md border border-(--color-border) bg-(--color-background) px-3 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
-          />
-        </label>
-        <div class="flex justify-end gap-2">
-          <button
-            type="button"
-            class="h-10 rounded-md border border-(--color-border) px-4 text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover)"
-            @click="isTagDialogOpen = false"
-          >
-            취소
-          </button>
-          <button
-            type="submit"
-            :disabled="!newTagName.trim()"
-            class="h-10 rounded-md bg-(--color-heading) px-4 text-sm font-medium text-(--color-background) transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            태그 추가
-          </button>
-        </div>
-      </form>
-    </div>
+        {{ t.message }}
+      </div>
+    </TransitionGroup>
   </BlogLayout>
 </template>
+
+<style scoped>
+.toast-enter-active,
+.toast-leave-active {
+  transition:
+    width 0.5s ease,
+    padding 0.5s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.toast-move {
+  transition: transform 0.5s ease;
+}
+</style>
