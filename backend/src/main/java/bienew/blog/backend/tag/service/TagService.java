@@ -4,14 +4,18 @@ package bienew.blog.backend.tag.service;
 import bienew.blog.backend.entity.PostTag;
 import bienew.blog.backend.entity.Tag;
 import bienew.blog.backend.post.dto.PostSummaryResponse;
+import bienew.blog.backend.tag.dto.TagCreateRequest;
 import bienew.blog.backend.tag.dto.TagPostResponse;
 import bienew.blog.backend.tag.dto.TagSummaryResponse;
 import bienew.blog.backend.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TagService {
@@ -24,7 +28,7 @@ public class TagService {
     }
 
     public TagPostResponse getTagPosts(String tagName) {
-        Tag tag = tagRepository.findByName(tagName).orElseThrow(() -> new RuntimeException("Tag not found"));
+        Tag tag = tagRepository.findByTagNameWithPosts(tagName).orElseThrow(() -> new RuntimeException("Tag not found"));
         return TagPostResponse.of(
                 tag,
                 tag.getPostTags().stream()
@@ -32,5 +36,21 @@ public class TagService {
                         .map(PostSummaryResponse::of)
                         .toList()
         );
+    }
+
+    @Transactional
+    public TagSummaryResponse createTag(TagCreateRequest request) {
+        log.info("Creating new tag: {}", request.tagName());
+
+        tagRepository.findByTagName(request.tagName()).ifPresent(existingTag -> {
+            throw new RuntimeException("Tag already exists");
+        });
+
+        Tag tag = new Tag();
+        tag.setTagName(request.tagName());
+
+        tagRepository.save(tag);
+
+        return TagSummaryResponse.of(tag);
     }
 }
