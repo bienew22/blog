@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import PostContentEditor from '@/components/blog/PostContentEditor.vue'
 import { Eye, Plus, Save, Search, Send, X } from 'lucide-vue-next'
-import { trendingTags } from '@/data/posts'
+import { fetchTags, type Tag } from '@/api/tags'
 
 const title = ref('')
 const content = ref('')
-const availableTags = ref([...trendingTags])
-const selectedTags = ref<string[]>([])
+const availableTags = ref<Tag[]>([])
+const selectedTags = ref<Tag[]>([])
 const tagSearch = ref('')
 const isTagListOpen = ref(false)
 const isTagDialogOpen = ref(false)
@@ -19,15 +19,37 @@ const filteredTags = computed(() => {
   const query = tagSearch.value.trim().toLocaleLowerCase()
   if (!query) return availableTags.value
 
-  return availableTags.value.filter((tag) => tag.toLocaleLowerCase().includes(query))
+  return availableTags.value.filter((tag) => tag.tagName.toLocaleLowerCase().includes(query))
 })
 
-function toggleTag(tagName: string) {
-  selectedTags.value = selectedTags.value.includes(tagName)
-    ? selectedTags.value.filter((tag) => tag !== tagName)
-    : [...selectedTags.value, tagName]
+onMounted(async () => {
+  try {
+    availableTags.value = await fetchTags()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : '태그를 불러오지 못했습니다.'
+  }
+})
+
+function toggleTag(clickedTag: Tag) {
+  const index = selectedTags.value.findIndex(
+    tag => tag.tagName === clickedTag.tagName
+  )
+
+  if (index >= 0) {
+    selectedTags.value.splice(index, 1)
+  } else {
+    selectedTags.value.push(clickedTag)
+  }
+
   tagSearch.value = ''
   isTagListOpen.value = false
+}
+
+function handleEsc(e: KeyboardEvent) {
+  tagSearch.value = ''
+  isTagListOpen.value = false 
+
+  e.target.blur()
 }
 
 function closeTagListOnFocusout(event: FocusEvent) {
@@ -67,20 +89,20 @@ function createTag() {
       <div class="mb-8 flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute)"
+          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
         >
           <Eye class="h-4 w-4" />미리보기
         </button>
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute)"
+          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
         >
           <Save class="h-4 w-4" />
           임시저장
         </button>
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md bg-(--color-heading) px-4 text-sm font-medium text-(--color-background) transition-opacity hover:opacity-85"
+          class="inline-flex h-10 items-center gap-2 rounded-md bg-(--color-heading) px-4 text-sm font-medium text-(--color-background) transition-opacity hover:opacity-85 hover:cursor-pointer"
         >
           <Send class="h-4 w-4" />
           저장
@@ -126,7 +148,7 @@ function createTag() {
                   aria-autocomplete="list"
                   class="h-9 w-full rounded-md border border-(--color-border) bg-(--color-background) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
                   @focus="isTagListOpen = true"
-                  @keydown.esc="isTagListOpen = false"
+                  @keydown.esc="handleEsc"
                 />
               </label>
               <ul
@@ -140,12 +162,12 @@ function createTag() {
                   <button
                     type="button"
                     role="option"
-                    :aria-selected="selectedTags.includes(tag)"
-                    class="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute)"
+                    :aria-selected="selectedTags.some(t => t.tagName === tag.tagName)"
+                    class="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
                     @click="toggleTag(tag)"
                   >
-                    <span>#{{ tag }}</span>
-                    <span v-if="selectedTags.includes(tag)" class="text-xs text-(--color-hover-title)">
+                    <span>#{{ tag.tagName }}</span>
+                    <span v-if="selectedTags.some(t => t.tagName === tag.tagName)" class="text-xs text-(--color-hover-title)">
                       선택됨
                     </span>
                   </button>
@@ -168,13 +190,13 @@ function createTag() {
             <span class="mr-1 text-xs text-(--color-text-secondary)">선택됨</span>
             <button
               v-for="tag in selectedTags"
-              :key="tag"
+              :key="tag.tagName"
               type="button"
               aria-label="선택한 태그 해제"
-              class="rounded-md border border-(--color-border) bg-(--color-background-soft) px-2.5 py-1 text-xs text-(--color-heading) transition-colors hover:border-(--color-border-hover) dark:border-(--color-border-hover) dark:bg-(--color-background-mute)"
+              class="rounded-md border border-(--color-border) bg-(--color-background-soft) px-2.5 py-1 text-xs text-(--color-heading) transition-colors hover:border-(--color-border-hover) dark:border-(--color-border-hover) dark:bg-(--color-background-mute) hover:cursor-pointer"
               @click="toggleTag(tag)"
             >
-              #{{ tag }} <span aria-hidden="true">×</span>
+              #{{ tag.tagName }} <span aria-hidden="true">×</span>
             </button>
           </div>
           <p v-else class="mt-3 text-sm text-(--color-text-secondary)">선택된 태그가 없습니다.</p>
