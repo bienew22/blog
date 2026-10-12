@@ -17,5 +17,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             LEFT JOIN FETCH pt.post
             WHERE t.tagName = :tagName
     """)
-    Optional<Tag> findByName(String tagName);
+    Optional<Tag> findByTagNameWithPosts(String tagName);
+
+    Optional<Tag> findByTagName(String tagName);
 }
