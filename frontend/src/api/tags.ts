@@ -37,3 +37,20 @@ export async function fetchTagPosts(tagName: string): Promise<TagPosts | null> {
 
     return data
 }
+
+export async function createTag(tag: string): Promise<Tag> {
+    const response = await fetch(`/api/v1/tags`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tagName: tag }),
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to create tag: ${response.status}`)
+    }
+
+    const data: Tag = await response.json()
+
+    return data
+}
