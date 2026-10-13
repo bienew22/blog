@@ -17,7 +17,6 @@ public class Tag {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(name = "tag_name", nullable = false)
@@ -35,8 +34,9 @@ public class Tag {
     @Column(name = "create_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    public static Tag create(String tagName, String tagDesc) {
+    public static Tag create(Long id, String tagName, String tagDesc) {
         Tag tag = new Tag();
+        tag.id = id;
         tag.tagName = tagName;
         tag.tagDesc = tagDesc;
         return tag;

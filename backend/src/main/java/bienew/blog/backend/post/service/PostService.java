@@ -1,6 +1,7 @@
 package bienew.blog.backend.post.service;
 
 
+import bienew.blog.backend.common.snowflake.Snowflake;
 import bienew.blog.backend.entity.Post;
 import bienew.blog.backend.entity.Tag;
 import bienew.blog.backend.post.dto.PostCreateRequest;
@@ -21,6 +22,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final Snowflake snowflake;
 
     public List<PostResponse> getPosts() {
 
@@ -47,6 +49,7 @@ public class PostService {
         List<Tag> tags = tagRepository.findAllByTagNameIn(postCreateRequest.tags());
 
         Post post = Post.create(
+                snowflake.nextId(),
                 postCreateRequest.title(),
                 postCreateRequest.title(),
                 postCreateRequest.contentMd(),

@@ -46,11 +46,12 @@ public class Post {
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
 
-    public static Post create(String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags) {
+    public static Post create(
+            Long id, String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags) {
         LocalDateTime now = LocalDateTime.now();
 
         Post post = new Post();
-
+        post.id = id;
         post.title = title;
         post.slug = slug;
 
