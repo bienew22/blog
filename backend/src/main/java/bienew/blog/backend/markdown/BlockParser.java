@@ -12,7 +12,7 @@ import bienew.blog.backend.markdown.parser.block.ListNodeParser;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum BlockParser {
+enum BlockParser {
 
     INSTANCE;
 
@@ -29,10 +29,6 @@ public enum BlockParser {
 
         // - 또는 * 시작하는 ListParser를 추가
         abstractBlockParsers.add(new ListNodeParser());
-    }
-
-    public static BlockParser getInstance() {
-        return INSTANCE;
     }
 
     public ASTNode parse(String markdown) {

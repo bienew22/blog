@@ -11,4 +11,9 @@ public class UnderLine extends ASTNode {
     public UnderLine(String source) {
         this.source = source;
     }
+
+    @Override
+    public String toHtml() {
+        return "<u>" + source + "</u>";
+    }
 }

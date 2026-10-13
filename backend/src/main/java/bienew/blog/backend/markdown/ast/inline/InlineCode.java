@@ -15,4 +15,9 @@ public class InlineCode extends ASTNode {
     public InlineCode(String code) {
         this.code = code;
     }
+
+    @Override
+    public String toHtml() {
+        return "<code>" + code + "</code>";
+    }
 }

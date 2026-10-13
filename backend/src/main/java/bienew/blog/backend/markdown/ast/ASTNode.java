@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 public abstract class ASTNode {
     protected ASTNode parent;
-    protected List<ASTNode> children;
+    protected List<ASTNode> children = new ArrayList<>();
     protected ASTNode prev;
     protected ASTNode next;
 
@@ -57,11 +57,13 @@ public abstract class ASTNode {
             }
         }
 
-        if (children != null && children.size() > 0) {
+        if (children != null && !children.isEmpty()) {
             for (ASTNode child : children) {
                 sb.append("\n\t").append(child.toString().replace("\n", "\n\t"));
             }
         }
         return sb.toString();
     }
+
+    public abstract String toHtml();
 }

@@ -11,4 +11,9 @@ public class Italic extends ASTNode {
     public Italic(String source) {
         this.source = source;
     }
+
+    @Override
+    public String toHtml() {
+        return "<em>" + source + "</em>";
+    }
 }

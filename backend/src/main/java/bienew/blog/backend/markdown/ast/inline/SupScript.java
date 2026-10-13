@@ -12,4 +12,9 @@ public class SupScript extends ASTNode {
     public SupScript(String text) {
         this.text = text;
     }
+
+    @Override
+    public String toHtml() {
+        return "<sup>" + text + "</sup>";
+    }
 }

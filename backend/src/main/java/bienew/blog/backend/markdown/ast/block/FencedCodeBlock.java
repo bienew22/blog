@@ -18,4 +18,10 @@ public class FencedCodeBlock extends ASTNode {
         this.language = language;
         this.code = code;
     }
+
+    @Override
+    public String toHtml() {
+        return "<pre class=\"line-numbers\">" +
+                "<code class=\"language-" + language + "\">" + code + "</code></pre>";
+    }
 }

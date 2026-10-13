@@ -14,4 +14,8 @@ public class SubScript extends ASTNode {
         this.text = text;
     }
 
+    @Override
+    public String toHtml() {
+        return "<sub>" + text + "</sub>";
+    }
 }
