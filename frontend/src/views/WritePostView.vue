@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import PostContentEditor from '@/components/blog/PostContentEditor.vue'
 import { Eye, Plus, Save, Search, Send } from 'lucide-vue-next'
 import { fetchTags, createTag, type Tag } from '@/api/tags'
+import { createPost } from '@/api/posts'
 
+const router = useRouter()
 const title = ref('')
 const content = ref('')
 const selectedTags = ref<Tag[]>([])
@@ -17,6 +20,7 @@ const tagPicker = ref<HTMLElement | null>(null)
 type ToastType = 'pending' | 'success' | 'error'
 const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
 const isCreatingTag = ref(false)  // 생성 완료전까지 중복 클릭 예방용
+const isSavingPost = ref(false)
 let toastSeq = 0  // toast의 아이디
 
 const filteredTags = computed(() => {
@@ -96,6 +100,43 @@ async function addTag(rawName: string) {
     isCreatingTag.value = false
   }
 }
+
+async function savePost(option: boolean) {
+  const postTitle = title.value.trim()
+  const postContent = content.value.trim()
+
+  if (!postTitle) {
+    showToast('제목을 입력해주세요.', 'error', 2000)
+    return
+  }
+
+  if (!postContent) {
+    showToast('내용을 입력해주세요.', 'error', 2000)
+    return
+  }
+
+  if (isSavingPost.value) return
+
+  isSavingPost.value = true
+  showToast('게시글 저장 중...', 'pending', 2000)
+
+  try {
+    const post = await createPost(
+      postTitle,
+      content.value,
+      selectedTags.value.map((tag) => tag.tagName),
+    )
+    showToast('게시글 저장 완료', 'success', 2000)
+
+    if (option) {
+      await router.push({ name: 'post', params: { slug: post.slug } })
+    }
+  } catch (e) {
+    showToast(e instanceof Error ? e.message : '게시글 저장에 실패했습니다.', 'error', 3000)
+  } finally {
+    isSavingPost.value = false
+  }
+}
 </script>
 
 <template>
@@ -118,6 +159,7 @@ async function addTag(rawName: string) {
         <button
           type="button"
           class="inline-flex h-10 items-center gap-2 rounded-md bg-(--color-heading) px-4 text-sm font-medium text-(--color-background) transition-opacity hover:opacity-85 hover:cursor-pointer"
+          @click="savePost(true)"
         >
           <Send class="h-4 w-4" />
           저장
