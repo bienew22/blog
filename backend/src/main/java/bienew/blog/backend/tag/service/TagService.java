@@ -1,6 +1,7 @@
 package bienew.blog.backend.tag.service;
 
 
+import bienew.blog.backend.common.snowflake.Snowflake;
 import bienew.blog.backend.entity.PostTag;
 import bienew.blog.backend.entity.Tag;
 import bienew.blog.backend.post.dto.PostSummaryResponse;
@@ -20,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagService {
     private final TagRepository tagRepository;
+    private final Snowflake snowflake;
+
 
     public List<TagSummaryResponse> getTags() {
         return tagRepository.findAll().stream()
@@ -46,8 +49,7 @@ public class TagService {
             throw new RuntimeException("Tag already exists");
         });
 
-        Tag tag = new Tag();
-        tag.setTagName(request.tagName());
+        Tag tag = Tag.create(snowflake.nextId(), request.tagName(), request.tagName());
 
         tagRepository.save(tag);
 

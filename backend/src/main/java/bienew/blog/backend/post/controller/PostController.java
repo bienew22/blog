@@ -1,16 +1,15 @@
 package bienew.blog.backend.post.controller;
 
 
+import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
 import bienew.blog.backend.post.dto.PostResponse;
 import bienew.blog.backend.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,4 +38,15 @@ public class PostController {
     public PostDetailResponse getPost(@PathVariable String slug) {
         return postService.getPost(slug);
     }
+
+    @PostMapping("")
+    @Operation(
+            summary = "게시물 생성",
+            description = "새로운 게시물을 생성합니다."
+    )
+    public PostDetailResponse createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
+        return postService.createPost(postCreateRequest);
+    }
+
+
 }
