@@ -40,3 +40,23 @@ export async function fetchPostDetail(slug: string): Promise<PostDetail> {
 
     return data
 }
+
+export async function createPost(
+    title: string,
+    content: string,
+    tags: string[]): Promise<Post> {
+    const response = await fetch(`/api/v1/posts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, "contentMd": content, tags }),
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to create post: ${response.status}`)
+    }
+
+    const data: Post = await response.json()
+
+    return data
+}

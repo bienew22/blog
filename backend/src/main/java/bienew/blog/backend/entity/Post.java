@@ -1,46 +1,73 @@
 package bienew.blog.backend.entity;
 
 
+import bienew.blog.backend.post.dto.PostCreateRequest;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "posts")
 public class Post {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(name = "title", nullable = false)
-    String title;
+    private String title;
 
     @Column(name = "slug", nullable = false, unique = true)
-    String slug;
+    private String slug;
 
     @Column(name = "content_md", nullable = false)
-    String contentMd;
+    private String contentMd;
 
     @Column(name = "content_html", nullable = false)
-    String contentHtml;
+    private String contentHtml;
 
     @Column(name = "author", nullable = false)
-    String author;
+    private String author;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostTag> postTags = new HashSet<>();
 
     @Column(name = "create_at", nullable = false)
-    LocalDateTime createAt;
+    private LocalDateTime createAt;
 
     @Column(name = "update_at", nullable = false)
-    LocalDateTime updateAt;
+    private LocalDateTime updateAt;
+
+    public static Post create(
+            Long id, String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags) {
+        LocalDateTime now = LocalDateTime.now();
+
+        Post post = new Post();
+        post.id = id;
+        post.title = title;
+        post.slug = slug;
+
+        post.contentMd = contentMd;
+        post.contentHtml = contentHtml;
+
+        post.author = author;
+
+        post.createAt = now;
+        post.updateAt = now;
+
+        for (Tag tag : tags) {
+            PostTag postTag = PostTag.create(post, tag);
+            post.postTags.add(postTag);
+        }
+
+        return post;
+    }
 }

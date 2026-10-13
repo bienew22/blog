@@ -9,6 +9,10 @@ COPY settings.gradle .
 
 RUN chmod +x gradlew
 
+RUN ./gradlew build --no-daemon || true
+
+COPY src src
+
 EXPOSE 8080
 
-ENTRYPOINT ["./gradlew", "bootRun"]
+ENTRYPOINT ["./gradlew", "bootRun", "--no-daemon"]

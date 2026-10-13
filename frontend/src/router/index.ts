@@ -43,6 +43,11 @@ const router = createRouter({
       component: () => import('../views/NotFoundView.vue'),
     },
     {
+      path: '/write',
+      name: 'write',
+      component: () => import('../views/WritePostView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: { name: 'not-found' },
     },
