@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,9 +40,9 @@ public class PostService {
     public PostDetailResponse createPost(PostCreateRequest postCreateRequest) {
 
         // 0. Slug 중복 체크
-        if (postRepository.existsBySlug(postCreateRequest.slug())) {
-            throw new IllegalArgumentException("Slug already exists: " + postCreateRequest.slug());
-        }
+//        if (postRepository.existsBySlug(postCreateRequest.title())) {
+//            throw new IllegalArgumentException("Slug already exists: " + postCreateRequest.title());
+//        }
 
         // 1. tags 목록 조회
         List<Tag> tags = tagRepository.findAllByTagNameIn(postCreateRequest.tags());
