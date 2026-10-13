@@ -21,17 +21,26 @@ public class Tag {
     Long id;
 
     @Column(name = "tag_name", nullable = false)
-    String tagName;
+    private String tagName;
 
     @Column(name = "tag_desc")
-    String tagDesc;
+    private String tagDesc;
 
     @Column(name = "post_cnt", nullable = false, columnDefinition = "int default 0")
-    Integer postCnt = 0;
+    private Integer postCnt = 0;
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostTag> postTags = new HashSet<>();
 
     @Column(name = "create_at", updatable = false, insertable = false)
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
+
+    public static Tag create(String tagName, String tagDesc) {
+        Tag tag = new Tag();
+        tag.tagName = tagName;
+        tag.tagDesc = tagDesc;
+        return tag;
+    }
+
+
 }

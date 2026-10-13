@@ -46,8 +46,7 @@ public class TagService {
             throw new RuntimeException("Tag already exists");
         });
 
-        Tag tag = new Tag();
-        tag.setTagName(request.tagName());
+        Tag tag = Tag.create(request.tagName(), request.tagName());
 
         tagRepository.save(tag);
 
