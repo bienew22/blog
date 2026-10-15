@@ -1,6 +1,6 @@
 package bienew.blog.backend.markdown.parser.block;
 
-import bienew.blog.backend.markdown.ast.block.Default;
+import bienew.blog.backend.markdown.ast.block.Paragraph;
 import bienew.blog.backend.markdown.ast.block.ListNode;
 import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
@@ -44,7 +44,7 @@ public class ListNodeParser extends AbstractBlockParser {
 
                     String content = strippedLine.replaceFirst("^(?:\\d+\\.\\s|[*-]\\s)", "");
 
-                    parent.addChild(new Default(content));
+                    parent.addChild(new Paragraph(content));
                 } else {
                     // 현재 줄이 부모 노드보다 덜 들여쓰기 수준이면, 파싱을 종료
                     break;
