@@ -20,10 +20,10 @@ public class Heading extends ASTNode {
 
     @Override
     public String toHtml() {
-        return "<h" + level + ">"
+        return "<h" + (level + 1) + ">"
                 + children.stream()
                     .map(ASTNode::toHtml)
                     .collect(Collectors.joining())
-                + "</h" + level + ">";
+                + "</h" + (level + 1) + ">";
     }
 }
