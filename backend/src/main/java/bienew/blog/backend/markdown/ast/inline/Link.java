@@ -20,10 +20,17 @@ public class Link  extends ASTNode {
 
 	@Override
 	public String toHtml() {
-		return "<a href=\"" + url + "\">"
-				+ children.stream()
-					.map(ASTNode::toHtml)
-					.collect(Collectors.joining())
+
+		String alt = children.stream()
+				.map(ASTNode::toHtml)
+				.collect(Collectors.joining());
+
+		if (alt.isEmpty()) {
+			alt = url;
+		}
+
+		return "<a href=\"" + url + "\" target=\"_blank\" rel=\"noopener noreferrer\" >"
+				+ alt
 				+ "</a>";
 	}
 }
