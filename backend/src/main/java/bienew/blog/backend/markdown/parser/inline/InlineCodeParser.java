@@ -9,7 +9,8 @@ public class InlineCodeParser extends AbstractInlineParser {
     protected boolean canParse(String text, int startIndex) {
         if (startIndex < text.length() && text.charAt(startIndex) == '`') {
             int endIndex = text.indexOf('`', startIndex + 1);
-            return endIndex != -1;
+
+            return endIndex != -1 && endIndex > startIndex + 1;
         }
         return false;
     }
