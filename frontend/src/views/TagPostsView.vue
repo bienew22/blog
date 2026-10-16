@@ -32,7 +32,10 @@ const postsByYear = computed(() =>
       ;(groups[year] ??= []).push(post)
       return groups
     }, {}),
-  ).sort(([a], [b]) => Number(b) - Number(a)),
+  ).sort(([a], [b]) => Number(b) - Number(a))
+  .map(([year, groupPosts]) => [
+    year, groupPosts.sort((a, b) => new Date(b.createAt.replace(' ', 'T')).getTime() - new Date(a.createAt.replace(' ', 'T')).getTime())
+  ])
 )
 
 onMounted(async () => {
