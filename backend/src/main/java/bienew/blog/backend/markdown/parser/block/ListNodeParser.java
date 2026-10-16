@@ -15,7 +15,7 @@ public class ListNodeParser extends AbstractBlockParser {
 
     @Override
     protected ParseResult parseNode(String[] lines, int startLineIndex) {
-        boolean isOrdered = lines[startLineIndex].matches("^\\d+\\.\\s.*");
+        boolean isOrdered = lines[startLineIndex].matches("^(\\t)*\\d+\\.\\s.*");
 
         int currentIndent = countIndent(lines[startLineIndex]);
 
