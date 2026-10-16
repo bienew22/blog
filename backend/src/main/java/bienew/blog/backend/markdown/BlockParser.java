@@ -1,7 +1,7 @@
 package bienew.blog.backend.markdown;
 
 import bienew.blog.backend.markdown.ast.ASTNode;
-import bienew.blog.backend.markdown.ast.block.Default;
+import bienew.blog.backend.markdown.ast.block.Paragraph;
 import bienew.blog.backend.markdown.ast.block.Document;
 import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
@@ -63,10 +63,10 @@ enum BlockParser {
 
             // 해당하는 파서가 없는 경우 기본 Node으로 처리
             if (!parsed) {
-                Default defaultNode = new Default(line);
-                now.setNext(defaultNode);
+                Paragraph paragraphNode = new Paragraph(line);
+                now.setNext(paragraphNode);
                 
-                now = defaultNode;
+                now = paragraphNode;
                 remainingLines++;
             }
         }
@@ -79,7 +79,7 @@ enum BlockParser {
         ASTNode now = document.getNext();
 
         while (now != null) {
-            InlineParser.getInstance().parse(now);
+            InlineParser.INSTANCE.parse(now);
             now = now.getNext();
         }
     }

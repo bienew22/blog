@@ -19,7 +19,7 @@ public class HeadingParser extends AbstractBlockParser {
         int count = getLevel(line);
         int length = line.trim().length();
 
-        return count > 0 && count <= 6 && length > count;
+        return count > 0 && count <= 5 && length > count;
     }
 
     @Override

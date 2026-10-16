@@ -98,13 +98,24 @@
 }
 
 .post-content strong,
-.post-content b {
+.post-content strong *,
+.post-content b,
+.post-content b * {
   font-weight: 700;
   color: var(--color-heading);
 }
 
+.post-content u,
+.post-content u * {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+
 .post-content em,
-.post-content i {
+.post-content em *,
+.post-content i,
+.post-content i * {
   font-style: italic;
 }
 

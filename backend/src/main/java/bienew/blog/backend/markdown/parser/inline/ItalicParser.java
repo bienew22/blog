@@ -8,18 +8,24 @@ public class ItalicParser extends AbstractInlineParser {
 
     @Override
     protected boolean canParse(String text, int startIndex) {
-        if (startIndex >= text.length()) {
+        if (startIndex >= text.length() || text.charAt(startIndex) != '_') {
             return false;
         }
 
-        if (text.charAt(startIndex) == '_') {
-            int endIndex = text.indexOf('_', startIndex + 1);
-
-            // 최소 한 글자 이상이 있어야 기울임 텍스트로 인식
-            return endIndex != -1 && endIndex > startIndex + 1;
+        // 앞 문자가 문자, 또는 숫자라면 기울임 텍스트로 인식하지 않음
+        if (startIndex > 0 && Character.isLetterOrDigit(text.charAt(startIndex - 1))) {
+            return false;
         }
 
-        return false;
+        int endIndex = text.indexOf('_', startIndex + 1);
+
+        // 최소 한 글자 이상이 있어야 기울임 텍스트로 인식
+        if (endIndex == -1 || endIndex == startIndex + 1) {
+            return false;
+        }
+
+        // 뒤 문자가 문자, 또는 숫자라면 기울임 텍스트로 인식하지 않음
+        return endIndex + 1 >= text.length() || !Character.isLetterOrDigit(text.charAt(endIndex + 1));
     }
 
     @Override

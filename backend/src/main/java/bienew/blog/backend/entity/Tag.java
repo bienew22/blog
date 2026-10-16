@@ -42,5 +42,8 @@ public class Tag {
         return tag;
     }
 
+    public void incrementPostCount() {
+        this.postCnt++;
+    }
 
 }
