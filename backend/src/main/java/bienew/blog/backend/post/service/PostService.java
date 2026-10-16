@@ -59,7 +59,7 @@ public class PostService {
         );
 
         // 2. 각 tag에 post_cnt 증가
-        tags.forEach(Tag::incrementPostCount);
+        tagRepository.incrementPostCount(tags.stream().map(Tag::getTagName).toList());
 
         Post savedPost = postRepository.save(post);
         return PostDetailResponse.of(savedPost);
