@@ -34,7 +34,7 @@ public class ListNodeParser extends AbstractBlockParser {
                     // 현재 줄이 부모 노드보다 더 깊은 들여쓰기 수준이면, 재귀적으로 하위 노드를 파싱
                     ParseResult childResult = parseNode(lines, startLineIndex);
                     if (childResult.isParsed()) {
-                        parent.addChild(childResult.node());
+                        parent.getLastChild().addChild(childResult.node());
                         startLineIndex = childResult.nextIndex();
                         continue;
                     }
@@ -56,7 +56,7 @@ public class ListNodeParser extends AbstractBlockParser {
             startLineIndex++;
         }
 
-        if (parent.getChildren().size() > 0) {
+        if (!parent.getChildren().isEmpty()) {
             return new ParseResult(parent, startLineIndex, true);
         }
 

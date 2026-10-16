@@ -79,7 +79,7 @@ enum BlockParser {
         ASTNode now = document.getNext();
 
         while (now != null) {
-            InlineParser.getInstance().parse(now);
+            InlineParser.INSTANCE.parse(now);
             now = now.getNext();
         }
     }

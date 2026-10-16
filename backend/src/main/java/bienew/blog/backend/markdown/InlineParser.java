@@ -25,10 +25,6 @@ public enum InlineParser {
         parsers.add(new InlineCodeParser()); // `some` 을 파싱하는 InlineCodeParser를 추가
     }
 
-    public static InlineParser getInstance() {
-        return INSTANCE;
-    }
-
     public void parse(ASTNode node) {
         if (node == null) {
             return;
@@ -40,7 +36,11 @@ public enum InlineParser {
             }
         }
 
-        parse(node.getSource()).forEach(node::addChild);
+        // source를 파싱한 결과물은 기존 자식 앞에 추가
+        List<ASTNode> nodes = parse(node.getSource());
+        for (int i = nodes.size() - 1; i >= 0; i--) {
+            node.addChildrenPrevious(nodes.get(i));
+        }
     }
 
     public List<ASTNode> parse(String text) {
