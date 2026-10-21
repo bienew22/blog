@@ -5,6 +5,7 @@ import { House, Menu, Book, X, Tags } from 'lucide-vue-next'
 import { CategoryIcon } from '@/components/icon'
 import ThemeToggle from '@/components/blog-sidebar/ThemeToggle.vue'
 import GithubButton from '@/components/blog-sidebar/GithubButton.vue'
+import WriteButton from '@/components/blog-sidebar/WriteButton.vue'
 
 const isOpen = ref(false)
 
@@ -79,7 +80,9 @@ const navItems = [
       <span class="text-2xl text-(--color-border-hover)">·</span>
 
       <GithubButton />
-      <!-- <span class="text-3xl text-(--color-border-hover)">·</span> -->
+      <span class="text-2xl text-(--color-border-hover)">·</span>
+
+      <WriteButton />
     </div>
   </aside>
 </template>
