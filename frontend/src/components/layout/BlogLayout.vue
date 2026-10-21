@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { ChevronUp } from 'lucide-vue-next'
-import BlogSidebar from './BlogSidebar.vue'
+import BlogSidebar from '../blog-sidebar/BlogSidebar.vue'
 
 const showScrollTop = ref(false)
 

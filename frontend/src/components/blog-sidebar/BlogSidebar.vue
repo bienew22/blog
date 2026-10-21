@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useThemeStore } from '@/stores/theme'
 import { House, Menu, Book, X, Tags } from 'lucide-vue-next'
-import { CategoryIcon, LightThemeIcon, DarkThemeIcon, GithubIcon } from '@/components/icon'
+import { CategoryIcon } from '@/components/icon'
+import ThemeToggle from '@/components/blog-sidebar/ThemeToggle.vue'
+import GithubButton from '@/components/blog-sidebar/GithubButton.vue'
 
-const theme = useThemeStore()
 const isOpen = ref(false)
 
 const navItems = [
@@ -75,37 +75,10 @@ const navItems = [
     </nav>
 
     <div class="flex items-center justify-center gap-3 border-t border-(--color-border-subtle) pt-5">
-      <button
-        type="button"
-        class="group relative flex h-11 w-11 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
-        aria-label="테마 전환"
-        @click="theme.toggleTheme"
-      >
-        <component :is="theme.isDark ? LightThemeIcon : DarkThemeIcon" class="h-4 w-4" />
-
-
-        <span
-          class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-surface-elevated-reverse) px-1.5 py-0.5 text-xs whitespace-nowrap text-(--color-text-reverse) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-surface-elevated-reverse) after:content-[''] group-hover:opacity-100"
-        >
-          Theme
-        </span>
-        
-      </button>
+      <ThemeToggle />
       <span class="text-2xl text-(--color-border-hover)">·</span>
-      <a
-        href="https://github.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="group relative flex h-11 w-11 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
-        aria-label="GitHub"
-      >
-        <GithubIcon class="h-4 w-4" />
-        <span
-          class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-surface-elevated) px-2 py-1 text-xs whitespace-nowrap text-(--color-text) opacity-0 shadow-sm transition group-hover:opacity-100"
-        >
-          GitHub
-        </span>
-      </a>
+
+      <GithubButton />
       <!-- <span class="text-3xl text-(--color-border-hover)">·</span> -->
     </div>
   </aside>
