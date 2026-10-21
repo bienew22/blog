@@ -18,7 +18,7 @@ const navItems = [
 
 <template>
   <header
-    class="sticky top-0 z-30 flex items-center justify-between border-b border-(--color-border) bg-(--color-background) px-4 py-3 lg:hidden"
+    class="sticky top-0 z-30 flex min-h-16 items-center justify-between border-b border-(--color-border) bg-(--color-surface) px-4 py-3 lg:hidden"
   >
     <RouterLink to="/" class="flex items-center gap-2" @click="isOpen = false">
       <span class="h-8 w-8 overflow-hidden rounded-full border border-(--color-border)">
@@ -28,8 +28,9 @@ const navItems = [
     </RouterLink>
     <button
       type="button"
-      class="flex h-9 w-9 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) hover:cursor-pointer"
-      aria-label="Toggle menu"
+      class="flex h-11 w-11 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) hover:cursor-pointer"
+      :aria-expanded="isOpen"
+      aria-label="메뉴 열기"
       @click="isOpen = !isOpen"
     >
       <Menu v-if="!isOpen" class="h-5 w-5" />
@@ -40,12 +41,12 @@ const navItems = [
   <div v-if="isOpen" class="fixed inset-0 z-20 bg-black/40 lg:hidden" @click="isOpen = false" />
 
   <aside
-    class="fixed inset-y-0 left-0 z-30 flex h-screen w-72 -translate-x-full shrink-0 flex-col overflow-y-auto border-r border-(--color-border) bg-(--color-background) px-6 py-8 transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:w-auto lg:min-w-(--sidebar-width) lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-30 flex h-screen w-72 -translate-x-full shrink-0 flex-col overflow-y-auto border-r border-(--color-border) bg-(--color-surface) px-6 py-8 transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:w-(--sidebar-width) lg:translate-x-0"
     :class="isOpen ? 'translate-x-0' : '-translate-x-full'"
   >
     <RouterLink
       to="/"
-      class="group flex flex-col items-center text-center border-b border-(--color-border) pb-4"
+      class="group flex flex-col items-center border-b border-(--color-border-subtle) pb-6 text-center"
       @click="isOpen = false"
     >
       <span class="h-20 w-20 overflow-hidden rounded-full border border-(--color-border)">
@@ -59,13 +60,13 @@ const navItems = [
       <p class="mt-1 text-xs text-(--color-text-secondary)">Never Stop Becoming Better</p>
     </RouterLink>
 
-    <nav class="flex flex-1 flex-col justify-center -translate-y-15 gap-1">
+    <nav aria-label="주요 메뉴" class="flex flex-1 flex-col justify-center gap-2 py-8">
       <RouterLink
         v-for="item in navItems"
         :key="item.label"
         :to="item.to"
-        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-bold text-(--color-text-secondary) transition-colors duration-500 ease-in-out hover:bg-(--color-background-mute) hover:text-(--color-heading)"
-        active-class="bg-(--color-background-mute)! text-(--color-heading)! transition-colors! duration-500! ease-in-out!"
+        class="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-primary)"
+        active-class="bg-(--color-accent-soft)! font-semibold! text-(--color-primary)!"
         @click="isOpen = false"
       >
         <component :is="item.icon" class="h-4 w-4" />
@@ -73,32 +74,34 @@ const navItems = [
       </RouterLink>
     </nav>
 
-    <div class="flex items-center justify-center gap-2 border-t border-(--color-border) pt-4">
+    <div class="flex items-center justify-center gap-3 border-t border-(--color-border-subtle) pt-5">
       <button
         type="button"
-        class="group relative flex h-7 w-7 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-hover-title) hover:cursor-pointer"
-        aria-label="Toggle theme"
+        class="group relative flex h-11 w-11 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
+        aria-label="테마 전환"
         @click="theme.toggleTheme"
       >
         <component :is="theme.isDark ? LightThemeIcon : DarkThemeIcon" class="h-4 w-4" />
 
+
         <span
-          class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-1.5 py-0.5 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
+          class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-surface-elevated-reverse) px-1.5 py-0.5 text-xs whitespace-nowrap text-(--color-text-reverse) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-surface-elevated-reverse) after:content-[''] group-hover:opacity-100"
         >
           Theme
         </span>
+        
       </button>
       <span class="text-2xl text-(--color-border-hover)">·</span>
       <a
         href="https://github.com"
         target="_blank"
         rel="noopener noreferrer"
-        class="group relative flex h-7 w-7 items-center justify-center rounded-full bg-(--color-background-mute) text-(--color-text-secondary) transition duration-500 hover:text-(--color-heading)"
+        class="group relative flex h-11 w-11 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
         aria-label="GitHub"
       >
         <GithubIcon class="h-4 w-4" />
         <span
-          class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-heading) px-1.5 py-0.5 text-xs whitespace-nowrap text-(--color-background) opacity-0 transition duration-500 after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-(--color-heading) after:content-[''] group-hover:opacity-100"
+          class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 rounded bg-(--color-surface-elevated) px-2 py-1 text-xs whitespace-nowrap text-(--color-text) opacity-0 shadow-sm transition group-hover:opacity-100"
         >
           GitHub
         </span>
