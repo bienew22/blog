@@ -1,11 +1,53 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const content = defineModel<string>({ required: true })
 
 const editor = ref<HTMLTextAreaElement | null>(null)
+const mirror = ref<HTMLTextAreaElement | null>(null)
 const lineNumberGutter = ref<HTMLDivElement | null>(null)
-const lineNumbers = computed(() => content.value.split('\n').map((_, index) => index + 1))
+const contentLines = computed(() => content.value.split('\n'))
+const defaultLineHeight = 28
+const lineHeights = ref<number[]>([])
+let resizeObserver: ResizeObserver | null = null
+
+// 화면상 줄바꿈(soft wrap)된 높이를 미러 요소로 측정해 줄 번호 높이에 반영
+function measureLines() {
+    const el = mirror.value
+    const textarea = editor.value
+    if (!el || !textarea) return
+
+    if (textarea.clientWidth === 0) return // 숨겨진 탭에서는 측정하지 않음
+
+    el.style.width = `${textarea.offsetWidth}px`
+    el.style.height = '0px'
+    const style = getComputedStyle(textarea)
+    const lineHeight = Number.parseFloat(style.lineHeight) || defaultLineHeight
+    const padding = (Number.parseFloat(style.paddingTop) || 0) + (Number.parseFloat(style.paddingBottom) || 0)
+
+    // 줄마다 값을 넣어 실제 표시 줄 수를 구하고, 줄 높이의 정수배로 보정
+    lineHeights.value = contentLines.value.map((line) => {
+        el.value = line
+        const rows = Math.max(1, Math.round((el.scrollHeight - padding) / lineHeight))
+        return rows * lineHeight
+    })
+}
+
+watch(content, () => nextTick(measureLines), { flush: 'post' })
+
+onMounted(() => {
+    measureLines()
+    if (editor.value) {
+        resizeObserver = new ResizeObserver(measureLines)
+        resizeObserver.observe(editor.value)
+    }
+})
+
+onBeforeUnmount(() => resizeObserver?.disconnect())
+
+function lineHeightAt(index: number) {
+    return lineHeights.value[index] || defaultLineHeight
+}
 
 function syncLineNumberScroll() {
     nextTick(() => {
@@ -17,15 +59,14 @@ function syncLineNumberScroll() {
 
 function scrollCaretIntoView(textarea: HTMLTextAreaElement) {
     const style = window.getComputedStyle(textarea)
-    const lineHeight = Number.parseFloat(style.lineHeight)
-
-    if (!Number.isFinite(lineHeight)) return
 
     const paddingTop = Number.parseFloat(style.paddingTop) || 0
     const paddingBottom = Number.parseFloat(style.paddingBottom) || 0
     const lineIndex = textarea.value.slice(0, textarea.selectionStart).split('\n').length - 1
-    const lineTop = paddingTop + lineIndex * lineHeight
-    const lineBottom = lineTop + lineHeight
+    let offset = 0
+    for (let i = 0; i < lineIndex; i++) offset += lineHeightAt(i)
+    const lineTop = paddingTop + offset
+    const lineBottom = lineTop + lineHeightAt(lineIndex)
     const visibleTop = textarea.scrollTop + paddingTop
     const visibleBottom = textarea.scrollTop + textarea.clientHeight - paddingBottom
 
@@ -164,18 +205,33 @@ function handleEnter(e: KeyboardEvent) {
         aria-hidden="true"
         class="pointer-events-none h-full w-12 shrink-0 select-none overflow-hidden border-r border-(--color-border-subtle) bg-(--color-background-soft) pb-0 pt-4 text-right font-mono text-sm leading-7 text-(--color-text-muted)"
     >
-        <div v-for="lineNumber in lineNumbers" :key="lineNumber" class="h-7 pr-2">
-            {{ lineNumber }}
+        <div
+            v-for="(_, index) in contentLines"
+            :key="index"
+            class="pr-2"
+            :style="{ height: `${lineHeightAt(index)}px` }"
+        >
+            {{ index + 1 }}
         </div>
     </div>
+
+    <!-- 줄 높이 측정용 숨김 textarea (실제 입력창과 동일한 스타일로 줄바꿈을 계산) -->
+    <textarea
+        ref="mirror"
+        aria-hidden="true"
+        tabindex="-1"
+        readonly
+        wrap="soft"
+        class="my-scroll pointer-events-none invisible absolute top-0 left-12 -z-10 box-border resize-none overflow-x-hidden overflow-y-scroll whitespace-pre-wrap break-words border-0 pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7"
+    ></textarea>
 
     <!-- 입력 영역 -->
     <textarea
         ref="editor"
         v-model="content"
         placeholder="본문을 작성하세요"
-        wrap="off"
-        class="my-scroll h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-auto bg-transparent pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7 text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
+        wrap="soft"
+        class="my-scroll h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-x-hidden overflow-y-scroll whitespace-pre-wrap break-words bg-transparent pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7 text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
         @scroll="syncLineNumberScroll"
         @input="syncLineNumberScroll"
         @keydown.tab.prevent="handleTab"

@@ -26,10 +26,12 @@ Prism.manual = true
 const route = useRoute()
 const router = useRouter()
 
+const props = defineProps<{ preview?: PostDetail }>()
+
 const slug = computed(() => route.params.slug as string)
 
 const post = ref<PostDetail | null>(null)
-const isLoading = ref(true)
+const isLoading = ref(!props.preview)
 const error = ref<string | null>(null)
 
 const contentRef = ref<HTMLElement | null>(null)
@@ -43,7 +45,16 @@ const formattedDate = computed(() => {
   })
 })
 
+watch(
+  () => props.preview,
+  (value) => {
+    if (value) post.value = value
+  },
+  { immediate: true },
+)
+
 onMounted(async () => {
+  if (props.preview) return
   try {
     post.value = await fetchPostDetail(slug.value)
     if (post.value === null) {
@@ -125,11 +136,12 @@ watch(
       })
     }
   },
+  { immediate: true },
 )
 </script>
 
 <template>
-  <BlogLayout>
+  <component :is="preview ? 'div' : BlogLayout">
     <!-- <BlogHeader :icon="TagIcon" :title="post?.title" :description="post?.content" /> -->
 
     <div v-if="isLoading" class="flex min-h-[50vh] items-center justify-center">
@@ -166,5 +178,5 @@ watch(
       </header>
       <div ref="contentRef" class="post-content" v-html="post?.content"></div>
     </article>
-  </BlogLayout>
+  </component>
 </template>

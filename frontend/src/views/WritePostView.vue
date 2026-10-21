@@ -3,13 +3,17 @@ import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import PostContentEditor from '@/components/blog/PostContentEditor.vue'
-import { Eye, Plus, Save, Search, Send } from 'lucide-vue-next'
+import PostView from '@/views/PostView.vue'
+import { Eye, Pencil, Plus, Save, Search, Send } from 'lucide-vue-next'
 import { fetchTags, createTag, type Tag } from '@/api/tags'
-import { createPost } from '@/api/posts'
+import { createPost, fetchPostPreview, type PostDetail } from '@/api/posts'
 
 const router = useRouter()
 const title = ref('')
 const content = ref('')
+const activeTab = ref<'edit' | 'preview'>('edit')
+const previewPost = ref<PostDetail | null>(null)
+const isPreviewLoading = ref(false)
 const selectedTags = ref<Tag[]>([])
 const availableTags = ref<Tag[]>([])
 
@@ -101,6 +105,22 @@ async function addTag(rawName: string) {
   }
 }
 
+async function openPreview() {
+  activeTab.value = 'preview'
+  isPreviewLoading.value = true
+  try {
+    previewPost.value = await fetchPostPreview(
+      title.value.trim(),
+      content.value,
+      selectedTags.value.map((tag) => tag.tagName),
+    )
+  } catch (e) {
+    showToast(e instanceof Error ? e.message : '미리보기를 불러오지 못했습니다.', 'error', 3000)
+  } finally {
+    isPreviewLoading.value = false
+  }
+}
+
 async function savePost(option: boolean) {
   const postTitle = title.value.trim()
   const postContent = content.value.trim()
@@ -142,32 +162,65 @@ async function savePost(option: boolean) {
 <template>
   <BlogLayout>
     <form class="mx-auto w-full" @submit.prevent>
-      <div class="mb-8 flex flex-wrap items-center justify-end gap-2">
+      <div class="mb-8 flex flex-nowrap items-center justify-end gap-1.5 sm:gap-2">
         <button
           type="button"
-          class="inline-flex h-11 items-center gap-2 rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
+          class="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) sm:flex-none sm:gap-2 sm:px-4 sm:text-sm"
+          @click="openPreview"
         >
-          <Eye class="h-4 w-4" />미리보기
+          <Eye class="h-4 w-4 shrink-0" />미리보기
         </button>
         <button
           type="button"
-          class="inline-flex h-11 items-center gap-2 rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
+          class="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) sm:flex-none sm:gap-2 sm:px-4 sm:text-sm"
         >
-          <Save class="h-4 w-4" />
+          <Save class="h-4 w-4 shrink-0" />
           임시저장
         </button>
         <button
           type="button"
-          class="inline-flex h-11 items-center gap-2 rounded-lg bg-(--color-primary) px-4 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg bg-(--color-primary) px-2 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none sm:gap-2 sm:px-4 sm:text-sm"
           :disabled="isSavingPost"
           @click="savePost(true)"
         >
-          <Send class="h-4 w-4" />
+          <Send class="h-4 w-4 shrink-0" />
           저장
         </button>
       </div>
 
-      <section class="space-y-8">
+      <div class="mb-6 flex gap-1 border-b border-(--color-border-subtle)" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === 'edit'"
+          class="inline-flex h-11 items-center gap-2 border-b-2 px-4 text-sm font-medium transition-colors"
+          :class="activeTab === 'edit' ? 'border-(--color-primary) text-(--color-primary)' : 'border-transparent text-(--color-text-secondary)'"
+          @click="activeTab = 'edit'"
+        >
+          <Pencil class="h-4 w-4" />작성
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === 'preview'"
+          class="inline-flex h-11 items-center gap-2 border-b-2 px-4 text-sm font-medium transition-colors"
+          :class="activeTab === 'preview' ? 'border-(--color-primary) text-(--color-primary)' : 'border-transparent text-(--color-text-secondary)'"
+          @click="openPreview"
+        >
+          <Eye class="h-4 w-4" />미리보기
+        </button>
+      </div>
+
+      <div v-if="activeTab === 'preview'" role="tabpanel">
+        <div v-if="isPreviewLoading" class="flex min-h-[30vh] items-center justify-center">
+          <div
+            class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
+          ></div>
+        </div>
+        <PostView v-else-if="previewPost" :preview="previewPost" />
+      </div>
+
+      <section v-show="activeTab === 'edit'" class="space-y-8">
         <section>
           <label class="mb-3 block text-sm font-semibold text-(--color-heading)" for="post-title">
             제목

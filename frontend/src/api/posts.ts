@@ -41,6 +41,24 @@ export async function fetchPostDetail(slug: string): Promise<PostDetail> {
     return data
 }
 
+export async function fetchPostPreview(
+    title: string,
+    content: string,
+    tags: string[]): Promise<PostDetail> {
+    const response = await fetch(`/api/v1/posts/preview`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, "contentMd": content, tags }),
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to preview post: ${response.status}`)
+    }
+
+    return await response.json()
+}
+
 export async function createPost(
     title: string,
     content: string,
