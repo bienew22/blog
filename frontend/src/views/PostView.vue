@@ -140,7 +140,7 @@ watch(
     <p v-else-if="error" class="rounded-lg border border-(--color-error) bg-(--color-surface) p-4 text-sm text-(--color-error)">
       게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요. {{ error }}
     </p>
-    <article v-else class="mx-auto w-full max-w-[760px]">
+    <article v-else class="mx-auto w-full">
       <header class="mb-8 border-b border-(--color-border-subtle) pb-6 sm:mb-10 sm:pb-8">
         <!-- 블로그 포스트 헤더 : 아이콘 -->
         <NotebookText class="mb-4 h-8 w-8 text-(--color-primary)" :stroke-width="1.5" />

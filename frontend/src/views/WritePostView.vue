@@ -141,7 +141,7 @@ async function savePost(option: boolean) {
 
 <template>
   <BlogLayout>
-    <form class="mx-auto w-full max-w-4xl" @submit.prevent>
+    <form class="mx-auto w-full" @submit.prevent>
       <div class="mb-8 flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"

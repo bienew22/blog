@@ -20,7 +20,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 <template>
   <div class="flex min-h-screen flex-col bg-(--color-background) text-(--color-text) lg:flex-row">
     <BlogSidebar />
-    <main class="flex min-h-screen min-w-0 flex-1 flex-col py-6 px-6 lg:px-10">
+    <main class="flex min-h-screen min-w-0 flex-1 flex-col py-6 px-6 sm:px-12 lg:px-16">
       <div class="mx-auto w-full max-w-(--container-width) min-w-0 flex-1 py-6 sm:py-8 lg:py-10">
         <slot />
       </div>
