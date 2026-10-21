@@ -145,20 +145,21 @@ async function savePost(option: boolean) {
       <div class="mb-8 flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
+          class="inline-flex h-11 items-center gap-2 rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
         >
           <Eye class="h-4 w-4" />미리보기
         </button>
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
+          class="inline-flex h-11 items-center gap-2 rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
         >
           <Save class="h-4 w-4" />
           임시저장
         </button>
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md bg-(--color-heading) px-4 text-sm font-medium text-(--color-background) transition-opacity hover:opacity-85 hover:cursor-pointer"
+          class="inline-flex h-11 items-center gap-2 rounded-lg bg-(--color-primary) px-4 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-60"
+          :disabled="isSavingPost"
           @click="savePost(true)"
         >
           <Send class="h-4 w-4" />
@@ -177,7 +178,7 @@ async function savePost(option: boolean) {
             type="text"
             maxlength="200"
             placeholder="제목을 입력하세요"
-            class="h-12 w-full rounded-md border border-(--color-border) bg-(--color-background) px-4 text-base text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
+            class="h-12 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-base text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-muted) focus:border-(--color-primary)"
           />
         </section>
 
@@ -203,7 +204,7 @@ async function savePost(option: boolean) {
                   aria-controls="available-tag-list"
                   role="combobox"
                   aria-autocomplete="list"
-                  class="h-9 w-full rounded-md border border-(--color-border) bg-(--color-background) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
+                  class="h-11 w-full rounded-lg border border-(--color-border) bg-(--color-surface) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-muted) focus:border-(--color-primary)"
                   @focus="isTagListOpen = true"
                   @keydown.esc="handleEsc"
                 />
@@ -213,18 +214,18 @@ async function savePost(option: boolean) {
                 id="available-tag-list"
                 role="listbox"
                 aria-label="태그 목록"
-                class="my-scroll absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-(--color-border-hover) bg-(--color-background) py-1 shadow-lg dark:bg-[#29292f]"
+                class="my-scroll absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-(--color-border) bg-(--color-surface-elevated) py-1 shadow-md"
               >
                 <li v-for="tag in filteredTags" :key="tag">
                   <button
                     type="button"
                     role="option"
                     :aria-selected="selectedTags.some(t => t.tagName === tag.tagName)"
-                    class="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
+                    class="flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft)"
                     @click="toggleTag(tag)"
                   >
                     <span>#{{ tag.tagName }}</span>
-                    <span v-if="selectedTags.some(t => t.tagName === tag.tagName)" class="text-xs text-(--color-hover-title)">
+                    <span v-if="selectedTags.some(t => t.tagName === tag.tagName)" class="text-xs text-(--color-primary)">
                       선택됨
                     </span>
                   </button>
@@ -232,7 +233,7 @@ async function savePost(option: boolean) {
                 <li v-if="filteredTags.length === 0">
                   <button
                     type="button"
-                    class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute)"
+                    class="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-soft)"
                     @click="addTag(tagSearch)"
                   >
                     <Plus class="h-4 w-4" />
@@ -250,7 +251,7 @@ async function savePost(option: boolean) {
               :key="tag.tagName"
               type="button"
               aria-label="선택한 태그 해제"
-              class="rounded-md border border-(--color-border) bg-(--color-background-soft) px-2.5 py-1 text-xs text-(--color-heading) transition-colors hover:border-(--color-border-hover) dark:border-(--color-border-hover) dark:bg-(--color-background-mute) hover:cursor-pointer"
+              class="min-h-9 rounded-full border border-(--color-border) bg-(--color-background-soft) px-3 py-1 text-xs text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
               @click="toggleTag(tag)"
             >
               #{{ tag.tagName }} <span aria-hidden="true">×</span>
@@ -274,11 +275,11 @@ async function savePost(option: boolean) {
         v-for="t in toasts"
         :key="t.id"
         role="status"
-        class="w-72 overflow-hidden rounded-md px-5 py-3 text-sm font-medium whitespace-nowrap text-ellipsis text-white shadow-lg"
+        class="w-72 overflow-hidden rounded-lg border border-(--color-border) bg-(--color-surface-elevated) px-5 py-3 text-sm font-medium whitespace-nowrap text-ellipsis shadow-md"
         :class="{
-          'bg-gray-500': t.type === 'pending',
-          'bg-green-600': t.type === 'success',
-          'bg-red-600': t.type === 'error',
+          'text-(--color-text-secondary)': t.type === 'pending',
+          'text-(--color-success)': t.type === 'success',
+          'text-(--color-error)': t.type === 'error',
         }"
       >
         {{ t.message }}

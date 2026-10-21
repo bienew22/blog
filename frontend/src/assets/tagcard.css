@@ -1,7 +1,3 @@
 .tag-card {
-  --color-border: rgba(26, 22, 15, 0.06);
-}
-
-.dark .tag-card {
-  --color-border: rgba(255, 255, 255, 0.06);
+  min-width: 0;
 }
