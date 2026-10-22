@@ -28,7 +28,7 @@ const router = useRouter()
 
 const props = defineProps<{ preview?: PostDetail }>()
 
-const slug = computed(() => route.params.slug as string)
+const postId = computed(() => route.params.id as string)
 
 const post = ref<PostDetail | null>(null)
 const isLoading = ref(!props.preview)
@@ -56,7 +56,7 @@ watch(
 onMounted(async () => {
   if (props.preview) return
   try {
-    post.value = await fetchPostDetail(slug.value)
+    post.value = await fetchPostDetail(postId.value)
     if (post.value === null) {
       router.replace({ name: 'not-found' })
     }

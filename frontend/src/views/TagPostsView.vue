@@ -88,8 +88,8 @@ onMounted(async () => {
       </div>
 
       <ul class="flex flex-col">
-        <li v-for="post in yearPosts" :key="post.slug">
-          <TagPostCard :title="post.title" :date="formatDate(post.createAt)" :slug="post.slug" />
+        <li v-for="post in yearPosts" :key="post.id">
+          <TagPostCard :title="post.title" :date="formatDate(post.createAt)" :id="post.id" />
         </li>
       </ul>
       <hr v-if="index < postsByYear.length - 1" class="mt-8 border-(--color-border)" />
