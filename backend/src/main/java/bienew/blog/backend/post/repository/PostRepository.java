@@ -25,10 +25,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
-        WHERE p.slug = :slug
+        WHERE p.id = :id
         AND p.status = 'PUBLISHED'
     """)
-	Optional<Post> findBySlug(String slug);
+    Optional<Post> findByIdWithTags(Long id);
 
     boolean existsBySlug(String slug);
 }
