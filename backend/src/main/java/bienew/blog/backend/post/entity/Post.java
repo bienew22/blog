@@ -78,4 +78,17 @@ public class Post {
 
         return post;
     }
+
+    public void update(String title, String contentMd, String contentHtml, List<Tag> tags, PostStatus status) {
+        this.title = title;
+        this.contentMd = contentMd;
+        this.contentHtml = contentHtml;
+        this.status = status;
+        this.updateAt = LocalDateTime.now();
+
+        postTags.clear();
+        for (Tag tag : tags) {
+            postTags.add(PostTag.create(this, tag));
+        }
+    }
 }

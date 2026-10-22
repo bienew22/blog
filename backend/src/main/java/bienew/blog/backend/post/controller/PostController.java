@@ -42,6 +42,15 @@ public class PostController {
         return postService.getPost(id);
     }
 
+    @GetMapping("/{id}/edit")
+    @Operation(
+            summary = "게시물 수정 정보 조회",
+            description = "수정에 필요한 게시물 정보를 반환합니다."
+    )
+    public PostDetailResponse getPostForEdit(@PathVariable Long id) {
+        return postService.getPostForEdit(id);
+    }
+
     @PostMapping("")
     @Operation(
             summary = "게시물 생성",
@@ -49,6 +58,18 @@ public class PostController {
     )
     public PostDetailResponse createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         return postService.createPost(postCreateRequest);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "게시물 수정",
+            description = "게시물의 제목, 내용, 태그, 상태를 수정합니다."
+    )
+    public PostDetailResponse updatePost(
+            @PathVariable Long id,
+            @Valid @RequestBody PostCreateRequest postUpdateRequest
+    ) {
+        return postService.updatePost(id, postUpdateRequest);
     }
 
     @PostMapping("/preview")
@@ -63,6 +84,7 @@ public class PostController {
                 "preview",
                 LocalDateTime.now(),
                 MarkDownParser.toHtml(request.contentMd() == null ? "" : request.contentMd()),
+                request.contentMd() == null ? "" : request.contentMd(),
                 request.tags() == null ? List.of() : request.tags()
         );
     }

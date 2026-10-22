@@ -32,4 +32,12 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             WHERE t.tagName IN :tagNames
     """)
     void incrementPostCount(List<String> tagNames);
+
+    @Modifying
+    @Query("""
+            UPDATE Tag t
+            SET t.postCnt = t.postCnt - 1
+            WHERE t.tagName IN :tagNames
+    """)
+    void decrementPostCount(List<String> tagNames);
 }
