@@ -5,6 +5,7 @@ import BlogLayout from '@/components/layout/BlogLayout.vue'
 import WriteTab from '@/components/write-post/WriteTab.vue'
 import PreviewTab from '@/components/write-post/PreviewTab.vue'
 import { Eye, Pencil, Save, Send } from 'lucide-vue-next'
+import { type PostStatus, POST_STATUS } from '@/types/postStatus'
 import { type Tag } from '@/api/tags'
 import { createPost } from '@/api/posts'
 
@@ -16,7 +17,7 @@ const selectedTags = ref<Tag[]>([])
 
 type ToastType = 'pending' | 'success' | 'error'
 const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
-const isSavingPost = ref(false)
+const isSavingPost = ref(false) // 연속 클릭을 막음
 let toastSeq = 0  // toast의 아이디
 
 function dismissToast(id: number) {
@@ -30,7 +31,7 @@ function showToast(message: string, type: ToastType, duration: number) {
   return id
 }
 
-async function savePost(option: boolean) {
+async function savePost(option: boolean, status: PostStatus) {
   const postTitle = title.value.trim()
   const postContent = content.value.trim()
 
@@ -54,6 +55,7 @@ async function savePost(option: boolean) {
       postTitle,
       content.value,
       selectedTags.value.map((tag) => tag.tagName),
+      status
     )
     showToast('게시글 저장 완료', 'success', 2000)
 
@@ -75,6 +77,8 @@ async function savePost(option: boolean) {
         <button
           type="button"
           class="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
+          :disabled="isSavingPost"
+          @click="savePost(false, POST_STATUS.DRAFT)"
         >
           <Save class="h-4 w-4 shrink-0" />
           임시저장
@@ -83,7 +87,7 @@ async function savePost(option: boolean) {
           type="button"
           class="inline-flex h-9 items-center justify-center gap-1 rounded-lg bg-(--color-primary) px-2 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-60 sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
           :disabled="isSavingPost"
-          @click="savePost(true)"
+          @click="savePost(true, POST_STATUS.PUBLISHED)"
         >
           <Send class="h-4 w-4 shrink-0" />
           저장

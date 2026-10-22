@@ -1,3 +1,5 @@
+import type { PostStatus } from '../types/postStatus'
+
 export interface Post {
     title: string
     slug: string
@@ -62,13 +64,15 @@ export async function fetchPostPreview(
 export async function createPost(
     title: string,
     content: string,
-    tags: string[]): Promise<Post> {
+    tags: string[],
+    status: PostStatus
+): Promise<Post> {
     const response = await fetch(`/api/v1/posts`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, "contentMd": content, tags }),
+        body: JSON.stringify({ title, "contentMd": content, tags, status }),
     })
     if (!response.ok) {
         throw new Error(`Failed to create post: ${response.status}`)
