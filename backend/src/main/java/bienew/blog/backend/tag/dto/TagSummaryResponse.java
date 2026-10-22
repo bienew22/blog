@@ -1,6 +1,6 @@
 package bienew.blog.backend.tag.dto;
 
-import bienew.blog.backend.entity.Tag;
+import bienew.blog.backend.tag.entity.Tag;
 
 public record TagSummaryResponse(
         String tagName,

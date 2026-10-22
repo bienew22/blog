@@ -1,7 +1,8 @@
-package bienew.blog.backend.entity;
+package bienew.blog.backend.post.entity;
 
 
-import bienew.blog.backend.post.dto.PostCreateRequest;
+import bienew.blog.backend.tag.entity.Tag;
+import bienew.blog.backend.mapping.entity.PostTag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

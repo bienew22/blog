@@ -3,7 +3,9 @@ package bienew.blog.backend.post.controller;
 
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
+import bienew.blog.backend.post.dto.PostPreviewRequest;
 import bienew.blog.backend.post.dto.PostResponse;
+import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -46,6 +49,21 @@ public class PostController {
     )
     public PostDetailResponse createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         return postService.createPost(postCreateRequest);
+    }
+
+    @PostMapping("/preview")
+    @Operation(
+            summary = "게시물 미리보기",
+            description = "저장하지 않고 마크다운을 HTML로 변환한 미리보기를 반환합니다."
+    )
+    public PostDetailResponse previewPost(@RequestBody PostPreviewRequest request) {
+        return new PostDetailResponse(
+                request.title() == null ? "" : request.title(),
+                "preview",
+                LocalDateTime.now(),
+                MarkDownParser.toHtml(request.contentMd() == null ? "" : request.contentMd()),
+                request.tags() == null ? List.of() : request.tags()
+        );
     }
 
 

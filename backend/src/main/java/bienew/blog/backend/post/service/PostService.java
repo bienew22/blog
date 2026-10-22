@@ -2,8 +2,8 @@ package bienew.blog.backend.post.service;
 
 
 import bienew.blog.backend.common.snowflake.Snowflake;
-import bienew.blog.backend.entity.Post;
-import bienew.blog.backend.entity.Tag;
+import bienew.blog.backend.post.entity.Post;
+import bienew.blog.backend.tag.entity.Tag;
 import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
