@@ -29,13 +29,13 @@ my blog
 - 개발 완료 후에 develop branch에 merge 함. (브랜치는 삭제 X)
 - 이름 규칙 "feature/기능 이름"
 
-#### b-feature
+#### b-feature (1인 개발시 생략)
 - 백엔드 기능 개발 브랜치
 - feature으로 부터 파생되어야 함.
 - 개발 완료 후에 feature 브랜치에 merge 되어야 함. (no fastforword)
 - feature 브랜치에 merge 후 삭제 함.
 
-#### f-feature
+#### f-feature (1인 개발시 생략)
 - 프론트 기능 개발 브랜치
 - feature으로 부터 파생되어야 함.
 - 개발 완료 후에 feature 브랜치에 merge 되어야 함. (no fastforword)
