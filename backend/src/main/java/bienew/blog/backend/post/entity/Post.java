@@ -1,7 +1,9 @@
-package bienew.blog.backend.entity;
+package bienew.blog.backend.post.entity;
 
 
-import bienew.blog.backend.post.dto.PostCreateRequest;
+import bienew.blog.backend.post.domain.PostStatus;
+import bienew.blog.backend.tag.entity.Tag;
+import bienew.blog.backend.mapping.entity.PostTag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,7 +40,11 @@ public class Post {
     private String author;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PostTag> postTags = new HashSet<>();
+    private final Set<PostTag> postTags = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private PostStatus status = PostStatus.DRAFT;
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt;
@@ -47,7 +53,7 @@ public class Post {
     private LocalDateTime updateAt;
 
     public static Post create(
-            Long id, String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags) {
+            Long id, String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags, PostStatus status) {
         LocalDateTime now = LocalDateTime.now();
 
         Post post = new Post();
@@ -59,6 +65,8 @@ public class Post {
         post.contentHtml = contentHtml;
 
         post.author = author;
+
+        post.status = status;
 
         post.createAt = now;
         post.updateAt = now;

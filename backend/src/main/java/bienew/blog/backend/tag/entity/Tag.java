@@ -1,6 +1,7 @@
-package bienew.blog.backend.entity;
+package bienew.blog.backend.tag.entity;
 
 
+import bienew.blog.backend.mapping.entity.PostTag;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

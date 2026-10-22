@@ -4,12 +4,12 @@ DELETE FROM posts;
 
 DELETE FROM tags;
 
-INSERT INTO posts (id, title, slug, content_md, content_html, author, create_at, update_at)
+INSERT INTO posts (id, title, slug, content_md, content_html, author, status, create_at, update_at)
 VALUES
-    (1, 'test1', 't1', '# First Post', '<h1>First Post</h1>', 'bienew22', NOW(), NOW()),
-    (2, 'test2', 't2', '# First Post', '<h1>First Post</h1>', 'bienew22', NOW(), NOW()),
-    (3, 'test3', 't3', '# First Post', '<h1>First Post</h1>', 'bienew22', NOW(), NOW()),
-    (4, 'test4', 't4', '# First Post', '<h1>First Post</h1>', 'bienew22', NOW(), NOW());
+    (1, 'test1', 't1', '# First Post', '<h1>First Post</h1>', 'bienew22', 'PUBLISHED', NOW(), NOW()),
+    (2, 'test2', 't2', '# First Post', '<h1>First Post</h1>', 'bienew22', 'PUBLISHED', NOW(), NOW()),
+    (3, 'test3', 't3', '# First Post', '<h1>First Post</h1>', 'bienew22', 'PUBLISHED', NOW(), NOW()),
+    (4, 'test4', 't4', '# First Post', '<h1>First Post</h1>', 'bienew22', 'PUBLISHED', NOW(), NOW());
 
 INSERT INTO tags (id, tag_name, tag_desc, post_cnt, create_at)
 VALUES

@@ -1,7 +1,7 @@
 package bienew.blog.backend.post.repository;
 
 
-import bienew.blog.backend.entity.Post;
+import bienew.blog.backend.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
+        WHERE p.status = 'PUBLISHED'
    """)
     List<Post> findAllWithTags();
 
@@ -25,6 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
         WHERE p.slug = :slug
+        AND p.status = 'PUBLISHED'
     """)
 	Optional<Post> findBySlug(String slug);
 

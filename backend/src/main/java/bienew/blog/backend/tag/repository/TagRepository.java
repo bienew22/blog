@@ -1,7 +1,7 @@
 package bienew.blog.backend.tag.repository;
 
 
-import bienew.blog.backend.entity.Tag;
+import bienew.blog.backend.tag.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

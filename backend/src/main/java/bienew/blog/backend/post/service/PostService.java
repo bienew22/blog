@@ -2,8 +2,9 @@ package bienew.blog.backend.post.service;
 
 
 import bienew.blog.backend.common.snowflake.Snowflake;
-import bienew.blog.backend.entity.Post;
-import bienew.blog.backend.entity.Tag;
+import bienew.blog.backend.post.domain.PostStatus;
+import bienew.blog.backend.post.entity.Post;
+import bienew.blog.backend.tag.entity.Tag;
 import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
@@ -55,7 +56,8 @@ public class PostService {
                 postCreateRequest.contentMd(),
                 MarkDownParser.toHtml(postCreateRequest.contentMd()),
                 "bienew22",
-                tags
+                tags,
+                PostStatus.fromString(postCreateRequest.status())
         );
 
         // 2. 각 tag에 post_cnt 증가
