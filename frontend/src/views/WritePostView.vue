@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import WriteTab from '@/components/write-post/WriteTab.vue'
 import PreviewTab from '@/components/write-post/PreviewTab.vue'
+import DraftPostDialog from '@/components/write-post/DraftPostDialog.vue'
 import { Eye, Pencil, Save, Send } from 'lucide-vue-next'
 import { type PostStatus, POST_STATUS } from '@/types/postStatus'
 import { type Tag } from '@/api/tags'
-import { createPost, fetchPostForEdit, updatePost } from '@/api/posts'
+import { createPost, fetchDraftPosts, fetchPostForEdit, updatePost, type Post } from '@/api/posts'
 
 const route = useRoute()
 const router = useRouter()
@@ -18,27 +19,79 @@ const activeTab = ref<'edit' | 'preview'>('edit')
 const selectedTags = ref<Tag[]>([])
 const isLoadingPost = ref(!!postId.value)
 const postLoadError = ref(false)
+const drafts = ref<Post[]>([])
+const isLoadingDrafts = ref(false)
+const draftLoadError = ref<string | null>(null)
+const isDraftDialogOpen = ref(!postId.value)
 
 type ToastType = 'pending' | 'success' | 'error'
 const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
 const isSavingPost = ref(false) // 연속 클릭을 막음
 let toastSeq = 0  // toast의 아이디
 
-onMounted(async () => {
-  if (!postId.value) return
+watch(
+  () => route.params.id,
+  async (routePostId) => {
+    postId.value = typeof routePostId === 'string' ? routePostId : undefined
 
+    if (!postId.value) {
+      title.value = ''
+      content.value = ''
+      selectedTags.value = []
+      isLoadingPost.value = false
+      postLoadError.value = false
+      isDraftDialogOpen.value = true
+      await loadDrafts()
+      return
+    }
+
+    isDraftDialogOpen.value = false
+    isLoadingPost.value = true
+    postLoadError.value = false
+    try {
+      const post = await fetchPostForEdit(postId.value)
+      title.value = post.title
+      content.value = post.contentMd
+      selectedTags.value = post.tags.map((tagName) => ({ tagName, postCount: 0 }))
+    } catch (e) {
+      postLoadError.value = true
+      showToast(e instanceof Error ? e.message : '게시글을 불러오지 못했습니다.', 'error', 3000)
+    } finally {
+      isLoadingPost.value = false
+    }
+  },
+  { immediate: true },
+)
+
+async function loadDrafts() {
+  isLoadingDrafts.value = true
+  draftLoadError.value = null
   try {
-    const post = await fetchPostForEdit(postId.value)
-    title.value = post.title
-    content.value = post.contentMd
-    selectedTags.value = post.tags.map((tagName) => ({ tagName, postCount: 0 }))
+    drafts.value = await fetchDraftPosts()
+    if (drafts.value.length === 0) isDraftDialogOpen.value = false
   } catch (e) {
-    postLoadError.value = true
-    showToast(e instanceof Error ? e.message : '게시글을 불러오지 못했습니다.', 'error', 3000)
+    draftLoadError.value = e instanceof Error ? e.message : '임시저장한 글을 불러오지 못했습니다.'
   } finally {
-    isLoadingPost.value = false
+    isLoadingDrafts.value = false
   }
-})
+}
+
+function startNewPost() {
+  isDraftDialogOpen.value = false
+  postId.value = undefined
+  title.value = ''
+  content.value = ''
+  selectedTags.value = []
+}
+
+async function resumeDraft(id: string) {
+  isDraftDialogOpen.value = false
+  await router.push({ name: 'edit-post', params: { id } })
+}
+
+async function closeDraftDialog() {
+  await router.push({ name: 'home' })
+}
 
 function dismissToast(id: number) {
   toasts.value = toasts.value.filter((t) => t.id !== id)
@@ -96,7 +149,14 @@ async function savePost(option: boolean, status: PostStatus) {
 
 <template>
   <BlogLayout>
-    <form class="mx-auto w-full" @submit.prevent>
+    <div v-if="isLoadingPost || (isLoadingDrafts && isDraftDialogOpen)" class="flex min-h-[50vh] items-center justify-center">
+      <div
+        class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
+        role="status"
+        aria-label="불러오는 중"
+      ></div>
+    </div>
+    <form v-else-if="!isDraftDialogOpen" class="mx-auto w-full" @submit.prevent>
       <div class="mb-4 flex items-center justify-end gap-1.5 sm:gap-2">
         <button
           type="button"
@@ -177,6 +237,17 @@ async function savePost(option: boolean, status: PostStatus) {
         {{ t.message }}
       </div>
     </TransitionGroup>
+
+    <DraftPostDialog
+      :open="isDraftDialogOpen"
+      :drafts="drafts"
+      :is-loading="isLoadingDrafts"
+      :error="draftLoadError"
+      @resume="resumeDraft"
+      @new-post="startNewPost"
+      @retry="loadDrafts"
+      @close="closeDraftDialog"
+    />
   </BlogLayout>
 </template>
 
