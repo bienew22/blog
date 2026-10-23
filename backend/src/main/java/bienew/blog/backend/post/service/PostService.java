@@ -100,11 +100,16 @@ public class PostService {
             tagRepository.incrementPostCount(addedTagNames);
         }
 
+        // 전체 삭제 후 재삽입하면 insert가 delete보다 먼저 실행되어 uk_post_tags 위반이 나므로 변경분만 반영
+        post.removeTags(removedTagNames);
+        post.addTags(tags.stream()
+                .filter(tag -> addedTagNames.contains(tag.getTagName()))
+                .toList());
+
         post.update(
                 postUpdateRequest.title(),
                 postUpdateRequest.contentMd(),
                 MarkDownParser.toHtml(postUpdateRequest.contentMd()),
-                tags,
                 PostStatus.fromString(postUpdateRequest.status())
         );
 
