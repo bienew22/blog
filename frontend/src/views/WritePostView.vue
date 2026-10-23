@@ -31,7 +31,11 @@ let toastSeq = 0  // toast의 아이디
 
 watch(
   () => route.params.id,
-  async (routePostId) => {
+  async (routePostId, _old, onCleanup) => {
+    let isStale = false
+    onCleanup(() => {
+      isStale = true
+    })
     postId.value = typeof routePostId === 'string' ? routePostId : undefined
 
     if (!postId.value) {
@@ -50,14 +54,16 @@ watch(
     postLoadError.value = false
     try {
       const post = await fetchPostForEdit(postId.value)
+      if (isStale) return
       title.value = post.title
       content.value = post.contentMd
       selectedTags.value = post.tags.map((tagName) => ({ tagName, postCount: 0 }))
     } catch (e) {
+      if (isStale) return
       postLoadError.value = true
       showToast(e instanceof Error ? e.message : '게시글을 불러오지 못했습니다.', 'error', 3000)
     } finally {
-      isLoadingPost.value = false
+      if (!isStale) isLoadingPost.value = false
     }
   },
   { immediate: true },
