@@ -1,70 +1,102 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
-import PostContentEditor from '@/components/blog/PostContentEditor.vue'
-import { Eye, Plus, Save, Search, Send } from 'lucide-vue-next'
-import { fetchTags, createTag, type Tag } from '@/api/tags'
-import { createPost } from '@/api/posts'
+import WriteTab from '@/components/write-post/WriteTab.vue'
+import PreviewTab from '@/components/write-post/PreviewTab.vue'
+import DraftPostDialog from '@/components/write-post/DraftPostDialog.vue'
+import { Eye, Pencil, Save, Send } from 'lucide-vue-next'
+import { type PostStatus, POST_STATUS } from '@/types/postStatus'
+import { type Tag } from '@/api/tags'
+import { createPost, fetchDraftPosts, fetchPostForEdit, updatePost, type Post } from '@/api/posts'
 
+const route = useRoute()
 const router = useRouter()
+const postId = ref(route.params.id as string | undefined)
 const title = ref('')
 const content = ref('')
+const activeTab = ref<'edit' | 'preview'>('edit')
 const selectedTags = ref<Tag[]>([])
-const availableTags = ref<Tag[]>([])
-
-const tagSearch = ref('')
-const isTagListOpen = ref(false)
-const tagPicker = ref<HTMLElement | null>(null)
+const isLoadingPost = ref(!!postId.value)
+const postLoadError = ref(false)
+const drafts = ref<Post[]>([])
+const isLoadingDrafts = ref(false)
+const draftLoadError = ref<string | null>(null)
+const isDraftDialogOpen = ref(!postId.value)
 
 type ToastType = 'pending' | 'success' | 'error'
 const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
-const isCreatingTag = ref(false)  // 생성 완료전까지 중복 클릭 예방용
-const isSavingPost = ref(false)
+const isSavingPost = ref(false) // 연속 클릭을 막음
 let toastSeq = 0  // toast의 아이디
 
-const filteredTags = computed(() => {
-  const query = tagSearch.value.trim().toLocaleLowerCase()
-  if (!query) return availableTags.value
+watch(
+  () => route.params.id,
+  async (routePostId, _old, onCleanup) => {
+    let isStale = false
+    onCleanup(() => {
+      isStale = true
+    })
+    postId.value = typeof routePostId === 'string' ? routePostId : undefined
 
-  return availableTags.value.filter((tag) => tag.tagName.toLocaleLowerCase().includes(query))
-})
+    if (!postId.value) {
+      title.value = ''
+      content.value = ''
+      selectedTags.value = []
+      isLoadingPost.value = false
+      postLoadError.value = false
+      isDraftDialogOpen.value = true
+      await loadDrafts()
+      return
+    }
 
-onMounted(async () => {
+    isDraftDialogOpen.value = false
+    isLoadingPost.value = true
+    postLoadError.value = false
+    try {
+      const post = await fetchPostForEdit(postId.value)
+      if (isStale) return
+      title.value = post.title
+      content.value = post.contentMd
+      selectedTags.value = post.tags.map((tagName) => ({ tagName, postCount: 0 }))
+    } catch (e) {
+      if (isStale) return
+      postLoadError.value = true
+      showToast(e instanceof Error ? e.message : '게시글을 불러오지 못했습니다.', 'error', 3000)
+    } finally {
+      if (!isStale) isLoadingPost.value = false
+    }
+  },
+  { immediate: true },
+)
+
+async function loadDrafts() {
+  isLoadingDrafts.value = true
+  draftLoadError.value = null
   try {
-    availableTags.value = await fetchTags()
+    drafts.value = await fetchDraftPosts()
+    if (drafts.value.length === 0) isDraftDialogOpen.value = false
   } catch (e) {
-    showToast('태그를 불러오지 못했습니다.', 'error', 2000)
+    draftLoadError.value = e instanceof Error ? e.message : '임시저장한 글을 불러오지 못했습니다.'
+  } finally {
+    isLoadingDrafts.value = false
   }
-})
-
-function toggleTag(clickedTag: Tag) {
-  const index = selectedTags.value.findIndex(
-    tag => tag.tagName === clickedTag.tagName
-  )
-
-  if (index >= 0) {
-    selectedTags.value.splice(index, 1)
-  } else {
-    selectedTags.value.push(clickedTag)
-  }
-
-  tagSearch.value = ''
-  isTagListOpen.value = false
 }
 
-function handleEsc(e: KeyboardEvent) {
-  tagSearch.value = ''
-  isTagListOpen.value = false 
-
-  e.target.blur()
+function startNewPost() {
+  isDraftDialogOpen.value = false
+  postId.value = undefined
+  title.value = ''
+  content.value = ''
+  selectedTags.value = []
 }
 
-function closeTagListOnFocusout(event: FocusEvent) {
-  const nextTarget = event.relatedTarget
-  if (!(nextTarget instanceof Node) || !tagPicker.value?.contains(nextTarget)) {
-    isTagListOpen.value = false
-  }
+async function resumeDraft(id: string) {
+  isDraftDialogOpen.value = false
+  await router.push({ name: 'edit-post', params: { id } })
+}
+
+async function closeDraftDialog() {
+  await router.push({ name: 'home' })
 }
 
 function dismissToast(id: number) {
@@ -78,30 +110,9 @@ function showToast(message: string, type: ToastType, duration: number) {
   return id
 }
 
-async function addTag(rawName: string) {
-  const tagName = rawName.trim()
-  if (!tagName || isCreatingTag.value) return
+async function savePost(option: boolean, status: PostStatus) {
+  if (isLoadingPost.value || postLoadError.value) return
 
-  isTagListOpen.value = false
-  isCreatingTag.value = true
-  const pendingId = showToast('태그 생성 중...', 'pending', 2000)
-
-  try {
-    const created = await createTag(tagName)
-
-    availableTags.value.push(created)
-    selectedTags.value.push(created)
-    tagSearch.value = ''
-
-    showToast('태그 생성 완료', 'success', 2000)
-  } catch (e) {
-    showToast(e instanceof Error ? e.message : '태그 생성에 실패했습니다.', 'error', 2000)
-  } finally {
-    isCreatingTag.value = false
-  }
-}
-
-async function savePost(option: boolean) {
   const postTitle = title.value.trim()
   const postContent = content.value.trim()
 
@@ -121,15 +132,18 @@ async function savePost(option: boolean) {
   showToast('게시글 저장 중...', 'pending', 2000)
 
   try {
-    const post = await createPost(
-      postTitle,
-      content.value,
-      selectedTags.value.map((tag) => tag.tagName),
-    )
+    const tags = selectedTags.value.map((tag) => tag.tagName)
+    const post = postId.value
+      ? await updatePost(postId.value, postTitle, content.value, tags, status)
+      : await createPost(postTitle, content.value, tags, status)
+    if (!post.id) {
+      throw new Error('저장된 게시글 ID를 응답에서 찾을 수 없습니다.')
+    }
+    postId.value = post.id
     showToast('게시글 저장 완료', 'success', 2000)
 
     if (option) {
-      await router.push({ name: 'post', params: { slug: post.slug } })
+      await router.push({ name: 'post', params: { id: post.id } })
     }
   } catch (e) {
     showToast(e instanceof Error ? e.message : '게시글 저장에 실패했습니다.', 'error', 3000)
@@ -141,128 +155,73 @@ async function savePost(option: boolean) {
 
 <template>
   <BlogLayout>
-    <form class="mx-auto w-full max-w-4xl" @submit.prevent>
-      <div class="mb-8 flex flex-wrap items-center justify-end gap-2">
+    <div v-if="isLoadingPost || (isLoadingDrafts && isDraftDialogOpen)" class="flex min-h-[50vh] items-center justify-center">
+      <div
+        class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
+        role="status"
+        aria-label="불러오는 중"
+      ></div>
+    </div>
+    <form v-else-if="!isDraftDialogOpen" class="mx-auto w-full" @submit.prevent>
+      <div class="mb-4 flex items-center justify-end gap-1.5 sm:gap-2">
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
+          class="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
+          :disabled="isSavingPost || isLoadingPost || postLoadError"
+          @click="savePost(false, POST_STATUS.DRAFT)"
         >
-          <Eye class="h-4 w-4" />미리보기
-        </button>
-        <button
-          type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md border border-(--color-border) px-4 text-sm font-medium text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:border-(--color-border-hover) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
-        >
-          <Save class="h-4 w-4" />
+          <Save class="h-4 w-4 shrink-0" />
           임시저장
         </button>
         <button
           type="button"
-          class="inline-flex h-10 items-center gap-2 rounded-md bg-(--color-heading) px-4 text-sm font-medium text-(--color-background) transition-opacity hover:opacity-85 hover:cursor-pointer"
-          @click="savePost(true)"
+          class="inline-flex h-9 items-center justify-center gap-1 rounded-lg bg-(--color-primary) px-2 text-xs font-semibold whitespace-nowrap text-white transition-colors hover:bg-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-60 sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
+          :disabled="isSavingPost || isLoadingPost || postLoadError"
+          @click="savePost(true, POST_STATUS.PUBLISHED)"
         >
-          <Send class="h-4 w-4" />
+          <Send class="h-4 w-4 shrink-0" />
           저장
         </button>
       </div>
 
-      <section class="space-y-8">
-        <section>
-          <label class="mb-3 block text-sm font-semibold text-(--color-heading)" for="post-title">
-            제목
-          </label>
-          <input
-            id="post-title"
-            v-model="title"
-            type="text"
-            maxlength="200"
-            placeholder="제목을 입력하세요"
-            class="h-12 w-full rounded-md border border-(--color-border) bg-(--color-background) px-4 text-base text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
-          />
-        </section>
+      <div class="mb-6 grid grid-cols-2 border-b border-(--color-border-subtle)" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === 'edit'"
+          class="inline-flex h-11 items-center justify-center gap-2 border-b-2 text-sm font-medium whitespace-nowrap transition-colors hover:cursor-pointer"
+          :class="activeTab === 'edit' ? 'border-(--color-primary) text-(--color-primary)' : 'border-transparent text-(--color-text-secondary)'"
+          @click="activeTab = 'edit'"
+        >
+          <Pencil class="h-4 w-4" />작성
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === 'preview'"
+          class="inline-flex h-11 items-center justify-center gap-2 border-b-2 text-sm font-medium whitespace-nowrap transition-colors hover:cursor-pointer"
+          :class="activeTab === 'preview' ? 'border-(--color-primary) text-(--color-primary)' : 'border-transparent text-(--color-text-secondary)'"
+          @click="activeTab = 'preview'"
+        >
+          <Eye class="h-4 w-4" />미리보기
+        </button>
+      </div>
 
-        <section>
-          <div class="flex items-center gap-3">
-            <h2 class="shrink-0 text-sm font-semibold text-(--color-heading)">태그</h2>
-            <div
-              ref="tagPicker"
-              class="relative min-w-0 flex-1"
-              @focusout="closeTagListOnFocusout"
-            >
-              <label class="relative block">
-                <span class="sr-only">태그 검색</span>
-                <Search
-                  class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-(--color-text-secondary)"
-                />
-                <input
-                  v-model="tagSearch"
-                  type="search"
-                  placeholder="태그 검색"
-                  aria-label="태그 검색"
-                  :aria-expanded="isTagListOpen"
-                  aria-controls="available-tag-list"
-                  role="combobox"
-                  aria-autocomplete="list"
-                  class="h-9 w-full rounded-md border border-(--color-border) bg-(--color-background) pr-3 pl-10 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-secondary) focus:border-(--color-hover-title) dark:border-(--color-border-hover) dark:bg-[#29292f]"
-                  @focus="isTagListOpen = true"
-                  @keydown.esc="handleEsc"
-                />
-              </label>
-              <ul
-                v-if="isTagListOpen"
-                id="available-tag-list"
-                role="listbox"
-                aria-label="태그 목록"
-                class="my-scroll absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-(--color-border-hover) bg-(--color-background) py-1 shadow-lg dark:bg-[#29292f]"
-              >
-                <li v-for="tag in filteredTags" :key="tag">
-                  <button
-                    type="button"
-                    role="option"
-                    :aria-selected="selectedTags.some(t => t.tagName === tag.tagName)"
-                    class="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute) hover:cursor-pointer"
-                    @click="toggleTag(tag)"
-                  >
-                    <span>#{{ tag.tagName }}</span>
-                    <span v-if="selectedTags.some(t => t.tagName === tag.tagName)" class="text-xs text-(--color-hover-title)">
-                      선택됨
-                    </span>
-                  </button>
-                </li>
-                <li v-if="filteredTags.length === 0">
-                  <button
-                    type="button"
-                    class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-soft) dark:hover:bg-(--color-background-mute)"
-                    @click="addTag(tagSearch)"
-                  >
-                    <Plus class="h-4 w-4" />
-                    '{{ tagSearch.trim() }}' 태그 추가하기
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
+      <PreviewTab
+        v-if="activeTab === 'preview'"
+        :title="title"
+        :content="content"
+        :tags="selectedTags"
+        @error="(message) => showToast(message, 'error', 3000)"
+      />
 
-          <div v-if="selectedTags.length" class="mt-4 flex flex-wrap items-center gap-2">
-            <span class="mr-1 text-xs text-(--color-text-secondary)">선택됨</span>
-            <button
-              v-for="tag in selectedTags"
-              :key="tag.tagName"
-              type="button"
-              aria-label="선택한 태그 해제"
-              class="rounded-md border border-(--color-border) bg-(--color-background-soft) px-2.5 py-1 text-xs text-(--color-heading) transition-colors hover:border-(--color-border-hover) dark:border-(--color-border-hover) dark:bg-(--color-background-mute) hover:cursor-pointer"
-              @click="toggleTag(tag)"
-            >
-              #{{ tag.tagName }} <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <p v-else class="mt-3 text-sm text-(--color-text-secondary)">선택된 태그가 없습니다.</p>
-        </section>
-
-        <PostContentEditor
-          v-model="content"
-        />
-      </section>
+      <WriteTab
+        v-show="activeTab === 'edit'"
+        v-model:title="title"
+        v-model:content="content"
+        v-model:selected-tags="selectedTags"
+        @toast="showToast"
+      />
     </form>
 
     <TransitionGroup
@@ -274,16 +233,27 @@ async function savePost(option: boolean) {
         v-for="t in toasts"
         :key="t.id"
         role="status"
-        class="w-72 overflow-hidden rounded-md px-5 py-3 text-sm font-medium whitespace-nowrap text-ellipsis text-white shadow-lg"
+        class="w-72 overflow-hidden rounded-lg border border-(--color-border) bg-(--color-surface-elevated) px-5 py-3 text-sm font-medium whitespace-nowrap text-ellipsis shadow-md"
         :class="{
-          'bg-gray-500': t.type === 'pending',
-          'bg-green-600': t.type === 'success',
-          'bg-red-600': t.type === 'error',
+          'text-(--color-text-secondary)': t.type === 'pending',
+          'text-(--color-success)': t.type === 'success',
+          'text-(--color-error)': t.type === 'error',
         }"
       >
         {{ t.message }}
       </div>
     </TransitionGroup>
+
+    <DraftPostDialog
+      :open="isDraftDialogOpen"
+      :drafts="drafts"
+      :is-loading="isLoadingDrafts"
+      :error="draftLoadError"
+      @resume="resumeDraft"
+      @new-post="startNewPost"
+      @retry="loadDrafts"
+      @close="closeDraftDialog"
+    />
   </BlogLayout>
 </template>
 

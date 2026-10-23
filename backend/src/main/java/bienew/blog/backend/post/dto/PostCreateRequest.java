@@ -13,6 +13,9 @@ public record PostCreateRequest(
         @NotBlank(message = "내용은 필수입니다.")
         String contentMd,
 
+        @NotBlank(message = "상태는 필수입니다.")
+        String status,
+
         @JsonSetter(nulls = Nulls.AS_EMPTY)
         List<String> tags
 ) {
