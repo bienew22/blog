@@ -33,6 +33,15 @@ public class PostController {
         return postService.getPosts();
     }
 
+    @GetMapping("/drafts")
+    @Operation(
+            summary = "임시저장 게시물 목록 조회",
+            description = "임시저장된 게시물의 요약 정보를 반환합니다."
+    )
+    public List<PostResponse> getDraftPosts() {
+        return postService.getDraftPosts();
+    }
+
     @GetMapping("/{id}")
     @Operation(
             summary = "게시물 상세 조회",

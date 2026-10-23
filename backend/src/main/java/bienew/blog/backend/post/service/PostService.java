@@ -27,7 +27,13 @@ public class PostService {
 
     public List<PostResponse> getPosts() {
 
-        return postRepository.findAllWithTags().stream()
+        return postRepository.findAllWithTagsByStatus(PostStatus.PUBLISHED).stream()
+                .map(PostResponse::of)
+                .toList();
+    }
+
+    public List<PostResponse> getDraftPosts() {
+        return postRepository.findAllWithTagsByStatus(PostStatus.DRAFT).stream()
                 .map(PostResponse::of)
                 .toList();
     }
