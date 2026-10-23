@@ -1,9 +1,10 @@
 package bienew.blog.backend.tag.repository;
 
 
+import bienew.blog.backend.post.domain.PostStatus;
+import bienew.blog.backend.tag.dto.TagSummaryResponse;
 import bienew.blog.backend.tag.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -12,32 +13,17 @@ import java.util.Optional;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
-    @Query("""
-            SELECT DISTINCT t
-            FROM Tag t
-            LEFT JOIN FETCH t.postTags pt
-            LEFT JOIN FETCH pt.post
-            WHERE t.tagName = :tagName
-    """)
-    Optional<Tag> findByTagNameWithPosts(String tagName);
-
     Optional<Tag> findByTagName(String tagName);
 
     List<Tag> findAllByTagNameIn(List<String> tagNames);
 
-    @Modifying
     @Query("""
-            UPDATE Tag t
-            SET t.postCnt = t.postCnt + 1
-            WHERE t.tagName IN :tagNames
+            SELECT new bienew.blog.backend.tag.dto.TagSummaryResponse(t.tagName, COUNT(p))
+            FROM Tag t
+            LEFT JOIN t.postTags pt
+            LEFT JOIN pt.post p ON p.status IN :statuses
+            GROUP BY t.id, t.tagName
+            ORDER BY t.tagName
     """)
-    void incrementPostCount(List<String> tagNames);
-
-    @Modifying
-    @Query("""
-            UPDATE Tag t
-            SET t.postCnt = t.postCnt - 1
-            WHERE t.tagName IN :tagNames
-    """)
-    void decrementPostCount(List<String> tagNames);
+    List<TagSummaryResponse> findAllWithPostCount(List<PostStatus> statuses);
 }

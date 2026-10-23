@@ -11,12 +11,12 @@ VALUES
     (3, 'test3', 't3', '# First Post', '<h1>First Post</h1>', 'bienew22', 'PUBLISHED', NOW(), NOW()),
     (4, 'test4', 't4', '# First Post', '<h1>First Post</h1>', 'bienew22', 'PUBLISHED', NOW(), NOW());
 
-INSERT INTO tags (id, tag_name, tag_desc, post_cnt, create_at)
+INSERT INTO tags (id, tag_name, tag_desc, create_at)
 VALUES
-    (1, 'Java', 'Java programming language', 2, NOW()),
-    (2, 'Spring', 'Spring Framework', 2, NOW()),
-    (3, 'PostgreSQL', 'PostgreSQL database', 3, NOW()),
-    (4, 'Docker', 'Docker containerization', 3, NOW());
+    (1, 'Java', 'Java programming language', NOW()),
+    (2, 'Spring', 'Spring Framework', NOW()),
+    (3, 'PostgreSQL', 'PostgreSQL database', NOW()),
+    (4, 'Docker', 'Docker containerization', NOW());
 
 
 INSERT INTO post_tags (post_id, tag_id)
