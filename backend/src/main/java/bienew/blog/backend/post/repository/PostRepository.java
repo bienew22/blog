@@ -30,5 +30,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     """)
     Optional<Post> findByIdWithTags(Long id);
 
+    @Query("""
+        SELECT p
+        FROM Post p
+        LEFT JOIN FETCH p.postTags pt
+        LEFT JOIN FETCH pt.tag
+        WHERE p.id = :id
+    """)
+    Optional<Post> findByIdForEdit(Long id);
+
     boolean existsBySlug(String slug);
 }
