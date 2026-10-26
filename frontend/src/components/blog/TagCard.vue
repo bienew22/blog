@@ -13,7 +13,7 @@ withDefaults(
 
 <template>
   <RouterLink
-    :to="`/tag/${tagName}`"
+    :to="{ name: 'tag', params: { tagName } }"
     class="tag-card group flex min-h-20 items-center justify-between gap-3 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 py-4 transition-colors hover:border-(--color-primary) hover:bg-(--color-accent-soft)"
   >
     <span class="flex min-w-0 items-center gap-3">

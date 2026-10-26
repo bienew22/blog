@@ -25,7 +25,7 @@ export async function fetchTags(): Promise<Tag[]> {
 }
 
 export async function fetchTagPosts(tagName: string): Promise<TagPosts | null> {
-    const response = await fetch(`/api/v1/tags/${tagName}`)
+    const response = await fetch(`/api/v1/tags/${encodeURIComponent(tagName)}`)
     if (response.status !== 200) {
         return null
     }
