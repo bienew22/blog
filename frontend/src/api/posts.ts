@@ -21,6 +21,7 @@ export interface PostDetail {
     slug: string
     createAt: string
     content: string
+    contentMd: string
     tags: string[]
 }
 
@@ -44,6 +45,15 @@ export async function fetchPostDetail(id: string): Promise<PostDetail> {
     const data: PostDetail = await response.json()
 
     return data
+}
+
+export async function fetchPostForEdit(id: string): Promise<PostDetail> {
+    const response = await fetch(`/api/v1/posts/${id}/edit`)
+    if (!response.ok) {
+        throw new Error(`Failed to fetch post for editing: ${response.status}`)
+    }
+
+    return await response.json()
 }
 
 export async function fetchPostPreview(
@@ -84,4 +94,25 @@ export async function createPost(
     const data: Post = await response.json()
 
     return data
+}
+
+export async function updatePost(
+    id: string,
+    title: string,
+    content: string,
+    tags: string[],
+    status: PostStatus
+): Promise<Post> {
+    const response = await fetch(`/api/v1/posts/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, "contentMd": content, tags, status }),
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to update post: ${response.status}`)
+    }
+
+    return await response.json()
 }

@@ -43,6 +43,11 @@ const router = createRouter({
       component: () => import('../views/NotFoundView.vue'),
     },
     {
+      path: '/write/:id',
+      name: 'edit-post',
+      component: () => import('../views/WritePostView.vue'),
+    },
+    {
       path: '/write',
       name: 'write',
       component: () => import('../views/WritePostView.vue'),

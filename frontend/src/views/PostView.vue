@@ -3,7 +3,7 @@ import BlogLayout from '@/components/layout/BlogLayout.vue'
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { fetchPostDetail, type PostDetail } from '@/api/posts'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import { NotebookText } from 'lucide-vue-next'
+import { NotebookText, Pencil } from 'lucide-vue-next'
 import Prism from 'prismjs'
 
 import 'prismjs/components/prism-typescript'
@@ -156,6 +156,14 @@ watch(
       <header class="mb-8 border-b border-(--color-border-subtle) pb-6 sm:mb-10 sm:pb-8">
         <!-- 블로그 포스트 헤더 : 아이콘 -->
         <NotebookText class="mb-4 h-8 w-8 text-(--color-primary)" :stroke-width="1.5" />
+        <RouterLink
+          v-if="post?.id"
+          :to="{ name: 'edit-post', params: { id: post.id } }"
+          class="mb-3 inline-flex items-center gap-2 rounded-lg border border-(--color-border) px-3 py-2 text-sm text-(--color-text-secondary) hover:border-(--color-primary) hover:text-(--color-primary)"
+        >
+          <Pencil class="h-4 w-4" />
+          수정
+        </RouterLink>
         <!-- 블로그 포스트 헤더 : 메타 정보 -->
         <div class="flex items-center gap-3 text-xs text-(--color-text-muted)">
           <time :datetime="post?.createAt.replace(' ', 'T')">{{ formattedDate }}</time>
