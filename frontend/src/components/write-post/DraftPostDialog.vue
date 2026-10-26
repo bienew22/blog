@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { FileText, Plus, RotateCcw, X } from 'lucide-vue-next'
 import type { Post } from '@/api/posts'
 
@@ -19,12 +19,27 @@ const emit = defineEmits<{
 
 const selectedDraft = ref<Post | null>(null)
 
+const dialogRef = ref<HTMLDialogElement | null>(null)
+
+// showModal() provides focus trapping, inert background, and focus restoration on close
 watch(
   () => props.open,
   (isOpen) => {
-    if (isOpen) selectedDraft.value = null
+    const dialog = dialogRef.value
+    if (!dialog) return
+    if (isOpen) {
+      selectedDraft.value = null
+      if (!dialog.open) dialog.showModal()
+    } else if (dialog.open) {
+      dialog.close()
+    }
   },
+  { flush: 'post' },
 )
+
+onMounted(() => {
+  if (props.open) dialogRef.value?.showModal()
+})
 
 function formatDate(createAt: string) {
   return new Date(createAt.replace(' ', 'T')).toLocaleDateString('ko-KR', {
@@ -34,29 +49,32 @@ function formatDate(createAt: string) {
   })
 }
 
+// Esc steps back from the confirm view first, then closes the dialog
 function handleEscape() {
-  selectedDraft.value = null
+  if (selectedDraft.value) selectedDraft.value = null
+  else emit('close')
 }
 
-function handleBackdropClick() {
-  emit('close')
+function handleBackdropClick(event: MouseEvent) {
+  if (event.target === dialogRef.value) emit('close')
+}
+
+function handleNativeClose() {
+  if (props.open) emit('close')
 }
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="open"
-      class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4"
-      @keydown.esc="handleEscape"
-      @click="handleBackdropClick"
-    >
+  <dialog
+    ref="dialogRef"
+    :aria-labelledby="selectedDraft ? 'resume-draft-title' : 'draft-list-title'"
+    class="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-xl border border-(--color-border) bg-(--color-surface) p-0 text-(--color-text) shadow-xl backdrop:bg-black/50"
+    @cancel.prevent="handleEscape"
+    @close="handleNativeClose"
+    @click="handleBackdropClick"
+  >
       <section
-        role="dialog"
-        aria-modal="true"
-        :aria-labelledby="selectedDraft ? 'resume-draft-title' : 'draft-list-title'"
-        class="relative my-auto w-full max-w-xl rounded-xl border border-(--color-border) bg-(--color-surface) p-6 shadow-xl sm:p-8"
-        @click.stop
+        class="relative p-6 sm:p-8"
       >
         <button
           type="button"
@@ -172,6 +190,5 @@ function handleBackdropClick() {
           </div>
         </template>
       </section>
-    </div>
-  </Teleport>
+  </dialog>
 </template>
