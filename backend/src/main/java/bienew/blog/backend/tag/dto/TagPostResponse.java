@@ -8,14 +8,14 @@ import java.util.List;
 public record TagPostResponse(
         String tagName,
         String tagDesc,
-        Integer postCount,
+        int postCount,
         List<PostSummaryResponse> posts
 ) {
     public static TagPostResponse of(Tag tag, List<PostSummaryResponse> posts) {
         return new TagPostResponse(
                 tag.getTagName(),
                 tag.getTagDesc(),
-                tag.getPostTags().size(),
+                posts.size(),
                 posts);
     }
 }

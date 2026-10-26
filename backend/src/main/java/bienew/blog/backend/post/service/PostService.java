@@ -66,9 +66,6 @@ public class PostService {
                 PostStatus.fromString(postCreateRequest.status())
         );
 
-        // 2. 각 tag에 post_cnt 증가
-        tagRepository.incrementPostCount(tags.stream().map(Tag::getTagName).toList());
-
         Post savedPost = postRepository.save(post);
         return PostDetailResponse.of(savedPost);
     }
@@ -92,13 +89,6 @@ public class PostService {
         List<String> addedTagNames = updatedTagNames.stream()
                 .filter(tagName -> !currentTagNames.contains(tagName))
                 .toList();
-
-        if (!removedTagNames.isEmpty()) {
-            tagRepository.decrementPostCount(removedTagNames);
-        }
-        if (!addedTagNames.isEmpty()) {
-            tagRepository.incrementPostCount(addedTagNames);
-        }
 
         // 전체 삭제 후 재삽입하면 insert가 delete보다 먼저 실행되어 uk_post_tags 위반이 나므로 변경분만 반영
         post.removeTags(removedTagNames);
