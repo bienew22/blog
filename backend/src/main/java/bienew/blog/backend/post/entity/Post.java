@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,14 +80,19 @@ public class Post {
         return post;
     }
 
-    public void update(String title, String contentMd, String contentHtml, List<Tag> tags, PostStatus status) {
+    public void update(String title, String contentMd, String contentHtml, PostStatus status) {
         this.title = title;
         this.contentMd = contentMd;
         this.contentHtml = contentHtml;
         this.status = status;
         this.updateAt = LocalDateTime.now();
+    }
 
-        postTags.clear();
+    public void removeTags(Collection<String> tagNames) {
+        postTags.removeIf(postTag -> tagNames.contains(postTag.getTag().getTagName()));
+    }
+
+    public void addTags(Collection<Tag> tags) {
         for (Tag tag : tags) {
             postTags.add(PostTag.create(this, tag));
         }
