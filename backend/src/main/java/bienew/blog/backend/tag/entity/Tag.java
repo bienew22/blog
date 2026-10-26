@@ -26,9 +26,6 @@ public class Tag {
     @Column(name = "tag_desc")
     private String tagDesc;
 
-    @Column(name = "post_cnt", nullable = false, columnDefinition = "int default 0")
-    private Integer postCnt = 0;
-
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostTag> postTags = new HashSet<>();
 
@@ -41,10 +38,6 @@ public class Tag {
         tag.tagName = tagName;
         tag.tagDesc = tagDesc;
         return tag;
-    }
-
-    public void incrementPostCount() {
-        this.postCnt++;
     }
 
 }

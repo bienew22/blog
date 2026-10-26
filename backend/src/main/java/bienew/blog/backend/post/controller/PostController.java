@@ -33,13 +33,31 @@ public class PostController {
         return postService.getPosts();
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/drafts")
+    @Operation(
+            summary = "임시저장 게시물 목록 조회",
+            description = "임시저장된 게시물의 요약 정보를 반환합니다."
+    )
+    public List<PostResponse> getDraftPosts() {
+        return postService.getDraftPosts();
+    }
+
+    @GetMapping("/{id}")
     @Operation(
             summary = "게시물 상세 조회",
-            description = "지정된 슬러그에 해당하는 게시물의 상세 정보를 반환합니다."
+            description = "지정된 ID에 해당하는 게시물의 상세 정보를 반환합니다."
     )
-    public PostDetailResponse getPost(@PathVariable String slug) {
-        return postService.getPost(slug);
+    public PostDetailResponse getPost(@PathVariable Long id) {
+        return postService.getPost(id);
+    }
+
+    @GetMapping("/{id}/edit")
+    @Operation(
+            summary = "게시물 수정 정보 조회",
+            description = "수정에 필요한 게시물 정보를 반환합니다."
+    )
+    public PostDetailResponse getPostForEdit(@PathVariable Long id) {
+        return postService.getPostForEdit(id);
     }
 
     @PostMapping("")
@@ -51,6 +69,18 @@ public class PostController {
         return postService.createPost(postCreateRequest);
     }
 
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "게시물 수정",
+            description = "게시물의 제목, 내용, 태그, 상태를 수정합니다."
+    )
+    public PostDetailResponse updatePost(
+            @PathVariable Long id,
+            @Valid @RequestBody PostCreateRequest postUpdateRequest
+    ) {
+        return postService.updatePost(id, postUpdateRequest);
+    }
+
     @PostMapping("/preview")
     @Operation(
             summary = "게시물 미리보기",
@@ -58,10 +88,12 @@ public class PostController {
     )
     public PostDetailResponse previewPost(@RequestBody PostPreviewRequest request) {
         return new PostDetailResponse(
+                null,
                 request.title() == null ? "" : request.title(),
                 "preview",
                 LocalDateTime.now(),
                 MarkDownParser.toHtml(request.contentMd() == null ? "" : request.contentMd()),
+                request.contentMd() == null ? "" : request.contentMd(),
                 request.tags() == null ? List.of() : request.tags()
         );
     }
