@@ -1,6 +1,7 @@
 import type { PostStatus } from '../types/postStatus'
 
 export interface Post {
+    id: string
     title: string
     slug: string
     createAt: string
@@ -8,12 +9,14 @@ export interface Post {
 }
 
 export interface PostSummary {
+    id: string
     title: string
     slug: string
     createAt: string
 }
 
 export interface PostDetail {
+    id: string | null
     title: string
     slug: string
     createAt: string
@@ -32,8 +35,8 @@ export async function fetchPosts(): Promise<Post[]> {
     return data
 }
 
-export async function fetchPostDetail(slug: string): Promise<PostDetail> {
-    const response = await fetch(`/api/v1/posts/${slug}`)
+export async function fetchPostDetail(id: string): Promise<PostDetail> {
+    const response = await fetch(`/api/v1/posts/${id}`)
     if (!response.ok) {
         throw new Error(`Failed to fetch post detail: ${response.status}`)
     }

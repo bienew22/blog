@@ -9,11 +9,10 @@ withDefaults(
     date: string
     tags: string[]
     icon?: Component
-    href?: string
+    postId: string
   }>(),
   {
     icon: () => NotebookText,
-    href: '#',
   },
 )
 </script>
@@ -22,7 +21,7 @@ withDefaults(
   <div
     class="post-card group flex w-full items-start justify-between gap-4 rounded-lg border-b border-(--color-border-subtle) px-3 py-5 transition-colors hover:bg-(--color-surface)"
   >
-    <RouterLink :to="`/post/${href}`" class="flex min-w-0 flex-1 items-start gap-3">
+    <RouterLink :to="{ name: 'post', params: { id: postId } }" class="flex min-w-0 flex-1 items-start gap-3">
       <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-(--color-background-soft) text-(--color-primary)">
         <component :is="icon" class="h-4 w-4" />
       </span>

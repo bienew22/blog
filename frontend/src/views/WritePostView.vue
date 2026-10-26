@@ -60,7 +60,10 @@ async function savePost(option: boolean, status: PostStatus) {
     showToast('게시글 저장 완료', 'success', 2000)
 
     if (option) {
-      await router.push({ name: 'post', params: { slug: post.slug } })
+      if (!post.id) {
+        throw new Error('저장된 게시글 ID를 응답에서 찾을 수 없습니다.')
+      }
+      await router.push({ name: 'post', params: { id: post.id } })
     }
   } catch (e) {
     showToast(e instanceof Error ? e.message : '게시글 저장에 실패했습니다.', 'error', 3000)

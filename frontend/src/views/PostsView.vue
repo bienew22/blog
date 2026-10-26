@@ -78,12 +78,12 @@ onMounted(async () => {
       </div>
 
       <ul class="flex flex-col">
-        <li v-for="post in yearPosts" :key="post.slug" class="flex items-start">
+        <li v-for="post in yearPosts" :key="post.id" class="flex items-start">
           <PostCard
             :title="post.title"
             :date="formatDate(post.createAt)"
             :tags="post.tags"
-            :href="post.slug"
+            :post-id="post.id"
           />
         </li>
       </ul>
