@@ -55,25 +55,35 @@ onMounted(async () => {
         class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
       ></div>
     </div>
-    <p v-else-if="error" class="text-sm text-red-500">{{ error }}</p>
+    <p v-else-if="error" class="rounded-lg border border-(--color-error) bg-(--color-surface) p-4 text-sm text-(--color-error)">
+      게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요. {{ error }}
+    </p>
+
+    <div
+      v-else-if="posts.length === 0"
+      class="rounded-lg border border-(--color-border) bg-(--color-surface) px-6 py-12 text-center"
+    >
+      <p class="font-semibold text-(--color-heading)">아직 게시글이 없습니다.</p>
+      <p class="mt-2 text-sm text-(--color-text-secondary)">새 글이 등록되면 이곳에서 확인할 수 있습니다.</p>
+    </div>
 
     <section v-for="([year, yearPosts], index) in postsByYear" :key="year" class="mb-10 w-full">
       <div class="mb-2 flex items-center gap-3">
-        <h2 class="text-2xl font-black text-(--color-heading) text-center">{{ year }}</h2>
+        <h2 class="text-xl font-bold text-(--color-heading)">{{ year }}</h2>
         <span
-          class="rounded-full border border-(--color-border) px-2.5 py-0.5 translate-y-0.5 text-xs text-center font-medium text-(--color-text-secondary)"
+          class="rounded-full border border-(--color-border) px-2.5 py-0.5 text-xs font-medium text-(--color-text-muted)"
         >
           {{ yearPosts.length }} Posts
         </span>
       </div>
 
       <ul class="flex flex-col">
-        <li v-for="post in yearPosts" :key="post.slug" class="flex items-start">
+        <li v-for="post in yearPosts" :key="post.id" class="flex items-start">
           <PostCard
             :title="post.title"
             :date="formatDate(post.createAt)"
             :tags="post.tags"
-            :href="post.slug"
+            :post-id="post.id"
           />
         </li>
       </ul>

@@ -3,7 +3,7 @@ import BlogLayout from '@/components/layout/BlogLayout.vue'
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { fetchPostDetail, type PostDetail } from '@/api/posts'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import { NotebookText } from 'lucide-vue-next'
+import { NotebookText, Pencil } from 'lucide-vue-next'
 import Prism from 'prismjs'
 
 import 'prismjs/components/prism-typescript'
@@ -26,10 +26,12 @@ Prism.manual = true
 const route = useRoute()
 const router = useRouter()
 
-const slug = computed(() => route.params.slug as string)
+const props = defineProps<{ preview?: PostDetail }>()
+
+const postId = computed(() => route.params.id as string)
 
 const post = ref<PostDetail | null>(null)
-const isLoading = ref(true)
+const isLoading = ref(!props.preview)
 const error = ref<string | null>(null)
 
 const contentRef = ref<HTMLElement | null>(null)
@@ -43,9 +45,18 @@ const formattedDate = computed(() => {
   })
 })
 
+watch(
+  () => props.preview,
+  (value) => {
+    if (value) post.value = value
+  },
+  { immediate: true },
+)
+
 onMounted(async () => {
+  if (props.preview) return
   try {
-    post.value = await fetchPostDetail(slug.value)
+    post.value = await fetchPostDetail(postId.value)
     if (post.value === null) {
       router.replace({ name: 'not-found' })
     }
@@ -125,11 +136,12 @@ watch(
       })
     }
   },
+  { immediate: true },
 )
 </script>
 
 <template>
-  <BlogLayout>
+  <component :is="preview ? 'div' : BlogLayout">
     <!-- <BlogHeader :icon="TagIcon" :title="post?.title" :description="post?.content" /> -->
 
     <div v-if="isLoading" class="flex min-h-[50vh] items-center justify-center">
@@ -137,32 +149,42 @@ watch(
         class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
       ></div>
     </div>
-    <p v-else-if="error" class="text-sm text-red-500">{{ error }}</p>
-    <div v-else class="max-w-none">
-      <header class="mb-8">
+    <p v-else-if="error" class="rounded-lg border border-(--color-error) bg-(--color-surface) p-4 text-sm text-(--color-error)">
+      게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요. {{ error }}
+    </p>
+    <article v-else class="mx-auto w-full">
+      <header class="mb-8 border-b border-(--color-border-subtle) pb-6 sm:mb-10 sm:pb-8">
         <!-- 블로그 포스트 헤더 : 아이콘 -->
-        <NotebookText class="mb-1 h-12 w-12 text-(--color-heading)" :stroke-width="1.5" />
+        <NotebookText class="mb-4 h-8 w-8 text-(--color-primary)" :stroke-width="1.5" />
+        <RouterLink
+          v-if="post?.id"
+          :to="{ name: 'edit-post', params: { id: post.id } }"
+          class="mb-3 inline-flex items-center gap-2 rounded-lg border border-(--color-border) px-3 py-2 text-sm text-(--color-text-secondary) hover:border-(--color-primary) hover:text-(--color-primary)"
+        >
+          <Pencil class="h-4 w-4" />
+          수정
+        </RouterLink>
         <!-- 블로그 포스트 헤더 : 메타 정보 -->
-        <div class="ml-1 flex items-center gap-3 font-mono text-sm text-(--color-text-secondary)">
-          <time>{{ formattedDate }}</time>
+        <div class="flex items-center gap-3 text-xs text-(--color-text-muted)">
+          <time :datetime="post?.createAt.replace(' ', 'T')">{{ formattedDate }}</time>
         </div>
         <!-- 블로그 포스트 헤더 : 제목 -->
-        <h1 class="mt-1 text-3xl leading-tight font-bold text-(--color-heading)">
+        <h1 class="mt-3 break-words text-[2rem] leading-tight font-bold tracking-tight text-(--color-heading) sm:text-[2.25rem]">
           {{ post?.title }}
         </h1>
         <!-- 블로그 포스트 헤더 : 태그 -->
-        <ul v-if="post?.tags?.length" class="mt-3 flex flex-wrap gap-1">
+        <ul v-if="post?.tags?.length" class="mt-5 flex flex-wrap gap-2">
           <li v-for="tag in post.tags" :key="tag">
             <RouterLink
               :to="`/tag/${tag}`"
-              class="inline-block rounded-md border-2 border-(--color-border) bg-(--color-background-soft) px-3 py-1 font-mono text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-mute) hover:border-(--color-border-hover)"
+              class="inline-block max-w-full break-all rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1 text-sm text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:bg-(--color-accent-soft) hover:text-(--color-primary)"
             >
-              <span class="text-blue-600 dark:text-blue-400">#</span>{{ tag }}
+              <span class="text-(--color-primary)">#</span>{{ tag }}
             </RouterLink>
           </li>
         </ul>
       </header>
       <div ref="contentRef" class="post-content" v-html="post?.content"></div>
-    </div>
-  </BlogLayout>
+    </article>
+  </component>
 </template>

@@ -34,9 +34,18 @@ onMounted(async () => {
         class="h-10 w-10 animate-spin rounded-full border-4 border-(--color-border) border-t-(--color-heading)"
       ></div>
     </div>
-    <p v-else-if="error" class="text-sm text-red-500">{{ error }}</p>
+    <p v-else-if="error" class="rounded-lg border border-(--color-error) bg-(--color-surface) p-4 text-sm text-(--color-error)">
+      태그를 불러오지 못했습니다. 잠시 후 다시 시도해주세요. {{ error }}
+    </p>
 
-    <ul v-else class="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <div
+      v-else-if="tags.length === 0"
+      class="rounded-lg border border-(--color-border) bg-(--color-surface) px-6 py-12 text-center"
+    >
+      <p class="font-semibold text-(--color-heading)">아직 등록된 태그가 없습니다.</p>
+      <p class="mt-2 text-sm text-(--color-text-secondary)">게시글에 태그가 추가되면 이곳에서 찾아볼 수 있습니다.</p>
+    </div>
+    <ul v-else class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <li v-for="tag in tags" :key="tag.tagName">
         <TagCard :tagName="tag.tagName" :postCount="tag.postCount" />
       </li>

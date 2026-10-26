@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { ChevronUp } from 'lucide-vue-next'
-import BlogSidebar from './BlogSidebar.vue'
+import BlogSidebar from '../blog-sidebar/BlogSidebar.vue'
 
 const showScrollTop = ref(false)
 
@@ -20,8 +20,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 <template>
   <div class="flex min-h-screen flex-col bg-(--color-background) text-(--color-text) lg:flex-row">
     <BlogSidebar />
-    <main class="flex min-h-screen min-w-0 flex-1 flex-col px-4 py-6 lg:px-10">
-      <div class="mx-auto w-full min-w-0 flex-1 px-0 py-6 sm:py-8">
+    <main class="flex min-h-screen min-w-0 flex-1 flex-col py-6 px-6 sm:px-12 lg:px-16">
+      <div class="mx-auto w-full max-w-(--container-width) min-w-0 flex-1 py-6 sm:py-8 lg:py-10">
         <slot />
       </div>
     </main>
@@ -38,7 +38,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
         v-if="showScrollTop"
         type="button"
         aria-label="맨 위로 이동"
-        class="fixed right-6 bottom-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-(--color-background-soft) text-(--color-text) shadow-md transition-all duration-300 hover:-translate-y-1 hover:bg-(--color-background-mute)"
+        class="fixed right-4 bottom-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-elevated) text-(--color-text) shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-(--color-primary) hover:text-(--color-primary) sm:right-6 sm:bottom-6"
         @click="scrollToTop"
       >
         <ChevronUp class="h-5 w-5" />

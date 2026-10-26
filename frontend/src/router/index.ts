@@ -6,6 +6,12 @@ import TagsView from '../views/TagsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, top: 80 }
+    if (to.path === from.path) return false
+    return { top: 0, left: 0, behavior: 'instant' }
+  },
   routes: [
     {
       path: '/',
@@ -33,7 +39,7 @@ const router = createRouter({
       component: () => import('../views/TagPostsView.vue'),
     },
     {
-      path: '/post/:slug',
+      path: '/post/:id',
       name: 'post',
       component: () => import('../views/PostView.vue'),
     },
@@ -41,6 +47,11 @@ const router = createRouter({
       path: '/404',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),
+    },
+    {
+      path: '/write/:id',
+      name: 'edit-post',
+      component: () => import('../views/WritePostView.vue'),
     },
     {
       path: '/write',

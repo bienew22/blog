@@ -2,8 +2,9 @@ package bienew.blog.backend.tag.service;
 
 
 import bienew.blog.backend.common.snowflake.Snowflake;
-import bienew.blog.backend.entity.PostTag;
-import bienew.blog.backend.entity.Tag;
+import bienew.blog.backend.post.domain.PostStatus;
+import bienew.blog.backend.post.repository.PostRepository;
+import bienew.blog.backend.tag.entity.Tag;
 import bienew.blog.backend.post.dto.PostSummaryResponse;
 import bienew.blog.backend.tag.dto.TagCreateRequest;
 import bienew.blog.backend.tag.dto.TagPostResponse;
@@ -20,22 +21,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TagService {
+
     private final TagRepository tagRepository;
+    private final PostRepository postRepository;
     private final Snowflake snowflake;
 
 
     public List<TagSummaryResponse> getTags() {
-        return tagRepository.findAll().stream()
-                .map(TagSummaryResponse::of)
-                .toList();
+        return tagRepository.findAllWithPostCount(List.of(PostStatus.PUBLISHED));
     }
 
     public TagPostResponse getTagPosts(String tagName) {
-        Tag tag = tagRepository.findByTagNameWithPosts(tagName).orElseThrow(() -> new RuntimeException("Tag not found"));
+        Tag tag = tagRepository.findByTagName(tagName).orElseThrow(() -> new RuntimeException("Tag not found"));
         return TagPostResponse.of(
                 tag,
-                tag.getPostTags().stream()
-                        .map(PostTag::getPost)
+                postRepository.findAllByTagNameAndStatusIn(tagName, List.of(PostStatus.PUBLISHED)).stream()
                         .map(PostSummaryResponse::of)
                         .toList()
         );
@@ -53,6 +53,6 @@ public class TagService {
 
         tagRepository.save(tag);
 
-        return TagSummaryResponse.of(tag);
+        return new TagSummaryResponse(tag.getTagName(), 0L);
     }
 }

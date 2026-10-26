@@ -2,8 +2,9 @@ package bienew.blog.backend.post.service;
 
 
 import bienew.blog.backend.common.snowflake.Snowflake;
-import bienew.blog.backend.entity.Post;
-import bienew.blog.backend.entity.Tag;
+import bienew.blog.backend.post.domain.PostStatus;
+import bienew.blog.backend.post.entity.Post;
+import bienew.blog.backend.tag.entity.Tag;
 import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
@@ -26,14 +27,26 @@ public class PostService {
 
     public List<PostResponse> getPosts() {
 
-        return postRepository.findAllWithTags().stream()
+        return postRepository.findAllWithTagsByStatus(PostStatus.PUBLISHED).stream()
                 .map(PostResponse::of)
                 .toList();
     }
 
-    public PostDetailResponse getPost(String slug) {
-        Post post = postRepository.findBySlug(slug)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with slug: " + slug));
+    public List<PostResponse> getDraftPosts() {
+        return postRepository.findAllWithTagsByStatus(PostStatus.DRAFT).stream()
+                .map(PostResponse::of)
+                .toList();
+    }
+
+    public PostDetailResponse getPost(Long id) {
+        Post post = postRepository.findByIdWithTags(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+        return PostDetailResponse.of(post);
+    }
+
+    public PostDetailResponse getPostForEdit(Long id) {
+        Post post = postRepository.findByIdForEdit(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
         return PostDetailResponse.of(post);
     }
 
@@ -55,13 +68,47 @@ public class PostService {
                 postCreateRequest.contentMd(),
                 MarkDownParser.toHtml(postCreateRequest.contentMd()),
                 "bienew22",
-                tags
+                tags,
+                PostStatus.fromString(postCreateRequest.status())
         );
-
-        // 2. 각 tag에 post_cnt 증가
-        tagRepository.incrementPostCount(tags.stream().map(Tag::getTagName).toList());
 
         Post savedPost = postRepository.save(post);
         return PostDetailResponse.of(savedPost);
+    }
+
+    @Transactional
+    public PostDetailResponse updatePost(Long id, PostCreateRequest postUpdateRequest) {
+        Post post = postRepository.findByIdForEdit(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+        List<Tag> tags = tagRepository.findAllByTagNameIn(postUpdateRequest.tags());
+
+        List<String> currentTagNames = post.getPostTags().stream()
+                .map(postTag -> postTag.getTag().getTagName())
+                .toList();
+        List<String> updatedTagNames = tags.stream()
+                .map(Tag::getTagName)
+                .toList();
+
+        List<String> removedTagNames = currentTagNames.stream()
+                .filter(tagName -> !updatedTagNames.contains(tagName))
+                .toList();
+        List<String> addedTagNames = updatedTagNames.stream()
+                .filter(tagName -> !currentTagNames.contains(tagName))
+                .toList();
+
+        // 전체 삭제 후 재삽입하면 insert가 delete보다 먼저 실행되어 uk_post_tags 위반이 나므로 변경분만 반영
+        post.removeTags(removedTagNames);
+        post.addTags(tags.stream()
+                .filter(tag -> addedTagNames.contains(tag.getTagName()))
+                .toList());
+
+        post.update(
+                postUpdateRequest.title(),
+                postUpdateRequest.contentMd(),
+                MarkDownParser.toHtml(postUpdateRequest.contentMd()),
+                PostStatus.fromString(postUpdateRequest.status())
+        );
+
+        return PostDetailResponse.of(post);
     }
 }
