@@ -32,9 +32,9 @@ public class PostService {
                 .toList();
     }
 
-    public PostDetailResponse getPost(String slug) {
-        Post post = postRepository.findBySlug(slug)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with slug: " + slug));
+    public PostDetailResponse getPost(Long id) {
+        Post post = postRepository.findByIdWithTags(id)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
         return PostDetailResponse.of(post);
     }
 

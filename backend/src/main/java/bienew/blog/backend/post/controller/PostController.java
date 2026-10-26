@@ -33,13 +33,13 @@ public class PostController {
         return postService.getPosts();
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/{id}")
     @Operation(
             summary = "게시물 상세 조회",
-            description = "지정된 슬러그에 해당하는 게시물의 상세 정보를 반환합니다."
+            description = "지정된 ID에 해당하는 게시물의 상세 정보를 반환합니다."
     )
-    public PostDetailResponse getPost(@PathVariable String slug) {
-        return postService.getPost(slug);
+    public PostDetailResponse getPost(@PathVariable Long id) {
+        return postService.getPost(id);
     }
 
     @PostMapping("")
@@ -58,6 +58,7 @@ public class PostController {
     )
     public PostDetailResponse previewPost(@RequestBody PostPreviewRequest request) {
         return new PostDetailResponse(
+                null,
                 request.title() == null ? "" : request.title(),
                 "preview",
                 LocalDateTime.now(),
