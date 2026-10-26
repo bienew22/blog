@@ -17,9 +17,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
-        WHERE p.status = 'PUBLISHED'
+        WHERE p.status = :status
    """)
-    List<Post> findAllWithTags();
+    List<Post> findAllWithTagsByStatus(PostStatus status);
 
     @Query("""
         SELECT p
