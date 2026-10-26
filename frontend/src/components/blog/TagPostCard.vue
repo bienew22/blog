@@ -4,12 +4,12 @@ import { RouterLink } from 'vue-router'
 defineProps<{
   title: string
   date: string
-  slug: string
+  id: string
 }>()
 </script>
 
 <template>
-  <RouterLink :to="`/post/${slug}`" class="group flex items-center gap-2 py-3 text-sm">
+  <RouterLink :to="{ name: 'post', params: { id } }" class="group flex items-center gap-2 py-3 text-sm">
     <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-(--color-primary)"></span>
     <span
       :title="title"
