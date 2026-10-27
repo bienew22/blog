@@ -6,8 +6,11 @@ import { CategoryIcon } from '@/components/icon'
 import ThemeToggle from '@/components/blog-sidebar/ThemeToggle.vue'
 import GithubButton from '@/components/blog-sidebar/GithubButton.vue'
 import WriteButton from '@/components/blog-sidebar/WriteButton.vue'
+import AuthButton from '@/components/blog-sidebar/AuthButton.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const isOpen = ref(false)
+const authStore = useAuthStore()
 
 const navItems = [
   { label: 'HOME', to: '/', icon: House },
@@ -82,7 +85,11 @@ const navItems = [
       <GithubButton />
       <span class="text-2xl text-(--color-border-hover)">·</span>
 
-      <WriteButton />
+      <AuthButton />
+      <template v-if="authStore.isAdmin">
+        <span class="text-2xl text-(--color-border-hover)">·</span>
+        <WriteButton />
+      </template>
     </div>
   </aside>
 </template>
