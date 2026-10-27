@@ -86,10 +86,6 @@ const navItems = [
       <span class="text-2xl text-(--color-border-hover)">·</span>
 
       <AuthButton />
-      <template v-if="authStore.isAdmin">
-        <span class="text-2xl text-(--color-border-hover)">·</span>
-        <WriteButton />
-      </template>
     </div>
   </aside>
 </template>
