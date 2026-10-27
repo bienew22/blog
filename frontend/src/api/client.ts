@@ -10,8 +10,18 @@ function requestWithToken(input: RequestInfo | URL, init: RequestInit): Promise<
   return fetch(input, { ...init, headers })
 }
 
-export function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
-  return requestWithToken(input, init)
+let unauthorizedHandler: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: () => void) {
+  unauthorizedHandler = handler
+}
+
+export async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  const hadToken = accessToken !== null
+  const response = await requestWithToken(input, init)
+  // 토큰을 보냈는데 401이면 만료된 세션이므로 로그인 페이지로 보낸다.
+  if (response.status === 401 && hadToken) unauthorizedHandler?.()
+  return response
 }
 
 export function clearAccessToken() {
