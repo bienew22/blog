@@ -56,6 +56,11 @@ const router = createRouter({
       component: LoginView,
     },
     {
+      path: '/login/callback',
+      name: 'login-callback',
+      component: () => import('../views/LoginCallbackView.vue'),
+    },
+    {
       path: '/write/:id',
       name: 'edit-post',
       component: () => import('../views/WritePostView.vue'),

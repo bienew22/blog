@@ -1,3 +1,5 @@
+export const GOOGLE_AUTH_STORAGE_KEY = 'google_auth'
+
 export interface AuthUser {
   email: string
   name: string
