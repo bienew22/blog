@@ -1,4 +1,5 @@
-import type { PostStatus } from '../types/postStatus'
+import type { PostStatus } from '../types/post-status'
+import { apiFetch } from './client'
 
 export interface Post {
     id: string
@@ -26,7 +27,7 @@ export interface PostDetail {
 }
 
 export async function fetchPosts(): Promise<Post[]> {
-    const response = await fetch(`/api/v1/posts`)
+    const response = await apiFetch(`/api/v1/posts`)
     if (!response.ok) {
         throw new Error(`Failed to fetch posts: ${response.status}`)
     }
@@ -37,7 +38,7 @@ export async function fetchPosts(): Promise<Post[]> {
 }
 
 export async function fetchDraftPosts(): Promise<Post[]> {
-    const response = await fetch(`/api/v1/posts/drafts`)
+    const response = await apiFetch(`/api/v1/posts/drafts`)
     if (!response.ok) {
         throw new Error(`Failed to fetch draft posts: ${response.status}`)
     }
@@ -48,7 +49,7 @@ export async function fetchDraftPosts(): Promise<Post[]> {
 }
 
 export async function fetchPostDetail(id: string): Promise<PostDetail> {
-    const response = await fetch(`/api/v1/posts/${id}`)
+    const response = await apiFetch(`/api/v1/posts/${id}`)
     if (!response.ok) {
         throw new Error(`Failed to fetch post detail: ${response.status}`)
     }
@@ -59,7 +60,7 @@ export async function fetchPostDetail(id: string): Promise<PostDetail> {
 }
 
 export async function fetchPostForEdit(id: string): Promise<PostDetail> {
-    const response = await fetch(`/api/v1/posts/${id}/edit`)
+    const response = await apiFetch(`/api/v1/posts/${id}/edit`)
     if (!response.ok) {
         throw new Error(`Failed to fetch post for editing: ${response.status}`)
     }
@@ -71,7 +72,7 @@ export async function fetchPostPreview(
     title: string,
     content: string,
     tags: string[]): Promise<PostDetail> {
-    const response = await fetch(`/api/v1/posts/preview`, {
+    const response = await apiFetch(`/api/v1/posts/preview`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ export async function createPost(
     tags: string[],
     status: PostStatus
 ): Promise<Post> {
-    const response = await fetch(`/api/v1/posts`, {
+    const response = await apiFetch(`/api/v1/posts`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ export async function updatePost(
     tags: string[],
     status: PostStatus
 ): Promise<Post> {
-    const response = await fetch(`/api/v1/posts/${id}`, {
+    const response = await apiFetch(`/api/v1/posts/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

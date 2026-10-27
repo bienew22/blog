@@ -6,7 +6,7 @@ import WriteTab from '@/components/write-post/WriteTab.vue'
 import PreviewTab from '@/components/write-post/PreviewTab.vue'
 import DraftPostDialog from '@/components/write-post/DraftPostDialog.vue'
 import { Eye, Pencil, Save, Send } from 'lucide-vue-next'
-import { type PostStatus, POST_STATUS } from '@/types/postStatus'
+import { type PostStatus, POST_STATUS } from '@/types/post-status'
 import { type Tag } from '@/api/tags'
 import { createPost, fetchDraftPosts, fetchPostForEdit, updatePost, type Post } from '@/api/posts'
 
