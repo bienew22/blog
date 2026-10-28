@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/google").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/posts/drafts", "/api/v1/posts/*/edit")
                         .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/posts", "/api/v1/tags")

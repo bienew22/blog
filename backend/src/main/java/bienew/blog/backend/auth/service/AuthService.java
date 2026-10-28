@@ -1,7 +1,9 @@
 package bienew.blog.backend.auth.service;
 
 import bienew.blog.backend.auth.domain.UserRole;
+import bienew.blog.backend.auth.entity.RefreshToken;
 import bienew.blog.backend.auth.entity.User;
+import bienew.blog.backend.auth.repository.RefreshTokenRepository;
 import bienew.blog.backend.auth.repository.UserRepository;
 import bienew.blog.backend.common.snowflake.Snowflake;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,9 +21,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.HexFormat;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +38,10 @@ import java.util.stream.Collectors;
 public class AuthService {
 
     private static final Duration ACCESS_TOKEN_LIFETIME = Duration.ofMinutes(15);
+    private static final Duration REFRESH_TOKEN_LIFETIME = Duration.ofDays(14);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final Snowflake snowflake;
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder googleJwtDecoder;
@@ -39,11 +51,13 @@ public class AuthService {
 
     public AuthService(
             UserRepository userRepository,
+            RefreshTokenRepository refreshTokenRepository,
             Snowflake snowflake,
             JwtEncoder jwtEncoder,
             @Qualifier("googleJwtDecoder") JwtDecoder googleJwtDecoder
     ) {
         this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.snowflake = snowflake;
         this.jwtEncoder = jwtEncoder;
         this.googleJwtDecoder = googleJwtDecoder;
@@ -105,6 +119,54 @@ public class AuthService {
         return ACCESS_TOKEN_LIFETIME.toSeconds();
     }
 
+    public long getRefreshTokenLifetimeSeconds() {
+        return REFRESH_TOKEN_LIFETIME.toSeconds();
+    }
+
+    // refresh token 은 1회용(rotation)이며, 만료/위조/재사용 시 401 을 반환한다.
+    @Transactional
+    public AuthSession refresh(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is missing.");
+        }
+        String hash = hash(refreshToken);
+        RefreshToken stored = refreshTokenRepository.findByTokenHash(hash)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token."));
+        if (refreshTokenRepository.deleteByTokenHash(hash) == 0 || stored.isExpired()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token expired.");
+        }
+        return newSession(stored.getUser());
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            refreshTokenRepository.deleteByTokenHash(hash(refreshToken));
+        }
+    }
+
+    private String issueRefreshToken(User user) {
+        byte[] random = new byte[48];
+        SECURE_RANDOM.nextBytes(random);
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(random);
+        refreshTokenRepository.save(RefreshToken.create(
+                snowflake.nextId(),
+                user,
+                hash(token),
+                LocalDateTime.now().plus(REFRESH_TOKEN_LIFETIME)
+        ));
+        return token;
+    }
+
+    private static String hash(String token) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(token.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest);
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException(exception);
+        }
+    }
+
     private AuthSession newSession(User user) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -120,7 +182,7 @@ public class AuthService {
                 claims
         )).getTokenValue();
 
-        return new AuthSession(accessToken, user);
+        return new AuthSession(accessToken, issueRefreshToken(user), user);
     }
 
     private boolean isAdminEmail(String email) {
