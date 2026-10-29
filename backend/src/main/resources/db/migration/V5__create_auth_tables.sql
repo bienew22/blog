@@ -1,0 +1,9 @@
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY,
+    email VARCHAR(320) NOT NULL UNIQUE,
+    google_sub VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    create_at TIMESTAMP NOT NULL,
+    update_at TIMESTAMP NOT NULL
+);

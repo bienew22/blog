@@ -3,6 +3,8 @@ import PostsView from '../views/PostsView.vue'
 import HomeView from '../views/HomeView.vue'
 import CategoriesView from '../views/CategoriesView.vue'
 import TagsView from '../views/TagsView.vue'
+import LoginView from '../views/LoginView.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,20 +51,44 @@ const router = createRouter({
       component: () => import('../views/NotFoundView.vue'),
     },
     {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+    },
+    {
+      path: '/login/callback',
+      name: 'login-callback',
+      component: () => import('../views/LoginCallbackView.vue'),
+    },
+    {
       path: '/write/:id',
       name: 'edit-post',
       component: () => import('../views/WritePostView.vue'),
+      meta: { requiresAdmin: true },
     },
     {
       path: '/write',
       name: 'write',
       component: () => import('../views/WritePostView.vue'),
+      meta: { requiresAdmin: true },
     },
     {
       path: '/:pathMatch(.*)*',
       redirect: { name: 'not-found' },
     },
   ],
+})
+
+router.beforeEach((to, from) => {
+  if (!to.meta.requiresAdmin) return
+  const authStore = useAuthStore()
+  if (!authStore.user) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+  if (!authStore.isAdmin) {
+    // 취소하면 이전 페이지에 머무름. 직접 진입한 경우에는 홈으로 이동
+    return from.matched.length ? false : { name: 'home' }
+  }
 })
 
 export default router
