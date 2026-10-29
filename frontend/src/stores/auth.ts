@@ -1,7 +1,13 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { loginWithGoogle, logoutRequest, refreshAuth, type AuthUser } from '@/api/auth'
-import { clearAccessToken, setAccessToken } from '@/api/client'
+import {
+  loginWithGoogle,
+  logoutRequest,
+  refreshAuth,
+  validateAccessToken,
+  type AuthUser,
+} from '@/api/auth'
+import { clearAccessToken, getAccessToken, setAccessToken } from '@/api/client'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<AuthUser | null>(null)
@@ -17,12 +23,31 @@ export const useAuthStore = defineStore('auth', () => {
     setSession(session.accessToken, session.user)
   }
 
-  // 성공 시 true, refresh 토큰이 없거나 만료되면 false
-  async function refresh(): Promise<boolean> {
+  // 'ok': 재발급 성공, 'none': refresh 토큰 없음, 'expired': refresh 토큰 만료/무효
+  async function refresh(): Promise<'ok' | 'none' | 'expired'> {
     const session = await refreshAuth()
-    if (!session) return false
+    if (typeof session === 'string') return session
     setSession(session.accessToken, session.user)
-    return true
+    return 'ok'
+  }
+
+  // 관리자 페이지 진입 판단: 'ok' 이동, 'login' 로그인 필요, 'forbidden' 권한 없음
+  async function checkAdminAccess(): Promise<'ok' | 'login' | 'forbidden'> {
+    let token = getAccessToken()  // 현재 저장된 access token 가져오기
+    
+    // access token이 없으면 refresh 시도
+    if (!token) {
+      if ((await refresh().catch(() => 'expired' as const)) !== 'ok') return 'login'
+      token = getAccessToken()
+    } else {
+      // access token 유효성 검사
+      let status = token ? await validateAccessToken(token) : 401
+
+      // access token이 유효하지 않으면 로그인 필요
+      if (status < 200 || status >= 300) return 'login'
+    }
+
+    return isAdmin.value ? 'ok' : 'forbidden'
   }
 
   function logout() {
@@ -31,5 +56,5 @@ export const useAuthStore = defineStore('auth', () => {
     void logoutRequest()
   }
 
-  return { user, isAdmin, signInWithGoogle, refresh, logout }
+  return { user, isAdmin, signInWithGoogle, refresh, checkAdminAccess, logout }
 })
