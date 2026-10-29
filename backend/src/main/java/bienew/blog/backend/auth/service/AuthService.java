@@ -186,7 +186,7 @@ public class AuthService {
                 claims
         )).getTokenValue();
 
-        return new AuthSession(accessToken, issueRefreshToken(user), user);
+        return AuthSession.of(accessToken, issueRefreshToken(user), user);
     }
 
     private boolean isAdminEmail(String email) {
