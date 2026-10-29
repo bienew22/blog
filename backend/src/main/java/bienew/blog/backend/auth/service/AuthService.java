@@ -37,14 +37,14 @@ import java.util.stream.Collectors;
 @Service
 public class AuthService {
 
-    private static final Duration ACCESS_TOKEN_LIFETIME = Duration.ofMinutes(15);
-    private static final Duration REFRESH_TOKEN_LIFETIME = Duration.ofDays(14);
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final Snowflake snowflake;
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder googleJwtDecoder;
+    private final Duration accessTokenLifetime;
+    private final Duration refreshTokenLifetime;
 
     @Value("${app.auth.admin-emails:}")
     private String configuredAdminEmails;
@@ -54,8 +54,12 @@ public class AuthService {
             RefreshTokenRepository refreshTokenRepository,
             Snowflake snowflake,
             JwtEncoder jwtEncoder,
-            @Qualifier("googleJwtDecoder") JwtDecoder googleJwtDecoder
+            @Qualifier("googleJwtDecoder") JwtDecoder googleJwtDecoder,
+            @Value("${app.auth.access-token-minutes:15}") long accessTokenMinutes,
+            @Value("${app.auth.refresh-token-days:14}") long refreshTokenDays
     ) {
+        this.accessTokenLifetime = Duration.ofMinutes(accessTokenMinutes);
+        this.refreshTokenLifetime = Duration.ofDays(refreshTokenDays);
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.snowflake = snowflake;
@@ -116,11 +120,11 @@ public class AuthService {
     }
 
     public long getAccessTokenLifetimeSeconds() {
-        return ACCESS_TOKEN_LIFETIME.toSeconds();
+        return accessTokenLifetime.toSeconds();
     }
 
     public long getRefreshTokenLifetimeSeconds() {
-        return REFRESH_TOKEN_LIFETIME.toSeconds();
+        return refreshTokenLifetime.toSeconds();
     }
 
     // refresh token 은 1회용(rotation)이며, 만료/위조/재사용 시 401 을 반환한다.
@@ -153,7 +157,7 @@ public class AuthService {
                 snowflake.nextId(),
                 user,
                 hash(token),
-                LocalDateTime.now().plus(REFRESH_TOKEN_LIFETIME)
+                LocalDateTime.now().plus(refreshTokenLifetime)
         ));
         return token;
     }
@@ -172,7 +176,7 @@ public class AuthService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("bienew-blog")
                 .issuedAt(now)
-                .expiresAt(now.plus(ACCESS_TOKEN_LIFETIME))
+                .expiresAt(now.plus(accessTokenLifetime))
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
