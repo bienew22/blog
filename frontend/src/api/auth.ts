@@ -25,3 +25,17 @@ export async function loginWithGoogle(credential: string): Promise<AuthResponse>
   }
   return response.json() as Promise<AuthResponse>
 }
+
+// refresh 토큰은 HttpOnly 쿠키로 전달된다. 만료/없음(401)이면 null.
+export async function refreshAuth(): Promise<AuthResponse | null> {
+  const response = await fetch('/api/v1/auth/refresh', {
+    method: 'POST',
+    credentials: 'same-origin',
+  })
+  if (!response.ok) return null
+  return response.json() as Promise<AuthResponse>
+}
+
+export async function logoutRequest(): Promise<void> {
+  await fetch('/api/v1/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {})
+}
