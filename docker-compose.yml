@@ -28,6 +28,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - ADMIN_EMAILS=${ADMIN_EMAILS:-}
+      - ACCESS_TOKEN_MINUTES=${ACCESS_TOKEN_MINUTES:-15}
+      - REFRESH_TOKEN_DAYS=${REFRESH_TOKEN_DAYS:-14}
     ports:
       - "8080:8080"
     volumes:
