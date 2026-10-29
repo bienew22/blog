@@ -1,5 +1,6 @@
 import { tagPosts } from '@/data/tagPosts'
 import type { PostSummary } from './posts'
+import { apiFetch } from './client'
 
 export interface Tag {
     tagName: string
@@ -14,7 +15,7 @@ export interface TagPosts {
 }
 
 export async function fetchTags(): Promise<Tag[]> {
-    const response = await fetch(`/api/v1/tags`)
+    const response = await apiFetch(`/api/v1/tags`)
     if (!response.ok) {
         throw new Error(`Failed to fetch tags: ${response.status}`)
     }
@@ -25,7 +26,7 @@ export async function fetchTags(): Promise<Tag[]> {
 }
 
 export async function fetchTagPosts(tagName: string): Promise<TagPosts | null> {
-    const response = await fetch(`/api/v1/tags/${encodeURIComponent(tagName)}`)
+    const response = await apiFetch(`/api/v1/tags/${encodeURIComponent(tagName)}`)
     if (response.status !== 200) {
         return null
     }
@@ -39,7 +40,7 @@ export async function fetchTagPosts(tagName: string): Promise<TagPosts | null> {
 }
 
 export async function createTag(tag: string): Promise<Tag> {
-    const response = await fetch(`/api/v1/tags`, {
+    const response = await apiFetch(`/api/v1/tags`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
