@@ -12,7 +12,8 @@ const app = createApp(App)
 
 app.use(createPinia())
 
-setRefreshHandler(() => useAuthStore().refresh())
+setRefreshHandler(() => useAuthStore().refresh().then((result) => result === 'ok'))
+
 setUnauthorizedHandler(() => {
   useAuthStore().logout()
   void router.push({
@@ -21,10 +22,10 @@ setUnauthorizedHandler(() => {
   })
 })
 
-// 새로고침 등으로 메모리의 access token이 사라져도 refresh 쿠키가 있으면 세션 복원 (라우터 가드 전에 수행)
+// 새로고침 등으로 메모리의 access token이 사라지면 refresh 시도 (라우터 가드 전에 수행)
 void useAuthStore()
   .refresh()
-  .catch(() => false)
+  .catch(() => 'none' as const)
   .finally(() => {
     app.use(router)
     app.mount('#app')

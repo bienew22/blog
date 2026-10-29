@@ -79,15 +79,16 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   if (!to.meta.requiresAdmin) return
-  const authStore = useAuthStore()
-  if (!authStore.user) {
+  // 관리자 권한이 필요한 페이지이면 접근 권한 확인
+  const result = await useAuthStore().checkAdminAccess()
+  if (result === 'login') {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
-  if (!authStore.isAdmin) {
-    // 취소하면 이전 페이지에 머무름. 직접 진입한 경우에는 홈으로 이동
-    return from.matched.length ? false : { name: 'home' }
+  if (result === 'forbidden') {
+    // 권한 없음: 홈으로 이동
+    return { name: 'home' }
   }
 })
 
