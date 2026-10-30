@@ -5,7 +5,8 @@ import BlogLayout from '@/components/layout/BlogLayout.vue'
 import WriteTab from '@/components/write-post/WriteTab.vue'
 import PreviewTab from '@/components/write-post/PreviewTab.vue'
 import DraftPostDialog from '@/components/write-post/DraftPostDialog.vue'
-import { Eye, Pencil, Save, Send } from 'lucide-vue-next'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import { Eye, Pencil, Save, Send, X } from 'lucide-vue-next'
 import { type PostStatus, POST_STATUS } from '@/types/post-status'
 import { type Tag } from '@/api/tags'
 import { createPost, fetchDraftPosts, fetchPostForEdit, updatePost, type Post } from '@/api/posts'
@@ -23,6 +24,12 @@ const drafts = ref<Post[]>([])
 const isLoadingDrafts = ref(false)
 const draftLoadError = ref<string | null>(null)
 const isDraftDialogOpen = ref(!postId.value)
+const isCancelDialogOpen = ref(false)
+
+function confirmCancel() {
+  isCancelDialogOpen.value = false
+  void router.push({ name: 'home' })
+}
 
 type ToastType = 'pending' | 'success' | 'error'
 const toasts = ref<{ id: number; message: string; type: ToastType }[]>([])
@@ -166,6 +173,15 @@ async function savePost(option: boolean, status: PostStatus) {
       <div class="mb-4 flex items-center justify-end gap-1.5 sm:gap-2">
         <button
           type="button"
+          class="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-error) hover:text-(--color-error) sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
+          @click="isCancelDialogOpen = true"
+        >
+          <X class="h-4 w-4 shrink-0" />
+          취소
+        </button>
+        <button
+        <button
+          type="button"
           class="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
           :disabled="isSavingPost || isLoadingPost || postLoadError"
           @click="savePost(false, POST_STATUS.DRAFT)"
@@ -243,6 +259,16 @@ async function savePost(option: boolean, status: PostStatus) {
         {{ t.message }}
       </div>
     </TransitionGroup>
+
+    <ConfirmDialog
+      :open="isCancelDialogOpen"
+      title="작성을 취소하시겠습니까?"
+      message="저장하지 않은 내용은 사라집니다. 홈으로 이동합니다."
+      confirm-text="확인"
+      cancel-text="계속 작성"
+      @confirm="confirmCancel"
+      @close="isCancelDialogOpen = false"
+    />
 
     <DraftPostDialog
       :open="isDraftDialogOpen"
