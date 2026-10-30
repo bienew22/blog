@@ -184,23 +184,25 @@ watch(
     <article v-else class="mx-auto w-full">
       <header class="mb-8 border-b border-(--color-border-subtle) pb-6 sm:mb-10 sm:pb-8">
         <!-- 블로그 포스트 헤더 : 아이콘 -->
-        <NotebookText class="mb-4 h-8 w-8 text-(--color-primary)" :stroke-width="1.5" />
-        <div v-if="showAdminActions && post?.id" class="mb-3 flex gap-2">
-          <RouterLink
-            :to="{ name: 'edit-post', params: { id: post.id } }"
-            class="inline-flex items-center gap-2 rounded-lg border border-(--color-border) px-3 py-2 text-sm text-(--color-text-secondary) hover:border-(--color-primary) hover:text-(--color-primary)"
-          >
-            <Pencil class="h-4 w-4" />
-            수정
-          </RouterLink>
-          <button
-            type="button"
-            class="inline-flex items-center gap-2 rounded-lg border border-(--color-border) px-3 py-2 text-sm text-(--color-text-secondary) hover:border-(--color-error) hover:text-(--color-error)"
-            @click="openDelete"
-          >
-            <Trash2 class="h-4 w-4" />
-            삭제
-          </button>
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <NotebookText class="h-8 w-8 text-(--color-primary)" :stroke-width="1.5" />
+          <div v-if="showAdminActions && post?.id" class="flex gap-2">
+            <RouterLink
+              :to="{ name: 'edit-post', params: { id: post.id } }"
+              class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-(--color-border) px-3 text-sm text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
+            >
+              <Pencil class="h-4 w-4" />
+              수정
+            </RouterLink>
+            <button
+              type="button"
+              class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-(--color-border) px-3 text-sm text-(--color-text-secondary) transition-colors hover:cursor-pointer hover:border-(--color-error) hover:text-(--color-error)"
+              @click="openDelete"
+            >
+              <Trash2 class="h-4 w-4" />
+              삭제
+            </button>
+          </div>
         </div>
         <DeletePostDialog
           v-if="showAdminActions && post?.id"
