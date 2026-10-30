@@ -41,10 +41,15 @@ export const useAuthStore = defineStore('auth', () => {
       token = getAccessToken()
     } else {
       // access token 유효성 검사
-      let status = token ? await validateAccessToken(token) : 401
+      const status = await validateAccessToken(token)
 
-      // access token이 유효하지 않으면 로그인 필요
-      if (status < 200 || status >= 300) return 'login'
+      // access token이 유효하지 않으면 refresh 시도, 실패하면 로그인 필요
+      if (status < 200 || status >= 300) {
+        if ((await refresh().catch(() => 'expired' as const)) !== 'ok') return 'login'
+
+        // 재발급된 access token 가져오기, 재발급한거 바로 사용하므로 유효성 검사 불필요
+        token = getAccessToken()
+      }
     }
 
     return isAdmin.value ? 'ok' : 'forbidden'
