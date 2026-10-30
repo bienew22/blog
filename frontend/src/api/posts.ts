@@ -108,6 +108,13 @@ export async function createPost(
     return data
 }
 
+export async function deletePost(id: string): Promise<void> {
+    const response = await apiFetch(`/api/v1/posts/${id}`, { method: 'DELETE' })
+    if (!response.ok) {
+        throw new Error(`Failed to delete post: ${response.status}`)
+    }
+}
+
 export async function updatePost(
     id: string,
     title: string,
