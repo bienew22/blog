@@ -26,13 +26,26 @@ export async function loginWithGoogle(credential: string): Promise<AuthResponse>
   return response.json() as Promise<AuthResponse>
 }
 
-// refresh 토큰은 HttpOnly 쿠키로 전달된다. 만료/없음(401)이면 null.
-export async function refreshAuth(): Promise<AuthResponse | null> {
+// 204: 유효, 401: access token 만료/무효, 0: 네트워크 오류
+export async function validateAccessToken(token: string): Promise<number> {
+  try {
+    const response = await fetch('/api/v1/auth/validate', {
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    return response.status
+  } catch {
+    return 0
+  }
+}
+
+// refresh 토큰은 HttpOnly 쿠키로 전달된다. 쿠키 없음(204)이면 'none', 만료/무효(401)이면 'expired'.
+export async function refreshAuth(): Promise<AuthResponse | 'none' | 'expired'> {
   const response = await fetch('/api/v1/auth/refresh', {
     method: 'POST',
     credentials: 'same-origin',
   })
-  if (!response.ok) return null
+  if (response.status === 204) return 'none'
+  if (!response.ok) return 'expired'
   return response.json() as Promise<AuthResponse>
 }
 

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -98,5 +99,13 @@ public class PostController {
         );
     }
 
-
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "게시물 삭제",
+            description = "지정된 ID에 해당하는 게시물을 삭제합니다."
+    )
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
+    }
 }
