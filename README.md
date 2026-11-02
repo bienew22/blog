@@ -16,12 +16,6 @@ my blog
 - 배포 대상인 feature 브랜치들의 merge 대상이 됨.
 - PR 만 허용
 
-#### ci-cd
-- CI/CD 작업 브랜치
-- main으로 부터 파생됨.
-- 관리자에 의해서 관리 됨.
-- 변경 사항은 `main`, `develop` 및 필요한 브랜치에 적용 됨.
-
 #### feature
 - 기능 개발 브랜치
 - develop으로 부터 파생되어야 햠.
@@ -29,13 +23,13 @@ my blog
 - 개발 완료 후에 develop branch에 merge 함. (브랜치는 삭제 X)
 - 이름 규칙 "feature/기능 이름"
 
-#### b-feature (1인 개발시 생략)
+#### b-feature
 - 백엔드 기능 개발 브랜치
 - feature으로 부터 파생되어야 함.
 - 개발 완료 후에 feature 브랜치에 merge 되어야 함. (no fastforword)
 - feature 브랜치에 merge 후 삭제 함.
 
-#### f-feature (1인 개발시 생략)
+#### f-feature
 - 프론트 기능 개발 브랜치
 - feature으로 부터 파생되어야 함.
 - 개발 완료 후에 feature 브랜치에 merge 되어야 함. (no fastforword)
