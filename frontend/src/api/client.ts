@@ -1,7 +1,13 @@
+import { validateAccessToken } from './auth'
+
 let accessToken: string | null = null
 
 export function setAccessToken(token: string | null) {
   accessToken = token
+}
+
+export function getAccessToken() {
+  return accessToken
 }
 
 export function clearAccessToken() {
@@ -38,9 +44,13 @@ function requestWithToken(input: RequestInfo | URL, init: RequestInit): Promise<
 }
 
 export async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
-  const hadToken = accessToken !== null
+  const sentToken = accessToken
   let response = await requestWithToken(input, init)
-  if (response.status !== 401 || !hadToken) return response
+  if (response.status !== 401 || !sentToken) return response
+
+  // 401 이어도 access token 이 아직 유효하면(다른 사유) refresh 하지 않는다.
+  const validateStatus = await validateAccessToken(sentToken)
+  if (validateStatus >= 200 && validateStatus < 300) return response
 
   // access token 만료: refresh 토큰으로 재발급 후 1회 재시도, 실패(refresh 만료 포함) 시 로그인 페이지로 이동
   if (await refreshOnce()) {
