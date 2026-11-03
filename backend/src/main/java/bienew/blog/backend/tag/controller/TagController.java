@@ -6,6 +6,7 @@ import bienew.blog.backend.tag.dto.TagPostResponse;
 import bienew.blog.backend.tag.dto.TagSummaryResponse;
 import bienew.blog.backend.tag.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class TagController {
             summary = "태그 생성",
             description = "지정된 이름으로 새로운 태그를 생성합니다. 태그가 이미 존재하는 경우 오류가 반환됩니다."
     )
-    public TagSummaryResponse createTag(@RequestBody TagCreateRequest request) {
+    public TagSummaryResponse createTag(@Valid @RequestBody TagCreateRequest request) {
         return tagService.createTag(request);
     }
 }

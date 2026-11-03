@@ -49,7 +49,7 @@ public class TagService {
             throw new RuntimeException("Tag already exists");
         });
 
-        Tag tag = Tag.create(snowflake.nextId(), request.tagName(), request.tagName());
+        Tag tag = Tag.create(snowflake.nextId(), request.tagName(), request.tagDesc().trim());
 
         tagRepository.save(tag);
 
