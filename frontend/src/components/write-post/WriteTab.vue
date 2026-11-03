@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import PostContentEditor from '@/components/write-post/PostContentEditor.vue'
+import TagCreateDialog from '@/components/common/TagCreateDialog.vue'
 import { Plus, Search } from 'lucide-vue-next'
 import { fetchTags, createTag, type Tag } from '@/api/tags'
 
@@ -17,6 +18,8 @@ const tagSearch = ref('')
 const isTagListOpen = ref(false)
 const tagPicker = ref<HTMLElement | null>(null)
 const isCreatingTag = ref(false) // 생성 완료전까지 중복 클릭 예방용
+const isTagDialogOpen = ref(false)
+const newTagName = ref('')
 
 const filteredTags = computed(() => {
   const query = tagSearch.value.trim().toLocaleLowerCase()
@@ -60,20 +63,27 @@ function closeTagListOnFocusout(event: FocusEvent) {
   }
 }
 
-async function addTag(rawName: string) {
-  const tagName = rawName.trim()
+function openTagDialog() {
+  const name = tagSearch.value.trim()
+  if (!name) return
+  newTagName.value = name
+  isTagListOpen.value = false
+  isTagDialogOpen.value = true
+}
+
+async function addTag(tagName: string, tagDesc: string) {
   if (!tagName || isCreatingTag.value) return
 
-  isTagListOpen.value = false
   isCreatingTag.value = true
   emit('toast', '태그 생성 중...', 'pending', 2000)
 
   try {
-    const created = await createTag(tagName)
+    const created = await createTag(tagName, tagDesc)
 
     availableTags.value.push(created)
     selectedTags.value.push(created)
     tagSearch.value = ''
+    isTagDialogOpen.value = false
 
     emit('toast', '태그 생성 완료', 'success', 2000)
   } catch (e) {
@@ -151,7 +161,7 @@ async function addTag(rawName: string) {
               <button
                 type="button"
                 class="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm text-(--color-heading) transition-colors hover:bg-(--color-background-soft)"
-                @click="addTag(tagSearch)"
+                @click="openTagDialog"
               >
                 <Plus class="h-4 w-4" />
                 '{{ tagSearch.trim() }}' 태그 추가하기
@@ -178,5 +188,13 @@ async function addTag(rawName: string) {
     </section>
 
     <PostContentEditor v-model="content" />
+
+    <TagCreateDialog
+      :open="isTagDialogOpen"
+      :tag-name="newTagName"
+      :is-submitting="isCreatingTag"
+      @submit="addTag"
+      @close="isTagDialogOpen = false"
+    />
   </section>
 </template>
