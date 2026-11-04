@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowRight } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 
 defineProps<{
   index: number
@@ -21,8 +22,9 @@ function formatDate(createAt?: string | null) {
 </script>
 
 <template>
-  <div
-    class="category-card h-full min-h-24 rounded-2xl bg-(--color-surface) px-5 py-5 lg:min-h-[220px] lg:px-6 lg:py-6"
+  <RouterLink
+    :to="{ name: 'category', params: { categoryName } }"
+    class="category-card block h-full min-h-24 rounded-2xl bg-(--color-surface) px-5 py-5 lg:min-h-[220px] lg:px-6 lg:py-6"
   >
     <div class="flex h-full items-center gap-4 lg:hidden">
       <span
@@ -61,7 +63,7 @@ function formatDate(createAt?: string | null) {
         <ArrowRight class="h-5 w-5" />
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <style scoped>
