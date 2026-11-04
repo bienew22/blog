@@ -27,7 +27,7 @@ public class CategoryController {
             description = "새로운 카테고리를 생성합니다."
     )
     @PostMapping("")
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
         return ResponseEntity.ok(categoryService.createCategory(request));
     }
 

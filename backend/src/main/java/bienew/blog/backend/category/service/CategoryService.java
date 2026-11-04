@@ -28,7 +28,7 @@ public class CategoryService {
     private final PostRepository postRepository;
 
     @Transactional
-    public CategorySummaryResponse createCategory(CategoryCreateRequest request) {
+    public CategoryResponse createCategory(CategoryCreateRequest request) {
         log.info("Creating new category: {}", request.categoryName());
 
         categoryRepository.findByCategoryName(request.categoryName()).ifPresent(existingCategory -> {
@@ -43,7 +43,7 @@ public class CategoryService {
 
         categoryRepository.save(category);
 
-        return CategorySummaryResponse.from(category, 0L, null);
+        return CategoryResponse.from(category);
     }
 
     public List<CategoryResponse> getCategories() {
