@@ -3,6 +3,7 @@ package bienew.blog.backend.post.dto;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public record PostCreateRequest(
         @NotBlank(message = "상태는 필수입니다.")
         String status,
 
-        @NotBlank(message = "카테고리 ID는 필수입니다.")
+        @NotNull(message = "카테고리 ID는 필수입니다.")
         Long categoryId,
 
         @JsonSetter(nulls = Nulls.AS_EMPTY)
