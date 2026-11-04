@@ -1,5 +1,6 @@
 package bienew.blog.backend.post.dto;
 
+import bienew.blog.backend.category.dto.CategoryResponse;
 import bienew.blog.backend.post.entity.Post;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public record PostDetailResponse(
 		LocalDateTime createAt,
 		String content,
 		String contentMd,
+		CategoryResponse category,
 		List<String> tags
 ) {
 	public static PostDetailResponse of(Post post) {
@@ -22,6 +24,7 @@ public record PostDetailResponse(
 				post.getCreateAt(),
 				post.getContentHtml(),
 				post.getContentMd(),
+				CategoryResponse.from(post.getCategory()),
 				post.getPostTags().stream()
 						.map(postTag -> postTag.getTag().getTagName())
 						.toList()

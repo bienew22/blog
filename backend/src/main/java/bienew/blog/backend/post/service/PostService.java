@@ -43,7 +43,7 @@ public class PostService {
     }
 
     public PostDetailResponse getPost(Long id) {
-        Post post = postRepository.findByIdWithTags(id)
+        Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
         return PostDetailResponse.of(post);
     }

@@ -1,6 +1,7 @@
 package bienew.blog.backend.post.controller;
 
 
+import bienew.blog.backend.category.dto.CategoryResponse;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
 import bienew.blog.backend.post.dto.PostPreviewRequest;
@@ -88,13 +89,17 @@ public class PostController {
     )
     @PostMapping("/preview")
     public PostDetailResponse previewPost(@RequestBody PostPreviewRequest request) {
+
+        boolean isContentMdEmpty = request.contentMd() == null || request.contentMd().isBlank();
+
         return new PostDetailResponse(
                 null,
                 request.title() == null ? "" : request.title(),
                 "preview",
                 LocalDateTime.now(),
-                MarkDownParser.toHtml(request.contentMd() == null ? "" : request.contentMd()),
-                request.contentMd() == null ? "" : request.contentMd(),
+                MarkDownParser.toHtml(isContentMdEmpty ? "" : request.contentMd()),
+                isContentMdEmpty ? "" : request.contentMd(),
+                new CategoryResponse(1L, "미리보기"),
                 request.tags() == null ? List.of() : request.tags()
         );
     }

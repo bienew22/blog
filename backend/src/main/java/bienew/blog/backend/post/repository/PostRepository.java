@@ -26,16 +26,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
+        LEFT JOIN FETCH p.category
         WHERE p.id = :id
         AND p.status = 'PUBLISHED'
     """)
-    Optional<Post> findByIdWithTags(Long id);
+    Optional<Post> findByIdWithDetails(Long id);
 
     @Query("""
         SELECT p
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
+        LEFT JOIN FETCH p.category
         WHERE p.id = :id
     """)
     Optional<Post> findByIdForEdit(Long id);
