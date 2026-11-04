@@ -1,6 +1,7 @@
 package bienew.blog.backend.post.entity;
 
 
+import bienew.blog.backend.category.entity.Category;
 import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.tag.entity.Tag;
 import bienew.blog.backend.mapping.entity.PostTag;
@@ -40,9 +41,6 @@ public class Post {
     @Column(name = "author", nullable = false)
     private String author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final Set<PostTag> postTags = new HashSet<>();
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PostStatus status = PostStatus.DRAFT;
@@ -52,6 +50,13 @@ public class Post {
 
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<PostTag> postTags = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public static Post create(
             Long id, String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags, PostStatus status) {
