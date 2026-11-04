@@ -16,6 +16,9 @@ public record PostCreateRequest(
         @NotBlank(message = "상태는 필수입니다.")
         String status,
 
+        @NotBlank(message = "카테고리 ID는 필수입니다.")
+        Long categoryId,
+
         @JsonSetter(nulls = Nulls.AS_EMPTY)
         List<String> tags
 ) {

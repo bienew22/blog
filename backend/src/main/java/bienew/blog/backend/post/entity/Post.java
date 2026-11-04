@@ -59,7 +59,8 @@ public class Post {
     private Category category;
 
     public static Post create(
-            Long id, String title, String slug, String contentMd, String contentHtml, String author, List<Tag> tags, PostStatus status) {
+            Long id, String title, String slug, String contentMd, String contentHtml,
+            String author, List<Tag> tags, PostStatus status, Category category) {
         LocalDateTime now = LocalDateTime.now();
 
         Post post = new Post();
@@ -77,6 +78,8 @@ public class Post {
         post.createAt = now;
         post.updateAt = now;
 
+        post.category = category;
+
         for (Tag tag : tags) {
             PostTag postTag = PostTag.create(post, tag);
             post.postTags.add(postTag);
@@ -85,11 +88,12 @@ public class Post {
         return post;
     }
 
-    public void update(String title, String contentMd, String contentHtml, PostStatus status) {
+    public void update(String title, String contentMd, String contentHtml, PostStatus status, Category category) {
         this.title = title;
         this.contentMd = contentMd;
         this.contentHtml = contentHtml;
         this.status = status;
+        this.category = category;
         this.updateAt = LocalDateTime.now();
     }
 
