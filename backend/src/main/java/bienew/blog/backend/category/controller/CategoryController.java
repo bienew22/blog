@@ -3,6 +3,7 @@ package bienew.blog.backend.category.controller;
 
 import bienew.blog.backend.category.dto.CategoryCreateRequest;
 import bienew.blog.backend.category.dto.CategoryPostResponse;
+import bienew.blog.backend.category.dto.CategoryResponse;
 import bienew.blog.backend.category.dto.CategorySummaryResponse;
 import bienew.blog.backend.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,11 +33,20 @@ public class CategoryController {
 
     @Operation(
             summary = "카테고리 목록 조회",
-            description = "모든 카테고리와 해당 카테고리에 속한 게시물 수를 반환합니다."
+            description = "모든 카테고리 이름과 ID를 반환합니다."
     )
     @GetMapping("")
-    public List<CategorySummaryResponse> getCategories() {
+    public List<CategoryResponse> getCategories() {
         return categoryService.getCategories();
+    }
+
+    @Operation(
+            summary = "카테고리 목록 조회",
+            description = "모든 카테고리와 해당 카테고리에 속한 게시물 수를 반환합니다."
+    )
+    @GetMapping("/summary")
+    public List<CategorySummaryResponse> getCategoriesSummary() {
+        return categoryService.getCategoriesSummary();
     }
 
     @GetMapping("/{categoryName}")

@@ -2,6 +2,7 @@ package bienew.blog.backend.category.service;
 
 import bienew.blog.backend.category.dto.CategoryCreateRequest;
 import bienew.blog.backend.category.dto.CategoryPostResponse;
+import bienew.blog.backend.category.dto.CategoryResponse;
 import bienew.blog.backend.category.dto.CategorySummaryResponse;
 import bienew.blog.backend.category.entity.Category;
 import bienew.blog.backend.category.repository.CategoryRepository;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -46,7 +46,13 @@ public class CategoryService {
         return CategorySummaryResponse.from(category, 0L, null);
     }
 
-    public List<CategorySummaryResponse> getCategories() {
+    public List<CategoryResponse> getCategories() {
+        return categoryRepository.findAll().stream()
+                .map(CategoryResponse::from)
+                .toList();
+    }
+
+    public List<CategorySummaryResponse> getCategoriesSummary() {
         return categoryRepository.findAllCategorySummary(List.of(PostStatus.PUBLISHED));
     }
 
