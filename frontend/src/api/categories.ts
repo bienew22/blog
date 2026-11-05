@@ -9,7 +9,7 @@ export interface CategorySummary {
 }
 
 export interface CategoryOption {
-  categoryId: number
+  categoryId: string
   categoryName: string
 }
 
