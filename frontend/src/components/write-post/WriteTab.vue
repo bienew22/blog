@@ -2,9 +2,10 @@
 import { computed, ref, onMounted } from 'vue'
 import PostContentEditor from '@/components/write-post/PostContentEditor.vue'
 import TagCreateDialog from '@/components/common/TagCreateDialog.vue'
+import CategoryCreateDialog from '@/components/common/CategoryCreateDialog.vue'
 import { ChevronDown, Plus, Search } from 'lucide-vue-next'
 import { fetchTags, createTag, type Tag } from '@/api/tags'
-import { fetchCategoryOptions, type CategoryOption } from '@/api/categories'
+import { fetchCategoryOptions, createCategory, type CategoryOption } from '@/api/categories'
 
 const title = defineModel<string>('title', { required: true })
 const content = defineModel<string>('content', { required: true })
@@ -32,8 +33,35 @@ const selectedCategoryName = computed(
   () => categories.value.find((c) => c.categoryId === selectedCategoryId.value)?.categoryName ?? null,
 )
 const isCategoryDisabled = computed(
-  () => isLoadingCategories.value || categoryLoadError.value || categories.value.length === 0,
+  () => isLoadingCategories.value || categoryLoadError.value,
 )
+const isCategoryDialogOpen = ref(false)
+const isCreatingCategory = ref(false)
+
+function openCategoryDialog() {
+  isCategoryListOpen.value = false
+  isCategoryDialogOpen.value = true
+}
+
+async function addCategory(categoryName: string, categoryDesc: string) {
+  if (isCreatingCategory.value) return
+
+  isCreatingCategory.value = true
+  emit('toast', '카테고리 생성 중...', 'pending', 2000)
+
+  try {
+    const created = await createCategory(categoryName, categoryDesc)
+    categories.value.push(created)
+    selectedCategoryId.value = created.categoryId
+    isCategoryDialogOpen.value = false
+
+    emit('toast', '카테고리 생성 완료', 'success', 2000)
+  } catch (e) {
+    emit('toast', e instanceof Error ? e.message : '카테고리 생성에 실패했습니다.', 'error', 2000)
+  } finally {
+    isCreatingCategory.value = false
+  }
+}
 
 function selectCategory(category: CategoryOption) {
   selectedCategoryId.value = category.categoryId
@@ -195,6 +223,15 @@ async function addTag(tagName: string, tagDesc: string) {
             </li>
           </ul>
         </div>
+        <button
+          type="button"
+          aria-label="카테고리 추가"
+          class="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm font-medium text-(--color-text) transition-colors hover:cursor-pointer hover:border-(--color-primary) hover:text-(--color-primary)"
+          @click="openCategoryDialog"
+        >
+          <Plus class="h-4 w-4" />
+          <span class="hidden sm:inline">추가</span>
+        </button>
       </div>
       <div
         v-if="categoryLoadError"
@@ -209,7 +246,7 @@ async function addTag(tagName: string, tagDesc: string) {
         v-else-if="!isLoadingCategories && categories.length === 0"
         class="mt-2 pl-19 text-sm text-(--color-text-secondary)"
       >
-        선택할 수 있는 카테고리가 없습니다.
+        등록된 카테고리가 없습니다. 오른쪽 추가 버튼으로 카테고리를 만들어주세요.
       </p>
     </section>
 
@@ -323,6 +360,13 @@ async function addTag(tagName: string, tagDesc: string) {
       :is-submitting="isCreatingTag"
       @submit="addTag"
       @close="isTagDialogOpen = false"
+    />
+
+    <CategoryCreateDialog
+      :open="isCategoryDialogOpen"
+      :is-submitting="isCreatingCategory"
+      @submit="addCategory"
+      @close="isCategoryDialogOpen = false"
     />
   </section>
 </template>

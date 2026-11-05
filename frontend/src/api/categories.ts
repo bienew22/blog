@@ -31,6 +31,26 @@ export async function fetchCategoryOptions(): Promise<CategoryOption[]> {
   return data
 }
 
+export async function createCategory(
+  categoryName: string,
+  categoryDesc: string,
+): Promise<CategoryOption> {
+  const response = await apiFetch(`/api/v1/categories`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ categoryName, categoryDesc }),
+  })
+  if (!response.ok) {
+    throw new Error(`Failed to create category: ${response.status}`)
+  }
+
+  const data: CategoryOption = await response.json()
+
+  return data
+}
+
 export async function fetchCategories(): Promise<CategorySummary[]> {
   const response = await apiFetch(`/api/v1/categories/summary`)
 
