@@ -8,11 +8,27 @@ export interface CategorySummary {
   lastPostCreateAt?: string | null
 }
 
+export interface CategoryOption {
+  categoryId: number
+  categoryName: string
+}
+
 export interface CategoryPosts {
   categoryName: string
   categoryDesc?: string
   postCount: number
   posts: PostSummary[]
+}
+
+export async function fetchCategoryOptions(): Promise<CategoryOption[]> {
+  const response = await apiFetch(`/api/v1/categories`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch category options: ${response.status}`)
+  }
+
+  const data: CategoryOption[] = await response.json()
+
+  return data
 }
 
 export async function fetchCategories(): Promise<CategorySummary[]> {

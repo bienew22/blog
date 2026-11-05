@@ -16,6 +16,7 @@ const router = useRouter()
 const postId = ref(route.params.id as string | undefined)
 const title = ref('')
 const content = ref('')
+const selectedCategoryId = ref<number | null>(null)
 const activeTab = ref<'edit' | 'preview'>('edit')
 const selectedTags = ref<Tag[]>([])
 const isLoadingPost = ref(!!postId.value)
@@ -48,6 +49,7 @@ watch(
     if (!postId.value) {
       title.value = ''
       content.value = ''
+      selectedCategoryId.value = null
       selectedTags.value = []
       isLoadingPost.value = false
       postLoadError.value = false
@@ -64,6 +66,7 @@ watch(
       if (isStale) return
       title.value = post.title
       content.value = post.contentMd
+      selectedCategoryId.value = post.category?.categoryId ?? null
       selectedTags.value = post.tags.map((tagName) => ({ tagName, postCount: 0 }))
     } catch (e) {
       if (isStale) return
@@ -94,6 +97,7 @@ function startNewPost() {
   postId.value = undefined
   title.value = ''
   content.value = ''
+  selectedCategoryId.value = null
   selectedTags.value = []
 }
 
@@ -123,6 +127,12 @@ async function savePost(option: boolean, status: PostStatus) {
   const postTitle = title.value.trim()
   const postContent = content.value.trim()
 
+  const categoryId = selectedCategoryId.value
+  if (categoryId === null) {
+    showToast('카테고리를 선택해주세요.', 'error', 2000)
+    return
+  }
+
   if (!postTitle) {
     showToast('제목을 입력해주세요.', 'error', 2000)
     return
@@ -141,8 +151,8 @@ async function savePost(option: boolean, status: PostStatus) {
   try {
     const tags = selectedTags.value.map((tag) => tag.tagName)
     const post = postId.value
-      ? await updatePost(postId.value, postTitle, content.value, tags, status)
-      : await createPost(postTitle, content.value, tags, status)
+      ? await updatePost(postId.value, postTitle, content.value, categoryId, tags, status)
+      : await createPost(postTitle, content.value, categoryId, tags, status)
     if (!post.id) {
       throw new Error('저장된 게시글 ID를 응답에서 찾을 수 없습니다.')
     }
@@ -179,7 +189,6 @@ async function savePost(option: boolean, status: PostStatus) {
           <X class="h-4 w-4 shrink-0" />
           취소
         </button>
-        <button
         <button
           type="button"
           class="inline-flex h-9 items-center justify-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) px-2 text-xs font-medium whitespace-nowrap text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) sm:gap-2 sm:px-4 sm:text-sm hover:cursor-pointer"
@@ -235,6 +244,7 @@ async function savePost(option: boolean, status: PostStatus) {
         v-show="activeTab === 'edit'"
         v-model:title="title"
         v-model:content="content"
+        v-model:selected-category-id="selectedCategoryId"
         v-model:selected-tags="selectedTags"
         @toast="showToast"
       />

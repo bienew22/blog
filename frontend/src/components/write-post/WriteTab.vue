@@ -2,12 +2,14 @@
 import { computed, ref, onMounted } from 'vue'
 import PostContentEditor from '@/components/write-post/PostContentEditor.vue'
 import TagCreateDialog from '@/components/common/TagCreateDialog.vue'
-import { Plus, Search } from 'lucide-vue-next'
+import { ChevronDown, Plus, Search } from 'lucide-vue-next'
 import { fetchTags, createTag, type Tag } from '@/api/tags'
+import { fetchCategoryOptions, type CategoryOption } from '@/api/categories'
 
 const title = defineModel<string>('title', { required: true })
 const content = defineModel<string>('content', { required: true })
 const selectedTags = defineModel<Tag[]>('selectedTags', { required: true })
+const selectedCategoryId = defineModel<number | null>('selectedCategoryId', { required: true })
 
 const emit = defineEmits<{
   toast: [message: string, type: 'pending' | 'success' | 'error', duration: number]
@@ -20,6 +22,30 @@ const tagPicker = ref<HTMLElement | null>(null)
 const isCreatingTag = ref(false) // 생성 완료전까지 중복 클릭 예방용
 const isTagDialogOpen = ref(false)
 const newTagName = ref('')
+const categories = ref<CategoryOption[]>([])
+const isLoadingCategories = ref(false)
+const categoryLoadError = ref(false)
+const isCategoryListOpen = ref(false)
+const categoryPicker = ref<HTMLElement | null>(null)
+
+const selectedCategoryName = computed(
+  () => categories.value.find((c) => c.categoryId === selectedCategoryId.value)?.categoryName ?? null,
+)
+const isCategoryDisabled = computed(
+  () => isLoadingCategories.value || categoryLoadError.value || categories.value.length === 0,
+)
+
+function selectCategory(category: CategoryOption) {
+  selectedCategoryId.value = category.categoryId
+  isCategoryListOpen.value = false
+}
+
+function closeCategoryListOnFocusout(event: FocusEvent) {
+  const nextTarget = event.relatedTarget
+  if (!(nextTarget instanceof Node) || !categoryPicker.value?.contains(nextTarget)) {
+    isCategoryListOpen.value = false
+  }
+}
 
 const filteredTags = computed(() => {
   const query = tagSearch.value.trim().toLocaleLowerCase()
@@ -35,6 +61,21 @@ onMounted(async () => {
     emit('toast', '태그를 불러오지 못했습니다.', 'error', 2000)
   }
 })
+
+async function loadCategories() {
+  isLoadingCategories.value = true
+  categoryLoadError.value = false
+  try {
+    categories.value = await fetchCategoryOptions()
+  } catch (e) {
+    categoryLoadError.value = true
+    emit('toast', e instanceof Error ? e.message : '카테고리를 불러오지 못했습니다.', 'error', 2000)
+  } finally {
+    isLoadingCategories.value = false
+  }
+}
+
+onMounted(loadCategories)
 
 function toggleTag(clickedTag: Tag) {
   const index = selectedTags.value.findIndex((tag) => tag.tagName === clickedTag.tagName)
@@ -95,24 +136,104 @@ async function addTag(tagName: string, tagDesc: string) {
 </script>
 
 <template>
-  <section class="space-y-8">
-    <section>
-      <label class="mb-3 block text-sm font-semibold text-(--color-heading)" for="post-title">
-        제목
-      </label>
-      <input
-        id="post-title"
-        v-model="title"
-        type="text"
-        maxlength="200"
-        placeholder="제목을 입력하세요"
-        class="h-12 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-base text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-muted) focus:border-(--color-primary)"
-      />
-    </section>
+  <section class="space-y-5">
 
+    <!-- 카테고리 선택 -->
     <section>
       <div class="flex items-center gap-3">
-        <h2 class="shrink-0 text-sm font-semibold text-(--color-heading)">태그</h2>
+        <label for="post-category" class="w-16 shrink-0 text-sm font-semibold text-(--color-heading)">
+          카테고리
+        </label>
+        <div ref="categoryPicker" class="relative min-w-0 flex-1" @focusout="closeCategoryListOnFocusout">
+          <button
+            id="post-category"
+            type="button"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-controls="available-category-list"
+            :aria-expanded="isCategoryListOpen"
+            :disabled="isCategoryDisabled"
+            class="flex h-11 w-full items-center justify-between rounded-lg border border-(--color-border) bg-(--color-surface) pr-3 pl-4 text-left text-sm outline-none transition-colors hover:cursor-pointer focus:border-(--color-primary) disabled:cursor-not-allowed disabled:opacity-60"
+            :class="selectedCategoryName ? 'text-(--color-text)' : 'text-(--color-text-muted)'"
+            @click="isCategoryListOpen = !isCategoryListOpen"
+            @keydown.esc="isCategoryListOpen = false"
+          >
+            <span class="truncate">
+              {{
+                selectedCategoryName ??
+                (isLoadingCategories ? '카테고리를 불러오는 중...' : '카테고리를 선택하세요')
+              }}
+            </span>
+            <ChevronDown
+              class="h-4 w-4 shrink-0 text-(--color-text-secondary) transition-transform"
+              :class="{ 'rotate-180': isCategoryListOpen }"
+            />
+          </button>
+          <ul
+            v-if="isCategoryListOpen"
+            id="available-category-list"
+            role="listbox"
+            aria-label="카테고리 목록"
+            class="my-scroll absolute top-full z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-(--color-border) bg-(--color-surface-elevated) py-1 shadow-md"
+          >
+            <li v-for="category in categories" :key="category.categoryId">
+              <button
+                type="button"
+                role="option"
+                :aria-selected="category.categoryId === selectedCategoryId"
+                class="flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft)"
+                @click="selectCategory(category)"
+              >
+                <span>{{ category.categoryName }}</span>
+                <span
+                  v-if="category.categoryId === selectedCategoryId"
+                  class="text-xs text-(--color-primary)"
+                >
+                  선택됨
+                </span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        v-if="categoryLoadError"
+        class="mt-2 flex items-center gap-3 pl-19 text-sm text-(--color-error)"
+      >
+        <span>카테고리를 불러오지 못했습니다.</span>
+        <button type="button" class="font-medium underline hover:cursor-pointer" @click="loadCategories">
+          다시 시도
+        </button>
+      </div>
+      <p
+        v-else-if="!isLoadingCategories && categories.length === 0"
+        class="mt-2 pl-19 text-sm text-(--color-text-secondary)"
+      >
+        선택할 수 있는 카테고리가 없습니다.
+      </p>
+    </section>
+
+    <!-- 제목 입력 -->
+    <section>
+      <div class="flex items-center gap-3">
+        <label for="post-title" class="w-16 shrink-0 text-sm font-semibold text-(--color-heading)">
+          제목
+        </label>
+        <input
+          id="post-title"
+          v-model="title"
+          type="text"
+          maxlength="200"
+          placeholder="제목을 입력하세요"
+          class="h-11 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-4 text-sm text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-muted) focus:border-(--color-primary)"
+        />
+      </div>
+    </section>
+
+    <!-- 태그 선택 -->
+    <section>
+      <div class="flex items-center gap-3">
+        <h2 class="w-16 shrink-0 text-sm font-semibold text-(--color-heading)">태그</h2>
         <div ref="tagPicker" class="relative min-w-0 flex-1" @focusout="closeTagListOnFocusout">
           <label class="relative block">
             <span class="sr-only">태그 검색</span>
@@ -171,22 +292,29 @@ async function addTag(tagName: string, tagDesc: string) {
         </div>
       </div>
 
-      <div v-if="selectedTags.length" class="mt-4 flex flex-wrap items-center gap-2">
-        <span class="mr-1 text-xs text-(--color-text-secondary)">선택됨</span>
-        <button
-          v-for="tag in selectedTags"
-          :key="tag.tagName"
-          type="button"
-          aria-label="선택한 태그 해제"
-          class="min-h-9 rounded-lg border border-(--color-border) bg-(--color-background-soft) px-3 py-1 text-xs text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
-          @click="toggleTag(tag)"
-        >
-          #{{ tag.tagName }} <span aria-hidden="true">×</span>
-        </button>
+      <div class="mt-3 flex min-h-9 items-center gap-3">
+        <span class="w-16 shrink-0 text-xs text-(--color-text-secondary)">
+          {{ selectedTags.length ? '선택됨' : '' }}
+        </span>
+        <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+          <button
+            v-for="tag in selectedTags"
+            :key="tag.tagName"
+            type="button"
+            aria-label="선택한 태그 해제"
+            class="min-h-9 rounded-lg border border-(--color-border) bg-(--color-background-soft) px-3 py-1 text-xs text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
+            @click="toggleTag(tag)"
+          >
+            #{{ tag.tagName }} <span aria-hidden="true">×</span>
+          </button>
+          <p v-if="!selectedTags.length" class="text-xs text-(--color-text-secondary)">
+            선택된 태그가 없습니다.
+          </p>
+        </div>
       </div>
-      <p v-else class="mt-3 text-sm text-(--color-text-secondary)">선택된 태그가 없습니다.</p>
     </section>
 
+    <!-- 본문 입력 -->
     <PostContentEditor v-model="content" />
 
     <TagCreateDialog
