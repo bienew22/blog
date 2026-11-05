@@ -99,7 +99,7 @@ public class PostController {
                 LocalDateTime.now(),
                 MarkDownParser.toHtml(isContentMdEmpty ? "" : request.contentMd()),
                 isContentMdEmpty ? "" : request.contentMd(),
-                new CategoryResponse(1L, "미리보기"),
+                new CategoryResponse("1", "미리보기"),
                 request.tags() == null ? List.of() : request.tags()
         );
     }
