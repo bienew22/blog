@@ -5,6 +5,8 @@ import bienew.blog.backend.auth.dto.AuthUserResponse;
 import bienew.blog.backend.auth.dto.GoogleLoginRequest;
 import bienew.blog.backend.auth.service.AuthService;
 import bienew.blog.backend.auth.service.AuthSession;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,7 @@ import java.time.Duration;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
+@Tag(name = "인증", description = "인증 관련 API")
 public class AuthController {
 
     private static final String REFRESH_COOKIE = "refresh_token";
@@ -34,12 +37,19 @@ public class AuthController {
     @Value("${app.auth.cookie-secure:false}")
     private boolean cookieSecure;
 
+    @Operation(
+            summary = "구글 로그인",
+            description = "구글 OAuth2 인증을 통해 로그인합니다. 성공 시 access token과 refresh token이 발급됩니다."
+    )
     @PostMapping("/google")
     public ResponseEntity<AuthResponse> loginWithGoogle(@Valid @RequestBody GoogleLoginRequest request) {
         return respond(authService.loginWithGoogle(request.credential()));
     }
 
-    // refresh 쿠키가 없으면 204, 만료/무효면 쿠키를 제거하고 401
+    @Operation(
+            summary = "토큰 갱신",
+            description = "만료된 access token을 refresh token으로 갱신합니다. refresh token이 없거나 무효/만료된 경우 401을 반환합니다."
+    )
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(
             @CookieValue(name = REFRESH_COOKIE, required = false) String refreshToken
@@ -56,12 +66,19 @@ public class AuthController {
         }
     }
 
-    // access token 유효성 확인용. 무효/만료는 보안 필터에서 401 을 반환한다. 유효인 경우 204 를 반환한다.
+    @Operation(
+            summary = "액세스 토큰 유효성 확인",
+            description = "액세스 토큰의 유효성을 확인합니다. 무효/만료된 경우 401을 반환하고, 유효한 경우 204를 반환합니다."
+    )
     @GetMapping("/validate")
     public ResponseEntity<Void> validate() {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "로그아웃",
+            description = "사용자를 로그아웃 처리하고 refresh token 쿠키를 제거합니다."
+    )
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @CookieValue(name = REFRESH_COOKIE, required = false) String refreshToken

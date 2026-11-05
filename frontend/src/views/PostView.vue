@@ -3,7 +3,7 @@ import BlogLayout from '@/components/layout/BlogLayout.vue'
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { deletePost, fetchPostDetail, type PostDetail } from '@/api/posts'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import { NotebookText, Pencil, Trash2 } from 'lucide-vue-next'
+import { Calendar, ChevronRight, NotebookText, Pencil, Trash2 } from 'lucide-vue-next'
 import DeletePostDialog from '@/components/common/DeletePostDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 import Prism from 'prismjs'
@@ -183,10 +183,23 @@ watch(
     </p>
     <article v-else class="mx-auto w-full">
       <header class="mb-8 border-b border-(--color-border-subtle) pb-6 sm:mb-10 sm:pb-8">
-        <!-- 블로그 포스트 헤더 : 아이콘 -->
+        <!-- 블로그 포스트 헤더 : 카테고리 경로 + 관리 버튼 -->
         <div class="mb-4 flex items-center justify-between gap-3">
-          <NotebookText class="h-8 w-8 text-(--color-primary)" :stroke-width="1.5" />
-          <div v-if="showAdminActions && post?.id" class="flex gap-2">
+          <nav aria-label="카테고리 경로" class="flex min-w-0 items-center gap-2 text-xs">
+            <NotebookText class="h-4 w-4 shrink-0 text-(--color-primary)" :stroke-width="1.5" />
+            <RouterLink
+              v-if="post?.category"
+              :to="{ name: 'category', params: { categoryName: post.category.categoryName } }"
+              class="shrink-0 font-medium text-(--color-primary) underline-offset-2 hover:underline"
+            >
+              {{ post.category.categoryName }}
+            </RouterLink>
+            <ChevronRight class="hidden h-3.5 w-3.5 shrink-0 text-(--color-text-muted) sm:block" />
+            <span class="hidden min-w-0 truncate font-semibold text-(--color-heading) sm:block">
+              {{ post?.title }}
+            </span>
+          </nav>
+          <div v-if="showAdminActions && post?.id" class="flex shrink-0 gap-2">
             <RouterLink
               :to="{ name: 'edit-post', params: { id: post.id } }"
               class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-(--color-border) px-3 text-sm text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
@@ -214,25 +227,32 @@ watch(
           @confirm="handleDelete"
           @close="isDeleteOpen = false"
         />
-        <!-- 블로그 포스트 헤더 : 메타 정보 -->
-        <div class="flex items-center gap-3 text-xs text-(--color-text-muted)">
-          <time :datetime="post?.createAt.replace(' ', 'T')">{{ formattedDate }}</time>
-        </div>
         <!-- 블로그 포스트 헤더 : 제목 -->
-        <h1 class="mt-3 break-words text-[2rem] leading-tight font-bold tracking-tight text-(--color-heading) sm:text-[2.25rem]">
+        <h1 class="break-words text-[2rem] leading-tight font-bold tracking-tight text-(--color-heading) sm:text-[2.25rem]">
           {{ post?.title }}
         </h1>
-        <!-- 블로그 포스트 헤더 : 태그 -->
-        <ul v-if="post?.tags?.length" class="mt-5 flex flex-wrap gap-2">
-          <li v-for="tag in post.tags" :key="tag">
-            <RouterLink
-              :to="`/tag/${tag}`"
-              class="inline-block max-w-full break-all rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1 text-sm text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:bg-(--color-accent-soft) hover:text-(--color-primary)"
-            >
-              <span class="text-(--color-primary)">#</span>{{ tag }}
-            </RouterLink>
-          </li>
-        </ul>
+        <!-- 블로그 포스트 헤더 : 메타 정보(날짜 + 태그) -->
+        <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <div class="flex shrink-0 items-center gap-1.5 text-xs text-(--color-text-muted)">
+            <Calendar class="h-3.5 w-3.5" />
+            <time :datetime="post?.createAt.replace(' ', 'T')">{{ formattedDate }}</time>
+          </div>
+          <span
+            v-if="post?.tags?.length"
+            class="hidden h-4 w-px bg-(--color-border) sm:block"
+            aria-hidden="true"
+          ></span>
+          <ul v-if="post?.tags?.length" class="flex flex-wrap gap-2">
+            <li v-for="tag in post.tags" :key="tag">
+              <RouterLink
+                :to="`/tag/${tag}`"
+                class="inline-block max-w-full break-all rounded-full border border-(--color-border) bg-(--color-surface) px-3 py-1 text-sm text-(--color-text-secondary) transition-colors hover:border-(--color-primary) hover:bg-(--color-accent-soft) hover:text-(--color-primary)"
+              >
+                <span class="text-(--color-primary)">#</span>{{ tag }}
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
       </header>
       <div ref="contentRef" class="post-content" v-html="post?.content"></div>
     </article>

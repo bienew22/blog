@@ -28,7 +28,7 @@ public class TagService {
 
 
     public List<TagSummaryResponse> getTags() {
-        return tagRepository.findAllWithPostCount(List.of(PostStatus.PUBLISHED));
+        return tagRepository.findAllTagSummary(List.of(PostStatus.PUBLISHED));
     }
 
     public TagPostResponse getTagPosts(String tagName) {

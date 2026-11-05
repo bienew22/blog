@@ -31,6 +31,11 @@ const router = createRouter({
       component: CategoriesView,
     },
     {
+      path: '/category/:categoryName',
+      name: 'category',
+      component: () => import('../views/CategoryPostView.vue'),
+    },
+    {
       path: '/tags',
       name: 'tags',
       component: TagsView,

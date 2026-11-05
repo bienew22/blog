@@ -26,16 +26,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
+        LEFT JOIN FETCH p.category
         WHERE p.id = :id
         AND p.status = 'PUBLISHED'
     """)
-    Optional<Post> findByIdWithTags(Long id);
+    Optional<Post> findByIdWithDetails(Long id);
 
     @Query("""
         SELECT p
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
+        LEFT JOIN FETCH p.category
         WHERE p.id = :id
     """)
     Optional<Post> findByIdForEdit(Long id);
@@ -46,8 +48,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         JOIN p.postTags pt
         WHERE pt.tag.tagName = :tagName
         AND p.status IN :statuses
+        ORDER BY p.id DESC
     """)
     List<Post> findAllByTagNameAndStatusIn(String tagName, List<PostStatus> statuses);
 
-    boolean existsBySlug(String slug);
+    @Query("""
+        SELECT p
+        FROM Category c
+        JOIN c.posts p
+        WHERE c.categoryName = :categoryName
+        AND p.status IN :statuses
+        ORDER BY p.id DESC
+    """)
+    List<Post> findAllByCategoryNameAndStatusIn(String categoryName, List<PostStatus> statuses);
 }

@@ -40,7 +40,7 @@
 | `--color-text-secondary` | `#475569` | 설명 및 보조 정보 |
 | `--color-text-muted` | `#64748B` | 날짜 등 약한 메타 정보 |
 | `--color-border` | `#CBD5E1` | 컴포넌트 경계 |
-| `--color-border-subtle` | `#E2E8F0` | 구분선 |
+| `--color-border-subtle` | `#D8E0EA` | 구분선 |
 | `--color-border-hover` | `#94A3B8` | 강조된 경계 |
 | `--color-success` | `#15803D` | 성공 상태 |
 | `--color-warning` | `#B45309` | 주의 상태 |

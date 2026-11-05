@@ -23,7 +23,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             LEFT JOIN t.postTags pt
             LEFT JOIN pt.post p ON p.status IN :statuses
             GROUP BY t.id, t.tagName
-            ORDER BY t.tagName
+            ORDER BY COUNT(p) DESC, t.id ASC
     """)
-    List<TagSummaryResponse> findAllWithPostCount(List<PostStatus> statuses);
+    List<TagSummaryResponse> findAllTagSummary(List<PostStatus> statuses);
 }

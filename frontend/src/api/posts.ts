@@ -23,6 +23,7 @@ export interface PostDetail {
     createAt: string
     content: string
     contentMd: string
+    category: { categoryId: number; categoryName: string } | null
     tags: string[]
 }
 
@@ -89,6 +90,7 @@ export async function fetchPostPreview(
 export async function createPost(
     title: string,
     content: string,
+    categoryId: number,
     tags: string[],
     status: PostStatus
 ): Promise<Post> {
@@ -97,7 +99,7 @@ export async function createPost(
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, "contentMd": content, tags, status }),
+        body: JSON.stringify({ title, "contentMd": content, categoryId, tags, status }),
     })
     if (!response.ok) {
         throw new Error(`Failed to create post: ${response.status}`)
@@ -119,6 +121,7 @@ export async function updatePost(
     id: string,
     title: string,
     content: string,
+    categoryId: number,
     tags: string[],
     status: PostStatus
 ): Promise<Post> {
@@ -127,7 +130,7 @@ export async function updatePost(
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, "contentMd": content, tags, status }),
+        body: JSON.stringify({ title, "contentMd": content, categoryId, tags, status }),
     })
     if (!response.ok) {
         throw new Error(`Failed to update post: ${response.status}`)
