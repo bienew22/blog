@@ -14,11 +14,11 @@ export interface AuthResponse {
 }
 
 export async function loginWithGoogle(credential: string): Promise<AuthResponse> {
-  const response = await fetch('/api/v1/auth/google', {
+  const response = await fetch('/api/v1/auth/tokens', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'same-origin',
-    body: JSON.stringify({ credential }),
+    body: JSON.stringify({ credential, loginType: 'GOOGLE' }),
   })
   if (!response.ok) {
     throw new Error(`Google 로그인에 실패했습니다. (${response.status})`)
@@ -26,10 +26,10 @@ export async function loginWithGoogle(credential: string): Promise<AuthResponse>
   return response.json() as Promise<AuthResponse>
 }
 
-// 204: 유효, 401: access token 만료/무효, 0: 네트워크 오류
+// 200: 유효, 401: access token 만료/무효, 0: 네트워크 오류
 export async function validateAccessToken(token: string): Promise<number> {
   try {
-    const response = await fetch('/api/v1/auth/validate', {
+    const response = await fetch('/api/v1/auth/me', {
       headers: { Authorization: 'Bearer ' + token },
     })
     return response.status

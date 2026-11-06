@@ -7,7 +7,7 @@ import bienew.blog.backend.post.repository.PostRepository;
 import bienew.blog.backend.tag.entity.Tag;
 import bienew.blog.backend.post.dto.PostSummaryResponse;
 import bienew.blog.backend.tag.dto.TagCreateRequest;
-import bienew.blog.backend.tag.dto.TagPostResponse;
+import bienew.blog.backend.tag.dto.TagDetailResponse;
 import bienew.blog.backend.tag.dto.TagSummaryResponse;
 import bienew.blog.backend.tag.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,9 @@ public class TagService {
         return tagRepository.findAllTagSummary(List.of(PostStatus.PUBLISHED));
     }
 
-    public TagPostResponse getTagPosts(String tagName) {
+    public TagDetailResponse getTagPosts(String tagName) {
         Tag tag = tagRepository.findByTagName(tagName).orElseThrow(() -> new RuntimeException("Tag not found"));
-        return TagPostResponse.of(
+        return TagDetailResponse.of(
                 tag,
                 postRepository.findAllByTagNameAndStatusIn(tagName, List.of(PostStatus.PUBLISHED)).stream()
                         .map(PostSummaryResponse::of)

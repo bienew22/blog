@@ -2,10 +2,11 @@ package bienew.blog.backend.tag.controller;
 
 
 import bienew.blog.backend.tag.dto.TagCreateRequest;
-import bienew.blog.backend.tag.dto.TagPostResponse;
+import bienew.blog.backend.tag.dto.TagDetailResponse;
 import bienew.blog.backend.tag.dto.TagSummaryResponse;
 import bienew.blog.backend.tag.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,13 +37,14 @@ public class TagController {
             description = "지정된 태그와 연관된 게시물 목록을 반환합니다."
     )
     @GetMapping("/{tagName}")
-    public TagPostResponse getTag(@PathVariable String tagName) {
+    public TagDetailResponse getTag(@PathVariable String tagName) {
         return tagService.getTagPosts(tagName);
     }
 
     @Operation(
             summary = "태그 생성",
-            description = "지정된 이름으로 새로운 태그를 생성합니다. 태그가 이미 존재하는 경우 오류가 반환됩니다."
+            description = "지정된 이름으로 새로운 태그를 생성합니다. 태그가 이미 존재하는 경우 오류가 반환됩니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("")
     public TagSummaryResponse createTag(@Valid @RequestBody TagCreateRequest request) {

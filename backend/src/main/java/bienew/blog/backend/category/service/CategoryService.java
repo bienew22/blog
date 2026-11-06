@@ -1,7 +1,7 @@
 package bienew.blog.backend.category.service;
 
 import bienew.blog.backend.category.dto.CategoryCreateRequest;
-import bienew.blog.backend.category.dto.CategoryPostResponse;
+import bienew.blog.backend.category.dto.CategoryDetailResponse;
 import bienew.blog.backend.category.dto.CategoryResponse;
 import bienew.blog.backend.category.dto.CategorySummaryResponse;
 import bienew.blog.backend.category.entity.Category;
@@ -56,11 +56,11 @@ public class CategoryService {
         return categoryRepository.findAllCategorySummary(List.of(PostStatus.PUBLISHED));
     }
 
-    public CategoryPostResponse getCategoryPosts(String categoryName) {
+    public CategoryDetailResponse getCategoryPosts(String categoryName) {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        return CategoryPostResponse.from(category,
+        return CategoryDetailResponse.from(category,
                 postRepository.findAllByCategoryNameAndStatusIn(categoryName, List.of(PostStatus.PUBLISHED)).stream()
                         .map(PostSummaryResponse::of)
                         .toList()

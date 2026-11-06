@@ -9,7 +9,7 @@ import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Eye, Pencil, Save, Send, X } from 'lucide-vue-next'
 import { type PostStatus, POST_STATUS } from '@/types/post-status'
 import { type Tag } from '@/api/tags'
-import { createPost, fetchDraftPosts, fetchPostForEdit, updatePost, type Post } from '@/api/posts'
+import { createPost, fetchDraftPosts, fetchPostDetail, updatePost, type Post } from '@/api/posts'
 
 const route = useRoute()
 const router = useRouter()
@@ -62,7 +62,7 @@ watch(
     isLoadingPost.value = true
     postLoadError.value = false
     try {
-      const post = await fetchPostForEdit(postId.value)
+      const post = await fetchPostDetail(postId.value)
       if (isStale) return
       title.value = post.title
       content.value = post.contentMd

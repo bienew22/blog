@@ -68,7 +68,7 @@ function handleNativeClose() {
         type="button"
         aria-label="닫기"
         :disabled="isDeleting"
-        class="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-lg text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-text) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary)"
+        class="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-lg text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-text) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) hover:cursor-pointer"
         @click="emit('close')"
       >
         <X class="h-5 w-5" />
@@ -105,7 +105,7 @@ function handleNativeClose() {
         <button
           type="button"
           :disabled="isDeleting"
-          class="min-h-11 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-border-hover) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary)"
+          class="min-h-11 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-border-hover) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) hover:cursor-pointer"
           @click="emit('close')"
         >
           취소
@@ -113,7 +113,7 @@ function handleNativeClose() {
         <button
           type="submit"
           :disabled="!canConfirm"
-          class="min-h-11 rounded-lg bg-(--color-error) px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-error) disabled:cursor-not-allowed disabled:opacity-50"
+          class="min-h-11 rounded-lg bg-(--color-error) px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-error) disabled:cursor-not-allowed disabled:opacity-50 hover:cursor-pointer"
         >
           {{ isDeleting ? '삭제 중...' : '삭제' }}
         </button>

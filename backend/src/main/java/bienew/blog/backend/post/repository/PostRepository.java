@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -17,9 +18,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         LEFT JOIN FETCH p.postTags pt
         LEFT JOIN FETCH pt.tag
-        WHERE p.status = :status
+        WHERE p.status IN :statuses
    """)
-    List<Post> findAllWithTagsByStatus(PostStatus status);
+    List<Post> findAllWithTagsByStatus(Set<PostStatus> statuses);
 
     @Query("""
         SELECT p
@@ -28,19 +29,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         LEFT JOIN FETCH pt.tag
         LEFT JOIN FETCH p.category
         WHERE p.id = :id
-        AND p.status = 'PUBLISHED'
     """)
     Optional<Post> findByIdWithDetails(Long id);
-
-    @Query("""
-        SELECT p
-        FROM Post p
-        LEFT JOIN FETCH p.postTags pt
-        LEFT JOIN FETCH pt.tag
-        LEFT JOIN FETCH p.category
-        WHERE p.id = :id
-    """)
-    Optional<Post> findByIdForEdit(Long id);
 
     @Query("""
         SELECT p

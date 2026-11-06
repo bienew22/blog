@@ -52,7 +52,7 @@ export async function createCategory(
 }
 
 export async function fetchCategories(): Promise<CategorySummary[]> {
-  const response = await apiFetch(`/api/v1/categories/summary`)
+  const response = await apiFetch(`/api/v1/categories/meta/summary`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch categories: ${response.status}`)

@@ -209,7 +209,7 @@ async function addTag(tagName: string, tagDesc: string) {
                 type="button"
                 role="option"
                 :aria-selected="category.categoryId === selectedCategoryId"
-                class="flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft)"
+                class="flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft) hover:cursor-pointer"
                 @click="selectCategory(category)"
               >
                 <span>{{ category.categoryName }}</span>
@@ -303,7 +303,7 @@ async function addTag(tagName: string, tagDesc: string) {
                 type="button"
                 role="option"
                 :aria-selected="selectedTags.some((t) => t.tagName === tag.tagName)"
-                class="flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft)"
+                class="flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-(--color-text) transition-colors hover:bg-(--color-background-soft) hover:cursor-pointer"
                 @click="toggleTag(tag)"
               >
                 <span>#{{ tag.tagName }}</span>
@@ -339,7 +339,7 @@ async function addTag(tagName: string, tagDesc: string) {
             :key="tag.tagName"
             type="button"
             aria-label="선택한 태그 해제"
-            class="min-h-9 rounded-lg border border-(--color-border) bg-(--color-background-soft) px-3 py-1 text-xs text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary)"
+            class="min-h-9 rounded-lg border border-(--color-border) bg-(--color-background-soft) px-3 py-1 text-xs text-(--color-text) transition-colors hover:border-(--color-primary) hover:text-(--color-primary) hover:cursor-pointer"
             @click="toggleTag(tag)"
           >
             #{{ tag.tagName }} <span aria-hidden="true">×</span>
