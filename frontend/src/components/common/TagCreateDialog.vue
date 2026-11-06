@@ -81,7 +81,7 @@ function handleNativeClose() {
       <button
         type="button"
         aria-label="닫기"
-        class="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-lg text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-text) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary)"
+        class="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-lg text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-text) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) hover:cursor-pointer"
         @click="emit('close')"
       >
         <X class="h-5 w-5" />
@@ -136,7 +136,7 @@ function handleNativeClose() {
       <div class="mt-8 flex flex-col-reverse justify-end gap-3 sm:flex-row">
         <button
           type="button"
-          class="min-h-11 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-border-hover) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary)"
+          class="min-h-11 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-border-hover) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) hover:cursor-pointer"
           @click="emit('close')"
         >
           취소
@@ -144,7 +144,7 @@ function handleNativeClose() {
         <button
           type="submit"
           :disabled="isSubmitting"
-          class="min-h-11 rounded-lg bg-(--color-primary) px-5 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) disabled:opacity-60"
+          class="min-h-11 rounded-lg bg-(--color-primary) px-5 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) disabled:opacity-60 hover:cursor-pointer"
         >
           저장
         </button>

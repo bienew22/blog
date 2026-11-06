@@ -79,7 +79,7 @@ function handleNativeClose() {
         <button
           type="button"
           aria-label="닫기"
-          class="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-lg text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-text) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary)"
+          class="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-lg text-(--color-text-secondary) transition-colors hover:bg-(--color-background-soft) hover:text-(--color-text) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) hover:cursor-pointer"
           @click="emit('close')"
         >
           <X class="h-5 w-5" />
@@ -99,14 +99,14 @@ function handleNativeClose() {
           <div class="mt-8 flex flex-col-reverse justify-end gap-3 sm:flex-row">
             <button
               type="button"
-              class="min-h-11 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-border-hover) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary)"
+              class="min-h-11 rounded-lg border border-(--color-border) bg-(--color-surface) px-5 text-sm font-medium text-(--color-text) transition-colors hover:border-(--color-border-hover) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) hover:cursor-pointer"
               @click="selectedDraft = null"
             >
               취소
             </button>
             <button
               type="button"
-              class="min-h-11 rounded-lg bg-(--color-primary) px-5 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary)"
+              class="min-h-11 rounded-lg bg-(--color-primary) px-5 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) hover:cursor-pointer"
               @click="emit('resume', selectedDraft.id)"
             >
               이어서 작성
@@ -159,7 +159,7 @@ function handleNativeClose() {
             <li v-for="draft in drafts" :key="draft.id">
               <button
                 type="button"
-                class="group flex min-h-16 w-full items-center gap-3 rounded-lg border border-(--color-border-subtle) bg-(--color-surface) px-4 py-3 text-left transition-colors hover:border-(--color-primary) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary)"
+                class="group flex min-h-16 w-full items-center gap-3 rounded-lg border border-(--color-border-subtle) bg-(--color-surface) px-4 py-3 text-left transition-colors hover:border-(--color-primary) hover:bg-(--color-background-soft) focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-(--color-primary) hover:cursor-pointer"
                 @click="selectedDraft = draft"
               >
                 <FileText class="h-5 w-5 shrink-0 text-(--color-primary)" />
@@ -181,7 +181,7 @@ function handleNativeClose() {
           <div class="mt-6 border-t border-(--color-border-subtle) pt-5">
             <button
               type="button"
-              class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-(--color-primary) px-5 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary)"
+              class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-(--color-primary) px-5 text-sm font-semibold text-white transition-colors hover:bg-(--color-primary-hover) focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-(--color-primary) hover:cursor-pointer"
               @click="emit('newPost')"
             >
               <Plus class="h-4 w-4" />
