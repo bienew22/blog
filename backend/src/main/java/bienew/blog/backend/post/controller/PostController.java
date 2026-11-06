@@ -57,7 +57,8 @@ public class PostController {
 
     @Operation(
             summary = "게시물 생성",
-            description = "새로운 게시물을 생성합니다."
+            description = "새로운 게시물을 생성합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("")
     public PostDetailResponse createPost(
@@ -68,7 +69,8 @@ public class PostController {
 
     @Operation(
             summary = "게시물 수정",
-            description = "게시물의 제목, 내용, 태그, 상태를 수정합니다."
+            description = "게시물의 제목, 내용, 태그, 상태를 수정합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @PutMapping("/{id}")
     public PostDetailResponse updatePost(
@@ -80,7 +82,8 @@ public class PostController {
 
     @Operation(
             summary = "게시물 삭제",
-            description = "지정된 ID에 해당하는 게시물을 삭제합니다."
+            description = "지정된 ID에 해당하는 게시물을 삭제합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
@@ -90,7 +93,8 @@ public class PostController {
 
     @Operation(
             summary = "게시물 미리보기",
-            description = "저장하지 않고 마크다운을 HTML로 변환한 미리보기를 반환합니다."
+            description = "저장하지 않고 마크다운을 HTML로 변환한 미리보기를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/preview")
     public PostDetailResponse previewPost(@RequestBody PostPreviewRequest request) {

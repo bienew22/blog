@@ -5,15 +5,15 @@ import bienew.blog.backend.post.dto.PostSummaryResponse;
 
 import java.util.List;
 
-public record CategoryPostResponse(
+public record CategoryDetailResponse(
         String categoryName,
         String categoryDesc,
         int postCount,
         List<PostSummaryResponse> posts
 ) {
-    public static CategoryPostResponse from(Category category, List<PostSummaryResponse> posts) {
+    public static CategoryDetailResponse from(Category category, List<PostSummaryResponse> posts) {
 
-        return new CategoryPostResponse(
+        return new CategoryDetailResponse(
                 category.getCategoryName(),
                 category.getCategoryDesc(),
                 posts.size(),
