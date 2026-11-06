@@ -2,6 +2,7 @@ package bienew.blog.backend.post.controller;
 
 
 import bienew.blog.backend.category.dto.CategoryResponse;
+import bienew.blog.backend.common.annotation.JwtUserId;
 import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
@@ -15,8 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -38,11 +37,9 @@ public class PostController {
     @GetMapping("")
     public List<PostResponse> getPosts(
             @RequestParam(required = false) List<PostStatus> statuses,
-            @AuthenticationPrincipal Jwt jwt
+            @JwtUserId Long userId
     ) {
-        String userId = jwt == null ? null : jwt.getSubject();
-
-        return postService.getPosts(userId, statuses);
+        return postService.getPosts(statuses, userId);
     }
 
     @Operation(
@@ -53,19 +50,19 @@ public class PostController {
     @GetMapping("/{id}")
     public PostDetailResponse getPost(
             @PathVariable Long id,
-            @AuthenticationPrincipal Jwt jwt
+            @JwtUserId Long userId
     ) {
-        String userId = jwt == null ? null : jwt.getSubject();
-
         return postService.getPost(id, userId);
     }
-    
+
     @Operation(
             summary = "게시물 생성",
             description = "새로운 게시물을 생성합니다."
     )
     @PostMapping("")
-    public PostDetailResponse createPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
+    public PostDetailResponse createPost(
+            @Valid @RequestBody PostCreateRequest postCreateRequest
+    ) {
         return postService.createPost(postCreateRequest);
     }
 
@@ -79,6 +76,16 @@ public class PostController {
             @Valid @RequestBody PostCreateRequest postUpdateRequest
     ) {
         return postService.updatePost(id, postUpdateRequest);
+    }
+
+    @Operation(
+            summary = "게시물 삭제",
+            description = "지정된 ID에 해당하는 게시물을 삭제합니다."
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(
@@ -100,15 +107,5 @@ public class PostController {
                 new CategoryResponse("1", "미리보기"),
                 request.tags() == null ? List.of() : request.tags()
         );
-    }
-
-    @Operation(
-            summary = "게시물 삭제",
-            description = "지정된 ID에 해당하는 게시물을 삭제합니다."
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
-        return ResponseEntity.noContent().build();
     }
 }

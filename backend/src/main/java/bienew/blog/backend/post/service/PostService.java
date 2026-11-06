@@ -44,7 +44,7 @@ public class PostService {
      * @param statuses 조회할 게시물 상태 목록 (옵션)
      * @return 게시물 요약 정보 목록
      */
-    public List<PostResponse> getPosts(String userId, List<PostStatus> statuses) {
+    public List<PostResponse> getPosts(List<PostStatus> statuses, Long userId) {
 
         // 1. 조회할 상태 set
         Set<PostStatus> statusSet = new HashSet<>();
@@ -72,7 +72,7 @@ public class PostService {
      * @param userId 사용자 ID (JWT에서 추출)
      * @return 게시물 상세 정보
      */
-    public PostDetailResponse getPost(Long id, String userId) {
+    public PostDetailResponse getPost(Long id, Long userId) {
         Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
 
@@ -84,20 +84,13 @@ public class PostService {
         return PostDetailResponse.of(post);
     }
 
-    public PostDetailResponse getPostForEdit(Long id) {
-        Post post = postRepository.findByIdWithDetails(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
-        return PostDetailResponse.of(post);
-    }
-
+    /**
+     * 게시물 생성
+     * @param postCreateRequest 게시물 생성 요청 DTO
+     * @return 생성된 게시물 상세 정보
+     */
     @Transactional
     public PostDetailResponse createPost(PostCreateRequest postCreateRequest) {
-
-        // 0. Slug 중복 체크
-//        if (postRepository.existsBySlug(postCreateRequest.title())) {
-//            throw new IllegalArgumentException("Slug already exists: " + postCreateRequest.title());
-//        }
-
         // 1. tags 목록 조회
         List<Tag> tags = tagRepository.findAllByTagNameIn(postCreateRequest.tags());
 
@@ -121,8 +114,15 @@ public class PostService {
         return PostDetailResponse.of(savedPost);
     }
 
+    /**
+     * 게시물 수정
+     * @param id 게시물 ID
+     * @param postUpdateRequest 게시물 수정 요청 DTO
+     * @return 수정된 게시물 상세 정보
+     */
     @Transactional
     public PostDetailResponse updatePost(Long id, PostCreateRequest postUpdateRequest) {
+
         Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
         List<Tag> tags = tagRepository.findAllByTagNameIn(postUpdateRequest.tags());
@@ -162,17 +162,21 @@ public class PostService {
         return PostDetailResponse.of(post);
     }
 
+    /**
+     * 게시물 삭제
+     * @param id 게시물 ID
+     */
     @Transactional
     public void deletePost(Long id) {
         postRepository.deleteById(id);
     }
 
-
-    private boolean isAdmin(String userId) {
+    private boolean isAdmin(Long userId) {
         if (userId == null) {
             return false;
         }
-        User user = userRepository.findById(Long.valueOf(userId))
+
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
         return user.getRole() == UserRole.ADMIN;
     }
