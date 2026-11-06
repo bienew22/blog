@@ -2,6 +2,7 @@ package bienew.blog.backend.post.controller;
 
 
 import bienew.blog.backend.category.dto.CategoryResponse;
+import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
 import bienew.blog.backend.post.dto.PostPreviewRequest;
@@ -9,10 +10,13 @@ import bienew.blog.backend.post.dto.PostResponse;
 import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,20 +32,17 @@ public class PostController {
 
     @Operation(
             summary = "게시물 목록 조회",
-            description = "모든 게시물의 요약 정보를 반환합니다."
+            description = "모든 게시물의 요약 정보를 반환합니다. (로그인 되어 있는 경우 공개 외 상태의 게시글 조회 가능)",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("")
-    public List<PostResponse> getPosts() {
-        return postService.getPosts();
-    }
+    public List<PostResponse> getPosts(
+            @RequestParam(required = false) List<PostStatus> statuses,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        String userId = jwt == null ? null : jwt.getSubject();
 
-    @Operation(
-            summary = "임시저장 게시물 목록 조회",
-            description = "임시저장된 게시물의 요약 정보를 반환합니다."
-    )
-    @GetMapping("/drafts")
-    public List<PostResponse> getDraftPosts() {
-        return postService.getDraftPosts();
+        return postService.getPosts(userId, statuses);
     }
 
     @Operation(

@@ -1,6 +1,9 @@
 package bienew.blog.backend.post.service;
 
 
+import bienew.blog.backend.auth.domain.UserRole;
+import bienew.blog.backend.auth.entity.User;
+import bienew.blog.backend.auth.repository.UserRepository;
 import bienew.blog.backend.category.entity.Category;
 import bienew.blog.backend.category.repository.CategoryRepository;
 import bienew.blog.backend.common.snowflake.Snowflake;
@@ -17,31 +20,60 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
 
     private final Snowflake snowflake;
 
-    public List<PostResponse> getPosts() {
+    /**
+     * 게시물 목록 조회
+     * 1. 기본적으로 PUBLISHED 상태의 게시물만 조회하도록 설정
+     * 2. 사용자가 임시상태 게시글 조회 가능 여부 확인
+     * 3. 조회된 게시물 목록을 PostResponse로 변환하여 반환
+     * @param userId 사용자 ID (JWT에서 추출)
+     * @param statuses 조회할 게시물 상태 목록 (옵션)
+     * @return 게시물 요약 정보 목록
+     */
+    public List<PostResponse> getPosts(String userId, List<PostStatus> statuses) {
 
-        return postRepository.findAllWithTagsByStatus(PostStatus.PUBLISHED).stream()
+        // 1. 조회할 상태 set
+        Set<PostStatus> statusSet = new HashSet<>();
+
+        if (statuses != null && !statuses.isEmpty()) {
+            statusSet.addAll(statuses);
+        } else {
+            // 기본적으로 PUBLISHED 상태의 게시물만 조회하도록 설정
+            statusSet.add(PostStatus.PUBLISHED);
+        }
+
+        // 2. 사용자가 임시상태 게시글 조회 가능 여부 확인
+        if (statusSet.contains(PostStatus.DRAFT)) {
+            if (userId == null) {
+                throw new IllegalArgumentException("Unauthorized access to posts");
+            }
+
+            User user = userRepository.findById(Long.valueOf(userId))
+                    .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+            if (user.getRole() != UserRole.ADMIN) {
+                throw new IllegalArgumentException("Unauthorized access to posts");
+            }
+        }
+
+        return postRepository.findAllWithTagsByStatus(statusSet).stream()
                 .map(PostResponse::of)
                 .toList();
     }
-
-    public List<PostResponse> getDraftPosts() {
-        return postRepository.findAllWithTagsByStatus(PostStatus.DRAFT).stream()
-                .map(PostResponse::of)
-                .toList();
-    }
-
+    
     public PostDetailResponse getPost(Long id) {
         Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
@@ -49,7 +81,7 @@ public class PostService {
     }
 
     public PostDetailResponse getPostForEdit(Long id) {
-        Post post = postRepository.findByIdForEdit(id)
+        Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
         return PostDetailResponse.of(post);
     }
@@ -87,7 +119,7 @@ public class PostService {
 
     @Transactional
     public PostDetailResponse updatePost(Long id, PostCreateRequest postUpdateRequest) {
-        Post post = postRepository.findByIdForEdit(id)
+        Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
         List<Tag> tags = tagRepository.findAllByTagNameIn(postUpdateRequest.tags());
 
