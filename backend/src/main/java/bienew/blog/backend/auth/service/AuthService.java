@@ -1,21 +1,19 @@
 package bienew.blog.backend.auth.service;
 
-import bienew.blog.backend.auth.domain.UserRole;
+import bienew.blog.backend.auth.dto.LoginRequest;
+import bienew.blog.backend.auth.dto.OauthUserInfo;
 import bienew.blog.backend.auth.entity.RefreshToken;
 import bienew.blog.backend.auth.entity.User;
+import bienew.blog.backend.auth.oauth.LoginResolveRegistry;
+import bienew.blog.backend.auth.oauth.LoginResolver;
 import bienew.blog.backend.auth.repository.RefreshTokenRepository;
-import bienew.blog.backend.auth.repository.UserRepository;
 import bienew.blog.backend.common.snowflake.Snowflake;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,109 +23,74 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HexFormat;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private final UserRepository userRepository;
+
+    private final AuthProperties authProperties;
+
+    private final UserService userService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final Snowflake snowflake;
     private final JwtEncoder jwtEncoder;
-    private final JwtDecoder googleJwtDecoder;
-    private final Duration accessTokenLifetime;
-    private final Duration refreshTokenLifetime;
+    private final LoginResolveRegistry loginResolveRegistry;
 
-    @Value("${app.auth.admin-emails:}")
-    private String configuredAdminEmails;
 
-    public AuthService(
-            UserRepository userRepository,
-            RefreshTokenRepository refreshTokenRepository,
-            Snowflake snowflake,
-            JwtEncoder jwtEncoder,
-            @Qualifier("googleJwtDecoder") JwtDecoder googleJwtDecoder,
-            @Value("${app.auth.access-token-minutes:15}") long accessTokenMinutes,
-            @Value("${app.auth.refresh-token-days:14}") long refreshTokenDays
-    ) {
-        this.accessTokenLifetime = Duration.ofMinutes(accessTokenMinutes);
-        this.refreshTokenLifetime = Duration.ofDays(refreshTokenDays);
-        this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.snowflake = snowflake;
-        this.jwtEncoder = jwtEncoder;
-        this.googleJwtDecoder = googleJwtDecoder;
-    }
+    /**
+     * 로그인 처리
+     * 1. 로그인 타입과 credential 검증
+     * 2. LoginResolver를 통해 OauthUserInfo를 가져옴
+     * 3. UserService를 통해 사용자 조회 또는 등록
+     * 4. 새로운 세션(AuthSession) 생성 및 반환
+     * @param request 로그인 요청 정보
+     * @return 새로운 세션 정보 (access token, refresh token, 사용자 정보)
+     */
+    public AuthSession login(LoginRequest request) {
 
-    @Transactional
-    public AuthSession loginWithGoogle(String credential) {
-        Jwt googleToken;
-        try {
-            googleToken = googleJwtDecoder.decode(credential);
-        } catch (JwtException | IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Google ID token.", exception);
+        if (request.loginType() == null || request.credential() == null || request.credential().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Login type and credential must be provided.");
         }
 
-        String email = googleToken.getClaimAsString("email");
-        String googleSub = googleToken.getSubject();
-        if (!Boolean.TRUE.equals(googleToken.getClaim("email_verified"))
-                || email == null || googleSub == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Google account email is not verified.");
-        }
+        LoginResolver resolver = loginResolveRegistry.get(request.loginType());
 
-        UserRole role = isAdminEmail(email) ? UserRole.ADMIN : UserRole.USER;
-        String name = valueOrDefault(googleToken.getClaimAsString("name"), email);
-        User user = userRepository.findByGoogleSub(googleSub)
-                // 기존 로그인 : 상태 업데이트
-                .map(existing -> {
-                    existing.updateProfile(
-                            email,
-                            name,
-                            role
-                    );
-                    return existing;
-                })
-                // 신규 로그인 : 계정 생성
-                .orElseGet(() -> createGoogleUser(email, googleSub, name, role));
+        OauthUserInfo userInfo = resolver.resolve(request.credential());
 
-        User savedUser = userRepository.save(user);
+        User user = userService.findOrRegisterUser(userInfo);
 
-        return newSession(savedUser);
+        return newSession(user);
     }
 
-    private User createGoogleUser(String email, String googleSub, String name, UserRole role) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "This email is already associated with another account."
-            );
-        }
-        return userRepository.save(User.create(
-                snowflake.nextId(),
-                googleSub,
-                email,
-                name,
-                role
-        ));
+    /**
+     * 개발 환경에서 관리자 계정으로 로그인 처리
+     * @return 새로운 세션 정보 (access token, refresh token, 사용자 정보)
+     */
+    public AuthSession loginAsDevAdmin() {
+        String googleSub = "development-admin";
+        String email = "developer@localhost";
+
+        OauthUserInfo userInfo = OauthUserInfo.of(email, "Local Developer", googleSub);
+
+        User user = userService.findOrRegisterUser(userInfo);
+
+        return newSession(user);
     }
 
-    public long getAccessTokenLifetimeSeconds() {
-        return accessTokenLifetime.toSeconds();
-    }
-
-    public long getRefreshTokenLifetimeSeconds() {
-        return refreshTokenLifetime.toSeconds();
-    }
-
-    // refresh token 은 1회용(rotation)이며, 만료/위조/재사용 시 401 을 반환한다.
+    /**
+     * Refresh token을 사용하여 새로운 세션(AuthSession)을 생성
+     * 1. refresh token 검증 (null, blank, 존재 여부)
+     * 2. refresh token 만료 여부 확인
+     * 3. 기존 refresh token 삭제 (1회용)
+     * 4. 새로운 세션(AuthSession) 생성 및 반환
+     * @param refreshToken 사용자가 제공한 refresh token
+     * @return 새로운 세션 정보 (access token, refresh token, 사용자 정보)
+     * @throws ResponseStatusException 401 Unauthorized: refresh token이 없거나 무효/만료된 경우
+     */
     @Transactional
     public AuthSession refresh(String refreshToken) {
         if (refreshToken == null || refreshToken.isBlank()) {
@@ -142,11 +105,25 @@ public class AuthService {
         return newSession(stored.getUser());
     }
 
+    /**
+     * 로그아웃 처리
+     * 1. refresh token 검증 (null, blank)
+     * 2. refresh token 삭제 (로그아웃 처리)
+     * @param refreshToken 사용자가 제공한 refresh token
+     */
     @Transactional
     public void logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isBlank()) {
             refreshTokenRepository.deleteByTokenHash(hash(refreshToken));
         }
+    }
+
+    public long getAccessTokenLifetimeSeconds() {
+        return authProperties.accessTokenLifetime().toSeconds();
+    }
+
+    public long getRefreshTokenLifetimeSeconds() {
+        return authProperties.refreshTokenLifetime().toSeconds();
     }
 
     private String issueRefreshToken(User user) {
@@ -157,7 +134,7 @@ public class AuthService {
                 snowflake.nextId(),
                 user,
                 hash(token),
-                LocalDateTime.now().plus(refreshTokenLifetime)
+                LocalDateTime.now().plus(authProperties.refreshTokenLifetime())
         ));
         return token;
     }
@@ -176,7 +153,7 @@ public class AuthService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("bienew-blog")
                 .issuedAt(now)
-                .expiresAt(now.plus(accessTokenLifetime))
+                .expiresAt(now.plus(authProperties.accessTokenLifetime()))
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
@@ -188,18 +165,4 @@ public class AuthService {
 
         return AuthSession.of(accessToken, issueRefreshToken(user), user);
     }
-
-    private boolean isAdminEmail(String email) {
-        Set<String> adminEmails = Arrays.stream(configuredAdminEmails.split(","))
-                .map(String::trim)
-                .filter(value -> !value.isEmpty())
-                .map(String::toLowerCase)
-                .collect(Collectors.toSet());
-        return adminEmails.contains(email.toLowerCase());
-    }
-
-    private static String valueOrDefault(String value, String fallback) {
-        return value == null || value.isBlank() ? fallback : value;
-    }
-
 }

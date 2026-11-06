@@ -2,10 +2,11 @@ package bienew.blog.backend.auth.controller;
 
 import bienew.blog.backend.auth.dto.AuthResponse;
 import bienew.blog.backend.auth.dto.AuthUserResponse;
-import bienew.blog.backend.auth.dto.GoogleLoginRequest;
+import bienew.blog.backend.auth.dto.LoginRequest;
 import bienew.blog.backend.auth.service.AuthService;
 import bienew.blog.backend.auth.service.AuthSession;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +39,12 @@ public class AuthController {
     private boolean cookieSecure;
 
     @Operation(
-            summary = "구글 로그인",
-            description = "구글 OAuth2 인증을 통해 로그인합니다. 성공 시 access token과 refresh token이 발급됩니다."
+            summary = "로그인",
+            description = "성공 시 access token과 refresh token이 발급됩니다."
     )
-    @PostMapping("/google")
-    public ResponseEntity<AuthResponse> loginWithGoogle(@Valid @RequestBody GoogleLoginRequest request) {
-        return respond(authService.loginWithGoogle(request.credential()));
+    @PostMapping("/tokens")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return respond(authService.login(request));
     }
 
     @Operation(
@@ -68,11 +69,12 @@ public class AuthController {
 
     @Operation(
             summary = "액세스 토큰 유효성 확인",
-            description = "액세스 토큰의 유효성을 확인합니다. 무효/만료된 경우 401을 반환하고, 유효한 경우 204를 반환합니다."
+            description = "액세스 토큰의 유효성을 확인합니다. 무효/만료된 경우 401을 반환하고, 유효한 경우 200을 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
-    @GetMapping("/validate")
+    @GetMapping("/me")
     public ResponseEntity<Void> validate() {
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
