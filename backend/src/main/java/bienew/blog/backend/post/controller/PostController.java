@@ -47,22 +47,19 @@ public class PostController {
 
     @Operation(
             summary = "게시물 상세 조회",
-            description = "지정된 ID에 해당하는 게시물의 상세 정보를 반환합니다."
+            description = "지정된 ID에 해당하는 게시물의 상세 정보를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{id}")
-    public PostDetailResponse getPost(@PathVariable Long id) {
-        return postService.getPost(id);
-    }
+    public PostDetailResponse getPost(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        String userId = jwt == null ? null : jwt.getSubject();
 
-    @Operation(
-            summary = "게시물 수정 정보 조회",
-            description = "수정에 필요한 게시물 정보를 반환합니다."
-    )
-    @GetMapping("/{id}/edit")
-    public PostDetailResponse getPostForEdit(@PathVariable Long id) {
-        return postService.getPostForEdit(id);
+        return postService.getPost(id, userId);
     }
-
+    
     @Operation(
             summary = "게시물 생성",
             description = "새로운 게시물을 생성합니다."

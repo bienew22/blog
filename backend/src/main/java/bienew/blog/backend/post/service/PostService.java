@@ -57,26 +57,30 @@ public class PostService {
         }
 
         // 2. 사용자가 임시상태 게시글 조회 가능 여부 확인
-        if (statusSet.contains(PostStatus.DRAFT)) {
-            if (userId == null) {
-                throw new IllegalArgumentException("Unauthorized access to posts");
-            }
-
-            User user = userRepository.findById(Long.valueOf(userId))
-                    .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
-            if (user.getRole() != UserRole.ADMIN) {
-                throw new IllegalArgumentException("Unauthorized access to posts");
-            }
+        if (statusSet.contains(PostStatus.DRAFT) && !isAdmin(userId)) {
+            throw new IllegalArgumentException("Unauthorized access to posts");
         }
 
         return postRepository.findAllWithTagsByStatus(statusSet).stream()
                 .map(PostResponse::of)
                 .toList();
     }
-    
-    public PostDetailResponse getPost(Long id) {
+
+    /**
+     * 게시물 상세 조회
+     * @param id  게시물 ID
+     * @param userId 사용자 ID (JWT에서 추출)
+     * @return 게시물 상세 정보
+     */
+    public PostDetailResponse getPost(Long id, String userId) {
         Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+
+        // 공개 상태가 아닌 게시물에 대한 접근 권한 확인
+        if (post.getStatus() != PostStatus.PUBLISHED && !isAdmin(userId)) {
+            throw new IllegalArgumentException("Unauthorized access to post");
+        }
+
         return PostDetailResponse.of(post);
     }
 
@@ -161,5 +165,15 @@ public class PostService {
     @Transactional
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+    }
+
+
+    private boolean isAdmin(String userId) {
+        if (userId == null) {
+            return false;
+        }
+        User user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        return user.getRole() == UserRole.ADMIN;
     }
 }
