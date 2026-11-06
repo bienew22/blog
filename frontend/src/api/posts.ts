@@ -28,7 +28,7 @@ export interface PostDetail {
 }
 
 export async function fetchPosts(): Promise<Post[]> {
-    const response = await apiFetch(`/api/v1/posts`)
+    const response = await apiFetch(`/api/v1/posts?statuses=PUBLISHED`)
     if (!response.ok) {
         throw new Error(`Failed to fetch posts: ${response.status}`)
     }
@@ -39,7 +39,7 @@ export async function fetchPosts(): Promise<Post[]> {
 }
 
 export async function fetchDraftPosts(): Promise<Post[]> {
-    const response = await apiFetch(`/api/v1/posts/drafts`)
+    const response = await apiFetch(`/api/v1/posts?statuses=DRAFT`)
     if (!response.ok) {
         throw new Error(`Failed to fetch draft posts: ${response.status}`)
     }
@@ -58,15 +58,6 @@ export async function fetchPostDetail(id: string): Promise<PostDetail> {
     const data: PostDetail = await response.json()
 
     return data
-}
-
-export async function fetchPostForEdit(id: string): Promise<PostDetail> {
-    const response = await apiFetch(`/api/v1/posts/${id}/edit`)
-    if (!response.ok) {
-        throw new Error(`Failed to fetch post for editing: ${response.status}`)
-    }
-
-    return await response.json()
 }
 
 export async function fetchPostPreview(
