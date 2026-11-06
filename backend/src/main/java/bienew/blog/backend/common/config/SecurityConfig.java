@@ -21,21 +21,37 @@ public class SecurityConfig {
             HttpSecurity http,
             @Qualifier("appJwtDecoder") JwtDecoder appJwtDecoder,
             JwtAuthenticationConverter jwtAuthenticationConverter
-    ) throws Exception {
+    ) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/validate").authenticated()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/drafts", "/api/v1/posts/*/edit")
+                        // Auth Controller API 관련 권한 정리
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/me")
+                        .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**")
+                        .permitAll()
+                        // Post Controller API 관련 권한 정리
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/posts/**")
                         .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/posts", "/api/v1/tags")
+                        // Tag Controller API 관련 권한 정리
+                        .requestMatchers(HttpMethod.GET, "/api/v1/tags/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/tags/**")
                         .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/posts/**")
+                        // Category Controller API 관련 권한 정리
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/categories/**")
                         .hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                        // Swagger 관련 권한 정리
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                        .permitAll()
+                        // 그 외 모든 요청은 인증 필요
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(resourceServer -> resourceServer
                         .jwt(jwt -> jwt
