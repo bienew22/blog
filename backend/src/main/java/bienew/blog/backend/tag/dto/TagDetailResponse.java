@@ -5,14 +5,14 @@ import bienew.blog.backend.post.dto.PostSummaryResponse;
 
 import java.util.List;
 
-public record TagPostResponse(
+public record TagDetailResponse(
         String tagName,
         String tagDesc,
         int postCount,
         List<PostSummaryResponse> posts
 ) {
-    public static TagPostResponse of(Tag tag, List<PostSummaryResponse> posts) {
-        return new TagPostResponse(
+    public static TagDetailResponse of(Tag tag, List<PostSummaryResponse> posts) {
+        return new TagDetailResponse(
                 tag.getTagName(),
                 tag.getTagDesc(),
                 posts.size(),
