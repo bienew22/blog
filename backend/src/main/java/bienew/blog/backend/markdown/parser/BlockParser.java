@@ -3,6 +3,7 @@ package bienew.blog.backend.markdown.parser;
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.Document;
+import bienew.blog.backend.markdown.parser.block.HeadingParser;
 import bienew.blog.backend.markdown.parser.block.ParagraphParser;
 
 import java.util.ArrayList;
@@ -16,6 +17,11 @@ public enum BlockParser {
 
     BlockParser() {
         abstractBlockParsers = new ArrayList<>();
+
+        // #{1, 5}로 시작하는 문장을 Parse
+        abstractBlockParsers.add(new HeadingParser());
+
+        // 그 외의 문장을 Parse
         abstractBlockParsers.add(new ParagraphParser());
     }
 
