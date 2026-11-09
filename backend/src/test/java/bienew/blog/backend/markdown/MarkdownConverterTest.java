@@ -358,6 +358,27 @@ class MarkdownConverterTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parseSupScriptText() {
+        String markdown = "This is a^{superscript} text.\n# Heading with ^{superscript} text";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is a\n" +
+                "\t\tSupScript: text=superscript \n" +
+                "\t\tText: text=text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with \n" +
+                "\t\tSupScript: text=superscript \n" +
+                "\t\tText: text=text";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*]", "");
     }
