@@ -286,7 +286,53 @@ class MarkdownConverterTest {
                 "\tParagraph\n" +
                 "\t\tText: text=Heading with a [link(https://example.com) is not a link\n" +
                 "\tParagraph\n" +
-                "\t\tText: text=This is not a [link](https://example.com in a paragraph.)";
+                "\t\tText: text=This is not a" +
+                "\t\tLink:url=https:example.cominaparagraph.Text:text=link";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parsesUnderLineText() {
+        String markdown = "This is __underline__ text.\n# Heading with __underline__ text";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tUnderLine\n" +
+                "\t\t\tText: text=underline \n" +
+                "\t\tText: text=text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with \n" +
+                "\t\tUnderLine\n" +
+                "\t\t\tText: text=underline \n" +
+                "\t\tText: text=text";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parseUnderLineAndOtherText() {
+        String markdown = "This is __**underline and bold**__\n[_link_](https://example.com)";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tUnderLine\n" +
+                "\t\t\tBold\n" +
+                "\t\t\t\tText: text=underline and bold \n" +
+                "\tParagraph\n" +
+                "\t\tLink: url=https://example.com \n" +
+                "\t\t\tItalic\n" +
+                "\t\t\t\tText: text=link";
 
         assertEquals(regString(expected), regString(document));
     }

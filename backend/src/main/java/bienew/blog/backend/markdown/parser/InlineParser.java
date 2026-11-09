@@ -16,6 +16,8 @@ public enum InlineParser {
         parsers = List.of(
                 // **some** 구조의 문장을 parse
                 new BoldParser(),
+                // __some__ 구조의 문장을 parse
+                new UnderLineParser(),
                 // _some_ 구조의 문장을 parse
                 new ItalicParser(),
                 // [some](url) 구조의 문장을 parse
