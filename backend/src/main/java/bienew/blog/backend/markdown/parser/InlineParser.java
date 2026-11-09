@@ -12,10 +12,20 @@ public enum InlineParser {
 
     private final List<AbstractInlineParser> parsers;
 
+//    parsers.add(new BoldParser());  // **some**을 파싱하는 BoldParser를 추가
+// *         parsers.add(new SubScriptParser()); // _{some} 을 파싱하는 SubScriptParser를 추가
+// *         parsers.add(new SupScriptParser()); // ^{some} 을 파싱하는 SupScriptParser를 추가
+// *         parsers.add(new UnderLineParser()); // __some__ 을 파싱하는 UnderLineParser를 추가
+// *         parsers.add(new ItalicParser()); // _some_ 을 파싱하는 ItalicParser를 추가
+// *         parsers.add(new LinkParser()); // [some](url) 을 파싱하는 LinkParser를 추가
+// *         parsers.add(new InlineCodeParser()); // `some` 을 파싱하는 InlineCodeParser를 추가
+
     InlineParser() {
         parsers = List.of(
                 // **some** 구조의 문장을 parse
                 new BoldParser(),
+                // _{some} 구조의 문장을 parse
+                new SubScriptParser(),
                 // __some__ 구조의 문장을 parse
                 new UnderLineParser(),
                 // _some_ 구조의 문장을 parse
@@ -76,52 +86,3 @@ public enum InlineParser {
         return nodes;
     }
 }
-
-/**
- * package bienew.blog.backend.markdown;
- *
- * import bienew.blog.backend.markdown.ast.ASTNode;
- * import bienew.blog.backend.markdown.ast.inline.Text;
- * import bienew.blog.backend.markdown.parser.inline.AbstractInlineParser;
- * import bienew.blog.backend.markdown.parser.ParseResult;
- * import bienew.blog.backend.markdown.parser.inline.*;
- *
- * import java.util.ArrayList;
- * import java.util.List;
- *
- * public enum InlineParser {
- *     INSTANCE;
- *
- *     private final List<AbstractInlineParser> parsers;
- *
- *     InlineParser() {
- *         parsers = new ArrayList<>();
- *         parsers.add(new BoldParser());  // **some**을 파싱하는 BoldParser를 추가
- *         parsers.add(new SubScriptParser()); // _{some} 을 파싱하는 SubScriptParser를 추가
- *         parsers.add(new SupScriptParser()); // ^{some} 을 파싱하는 SupScriptParser를 추가
- *         parsers.add(new UnderLineParser()); // __some__ 을 파싱하는 UnderLineParser를 추가
- *         parsers.add(new ItalicParser()); // _some_ 을 파싱하는 ItalicParser를 추가
- *         parsers.add(new LinkParser()); // [some](url) 을 파싱하는 LinkParser를 추가
- *         parsers.add(new InlineCodeParser()); // `some` 을 파싱하는 InlineCodeParser를 추가
- *     }
- *
- *     public void parse(ASTNode node) {
- *         if (node == null) {
- *             return;
- *         }
- *
- *         if (node.getChildren() != null && !node.getChildren().isEmpty()) {
- *             for (ASTNode child : node.getChildren()) {
- *                 parse(child);
- *             }
- *         }
- *
- *         // source를 파싱한 결과물은 기존 자식 앞에 추가
- *         List<ASTNode> nodes = parse(node.getSource());
- *         for (int i = nodes.size() - 1; i >= 0; i--) {
- *             node.addChildrenPrevious(nodes.get(i));
- *         }
- *     }
- *
- * }
- */
