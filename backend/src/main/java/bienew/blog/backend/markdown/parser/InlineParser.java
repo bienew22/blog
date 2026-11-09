@@ -2,16 +2,71 @@ package bienew.blog.backend.markdown.parser;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Text;
+import bienew.blog.backend.markdown.parser.inline.BoldParser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public enum InlineParser {
     INSTANCE;
 
+    private final List<AbstractInlineParser> parsers;
+
+    InlineParser() {
+        parsers = List.of(
+                // **some** 구조의 문자을 parse
+                new BoldParser()
+        );
+    }
     public List<InlineNode> parse(String text) {
-        Objects.requireNonNull(text, "text must not be null");
-        return List.of(new Text(text));
+        if (text == null || text.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<InlineNode> nodes = new ArrayList<>();
+
+        int index = 0;
+        StringBuilder sb = new StringBuilder();
+
+        while (index < text.length()) {
+            boolean matched = false;
+            ParseResult<? extends InlineNode> result = null;
+
+            // Iterate through the parsers to find a match
+            for (AbstractInlineParser parser : parsers) {
+                ParseResult<? extends InlineNode> parseResult = parser.parse(text, index);
+
+                if (parseResult.isParsed()) {
+                    result = parseResult;
+                    matched = true;
+                    break;
+                }
+            }
+
+            // 해당 하는 파서가 없는 경우 : TextNode으로 변환
+            if (!matched) {
+                sb.append(text.charAt(index));
+                index++;
+            } else {
+                // If there is accumulated text, create a Text node and add it to the list
+                if (!sb.isEmpty()) {
+                    nodes.add(new Text(sb.toString()));
+                    sb.setLength(0);
+                }
+
+                nodes.add(result.node());
+
+                index = result.nextIndex();
+            }
+        }
+
+        // If there is any remaining text, create a Text node and add it to the list
+        if (!sb.isEmpty()) {
+            nodes.add(new Text(sb.toString()));
+        }
+
+        return nodes;
     }
 }
 
@@ -61,56 +116,5 @@ public enum InlineParser {
  *         }
  *     }
  *
- *     public List<ASTNode> parse(String text) {
- *         if (text == null || text.isEmpty()) {
- *             return new ArrayList<>();
- *         }
- *
- *         List<ASTNode> nodes = new ArrayList<>();
- *
- *         int index = 0;
- *         StringBuilder sb = new StringBuilder();
- *
- *         while (index < text.length()) {
- *             boolean matched = false;
- *             ParseResult result = null;
- *
- *             // Iterate through the parsers to find a match
- *             for (AbstractInlineParser parser : parsers) {
- *                 ParseResult parseResult = parser.parse(text, index);
- *
- *                 if (parseResult.isParsed()) {
- *                     result = parseResult;
- *                     matched = true;
- *                     break;
- *                 }
- *             }
- *
- *             // 해당 하는 파서가 없는 경우 : TextNode으로 변환
- *             if (!matched) {
- *                 sb.append(text.charAt(index));
- *                 index++;
- *             } else {
- *                 // If there is accumulated text, create a Text node and add it to the list
- *                 if (!sb.isEmpty()) {
- *                     nodes.add(new Text(sb.toString()));
- *                     sb.setLength(0);
- *                 }
- *
- *                 nodes.add(result.node());
- *
- *                 parse(result.node());
- *
- *                 index = result.nextIndex();
- *             }
- *         }
- *
- *         // If there is any remaining text, create a Text node and add it to the list
- *         if (!sb.isEmpty()) {
- *             nodes.add(new Text(sb.toString()));
- *         }
- *
- *         return nodes;
- *     }
  * }
  */

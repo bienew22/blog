@@ -1,7 +1,9 @@
 package bienew.blog.backend.markdown.parser.inline;
 
+import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Bold;
 import bienew.blog.backend.markdown.parser.AbstractInlineParser;
+import bienew.blog.backend.markdown.parser.InlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class BoldParser extends AbstractInlineParser {
@@ -16,17 +18,13 @@ public class BoldParser extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult parseNode(String text, int startIndex) {
+    protected ParseResult<Bold> parseNode(String text, int startIndex) {
 
         int startBoldIndex = startIndex + 2;
         int endBoldIndex = text.indexOf("**", startBoldIndex);
 
-        // parsing
-        if (endBoldIndex != -1) {
-            String boldText = text.substring(startBoldIndex, endBoldIndex);
-            return new ParseResult(new Bold(boldText), endBoldIndex + 2, true);
-        }
-
-        return ParseResult.notParsed();
+        String boldText = text.substring(startBoldIndex, endBoldIndex);
+        return new ParseResult<>(new Bold(InlineParser.INSTANCE.parse(boldText)),
+                endBoldIndex + 2, true);
     }
 }

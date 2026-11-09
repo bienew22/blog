@@ -13,16 +13,15 @@ public enum BlockParser {
 
     INSTANCE;
 
-    private final List<AbstractBlockParser> abstractBlockParsers;
+    private final List<AbstractBlockParser> parsers;
 
     BlockParser() {
-        abstractBlockParsers = new ArrayList<>();
-
-        // #{1, 5}로 시작하는 문장을 Parse
-        abstractBlockParsers.add(new HeadingParser());
-
-        // 그 외의 문장을 Parse
-        abstractBlockParsers.add(new ParagraphParser());
+        parsers = List.of(
+                // #{1, 5}로 시작하는 문장을 Parse
+                new HeadingParser(),
+                // 그 외의 문장을 Parse
+                new ParagraphParser()
+        );
     }
 
     public ASTNode parse(String markdown) {
@@ -42,7 +41,7 @@ public enum BlockParser {
 
             boolean parsed = false;
 
-            for (AbstractBlockParser abstractBlockParser : abstractBlockParsers) {
+            for (AbstractBlockParser abstractBlockParser : parsers) {
                 ParseResult<? extends BlockNode> result = abstractBlockParser.parse(lines, lineIndex);
 
                 if (result.isParsed()) {

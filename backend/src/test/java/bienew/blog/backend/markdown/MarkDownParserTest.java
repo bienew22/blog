@@ -53,6 +53,29 @@ class MarkDownParserTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parsesBoldText() {
+        String markdown = "This is **bold** text.\n# Heading with **bold** text";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tBold\n" +
+                "\t\t\tText: text=bold \n" +
+                "\t\tText: text=text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with \n" +
+                "\t\tBold\n" +
+                "\t\t\tText: text=bold \n" +
+                "\t\tText: text=text";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.]", "");
     }
