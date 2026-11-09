@@ -18,7 +18,7 @@ public class BoldParser extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult<Bold> parseNode(String text, int startIndex) {
+    protected ParseResult<? extends InlineNode> parseNode(String text, int startIndex) {
 
         int startBoldIndex = startIndex + 2;
         int endBoldIndex = text.indexOf("**", startBoldIndex);

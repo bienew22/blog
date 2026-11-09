@@ -138,7 +138,64 @@ class MarkDownParserTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parsesInlineCode() {
+        String markdown = "This is `inline code` text.\n# Heading with `inline code` text";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tInlineCode: code=inline code \n" +
+                "\t\tText: text=text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with \n" +
+                "\t\tInlineCode: code=inline code \n" +
+                "\t\tText: text=text";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parsesNotInlineCode() {
+        String markdown = "This is not ````inline code text.\n# Heading with not `inline code text is not inline code";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is not ````inline code text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with not `inline code text is not inline code";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parseBoldAndInlineCode() {
+        String markdown = "This is **`bold and inline`** and only `**inline code**`";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tBold\n" +
+                "\t\t\tInlineCode: code=bold and inline \n" +
+                "\t\tText: text=and only \n" +
+                "\t\tInlineCode: code=**inline code**";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
-        return str.replaceAll("[^a-zA-Z0-9:=.]", "");
+        return str.replaceAll("[^a-zA-Z0-9:=.`*]", "");
     }
 }

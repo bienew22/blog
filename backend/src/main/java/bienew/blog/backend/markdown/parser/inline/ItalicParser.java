@@ -1,5 +1,6 @@
 package bienew.blog.backend.markdown.parser.inline;
 
+import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Italic;
 import bienew.blog.backend.markdown.parser.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.InlineParser;
@@ -30,7 +31,7 @@ public class ItalicParser extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult<Italic> parseNode(String text, int startIndex) {
+    protected ParseResult<? extends InlineNode> parseNode(String text, int startIndex) {
 
         int startItalicIndex = startIndex + 1;
         char delimiter = text.charAt(startIndex);
