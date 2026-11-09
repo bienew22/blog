@@ -1,6 +1,7 @@
 package bienew.blog.backend.markdown.parser.block;
 
 
+import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.Heading;
 import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.InlineParser;
@@ -24,7 +25,7 @@ public class HeadingParser extends AbstractBlockParser {
     }
 
     @Override
-    protected ParseResult<Heading> parseNode(String[] lines, int startLineIndex) {
+    protected ParseResult<? extends BlockNode> parseNode(String[] lines, int startLineIndex) {
 
         String line = lines[startLineIndex];
         int level = getLevel(line);

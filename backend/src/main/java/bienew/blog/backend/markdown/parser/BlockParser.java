@@ -3,6 +3,7 @@ package bienew.blog.backend.markdown.parser;
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.Document;
+import bienew.blog.backend.markdown.parser.block.FencedCodeBlockParser;
 import bienew.blog.backend.markdown.parser.block.HeadingParser;
 import bienew.blog.backend.markdown.parser.block.ParagraphParser;
 
@@ -19,6 +20,8 @@ public enum BlockParser {
         parsers = List.of(
                 // #{1, 5}로 시작하는 문장을 Parse
                 new HeadingParser(),
+                // ```로 시작하는 문장을 Parse
+                new FencedCodeBlockParser(),
                 // 그 외의 문장을 Parse
                 new ParagraphParser()
         );
@@ -45,7 +48,7 @@ public enum BlockParser {
                 ParseResult<? extends BlockNode> result = abstractBlockParser.parse(lines, lineIndex);
 
                 if (result.isParsed()) {
-                    if (result.nextIndex() <= lineIndex || result.nextIndex() > lines.length) {
+                    if (result.nextIndex() <= lineIndex) {
                         throw new IllegalStateException("Block parser returned an invalid next index.");
                     }
 

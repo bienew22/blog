@@ -195,6 +195,58 @@ class MarkdownConverterTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parseFencedCodeBlock() {
+        String markdown = "```java\n" +
+                "public class HelloWorld {\n" +
+                "    public static void main(String[] args) {\n" +
+                "        System.out.println(\"Hello, World!\");\n" +
+                "    }\n" +
+                "}\n" +
+                "```";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tFencedCodeBlock: language=java \n" +
+                "\t\tcode=public class HelloWorld {\n" +
+                "    public static void main(String[] args) {\n" +
+                "        System.out.println(&quot;Hello, World!&quot;);\n" +
+                "    }\n" +
+                "}";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parseUnClosedFencedCodeBlock() {
+        String markdown = "# heading 1\n```java\n" +
+                "public class HelloWorld {\n" +
+                "    public static void main(String[] args) {\n" +
+                "        System.out.println(\"Hello, World!\");\n" +
+                "    }\n" +
+                "}\n" +
+                "# heading 1";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=heading 1\n" +
+                "\tFencedCodeBlock: language=java code=public class HelloWorld {\n" +
+                "\t    public static void main(String[] args) {\n" +
+                "\t        System.out.println(&quot;Hello, World!&quot;);\n" +
+                "\t    }\n" +
+                "\t}\n" +
+                "\t# heading 1 ";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*]", "");
     }
