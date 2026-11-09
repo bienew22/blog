@@ -2,10 +2,7 @@ package bienew.blog.backend.markdown.parser;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Text;
-import bienew.blog.backend.markdown.parser.inline.AbstractInlineParser;
-import bienew.blog.backend.markdown.parser.inline.BoldParser;
-import bienew.blog.backend.markdown.parser.inline.InlineCodeParser;
-import bienew.blog.backend.markdown.parser.inline.ItalicParser;
+import bienew.blog.backend.markdown.parser.inline.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,8 @@ public enum InlineParser {
                 new BoldParser(),
                 // _some_ 구조의 문장을 parse
                 new ItalicParser(),
+                // [some](url) 구조의 문장을 parse
+                new LinkParser(),
                 // `some` 구조의 문장을 parse
                 new InlineCodeParser()
         );

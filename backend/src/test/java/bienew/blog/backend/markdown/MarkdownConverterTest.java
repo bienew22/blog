@@ -247,6 +247,50 @@ class MarkdownConverterTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parseLink() {
+        String markdown = "This is a [link](https://example.com) in a paragraph.\n" +
+                "# Heading with a [link](https://example.com)";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is a \n" +
+                "\t\tLink: url=https://example.com \n" +
+                "\t\t\tText: text=link \n" +
+                "\t\tText: text=in a paragraph.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with a \n" +
+                "\t\tLink: url=https://example.com \n" +
+                "\t\t\tText: text=link";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parseNotLink() {
+        String markdown = "This is not a [link]https://example.com in a paragraph.\n" +
+                "Heading with a [link(https://example.com) is not a link\n" +
+                "This is not a [link](https://example.com in a paragraph.)";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is not a [link]https://example.com in a paragraph.\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=Heading with a [link(https://example.com) is not a link\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is not a [link](https://example.com in a paragraph.)";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*]", "");
     }
