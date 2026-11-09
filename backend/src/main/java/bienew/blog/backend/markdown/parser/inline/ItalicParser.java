@@ -2,6 +2,7 @@ package bienew.blog.backend.markdown.parser.inline;
 
 import bienew.blog.backend.markdown.ast.inline.Italic;
 import bienew.blog.backend.markdown.parser.AbstractInlineParser;
+import bienew.blog.backend.markdown.parser.InlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class ItalicParser extends AbstractInlineParser {
@@ -29,17 +30,14 @@ public class ItalicParser extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult parseNode(String text, int startIndex) {
+    protected ParseResult<Italic> parseNode(String text, int startIndex) {
 
         int startItalicIndex = startIndex + 1;
         char delimiter = text.charAt(startIndex);
         int endItalicIndex = text.indexOf(delimiter, startItalicIndex);
 
-        if (endItalicIndex != -1) {
-            String italicText = text.substring(startItalicIndex, endItalicIndex);
-            return new ParseResult(new Italic(italicText), endItalicIndex + 1, true);
-        }
-
-        return ParseResult.notParsed();
+        String italicText = text.substring(startItalicIndex, endItalicIndex);
+        return new ParseResult<>(new Italic(InlineParser.INSTANCE.parse(italicText)),
+                endItalicIndex + 1, true);
     }
 }

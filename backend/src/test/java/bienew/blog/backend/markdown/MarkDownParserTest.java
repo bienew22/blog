@@ -76,6 +76,68 @@ class MarkDownParserTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parsesItalicText() {
+        String markdown = "This is _italic_ text.\n# Heading with _italic_ text";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tItalic\n" +
+                "\t\t\tText: text=italic \n" +
+                "\t\tText: text=text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with \n" +
+                "\t\tItalic\n" +
+                "\t\t\tText: text=italic \n" +
+                "\t\tText: text=text";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parsesBoldAndItalicText() {
+        String markdown = "This is _**italic after bold**_ and **_bold after italic_**";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is \n" +
+                "\t\tItalic\n" +
+                "\t\t\tBold\n" +
+                "\t\t\t\tText: text=italic after bold \n" +
+                "\t\tText: text=and \n" +
+                "\t\tBold\n" +
+                "\t\t\tItalic\n" +
+                "\t\t\t\tText: text=bold after italic";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
+    @Test
+    void parsesNotItalicText() {
+        String markdown = "This is not _italic text.\n# Heading with not _italic text a_b_c is not italic";
+
+        String document = ASTRenderer.render(MarkDownParser.parse(markdown));
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tParagraph\n" +
+                "\t\tText: text=This is not _italic text.\n" +
+                "\tHeading: level=1 \n" +
+                "\t\tText: text=Heading with not _italic text a_b_c is not italic";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.]", "");
     }
