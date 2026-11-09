@@ -1,7 +1,6 @@
 package bienew.blog.backend.markdown.parser.block;
 
 import bienew.blog.backend.markdown.ast.block.Paragraph;
-import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.InlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 

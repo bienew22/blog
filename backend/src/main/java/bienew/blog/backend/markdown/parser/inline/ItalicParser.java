@@ -2,7 +2,6 @@ package bienew.blog.backend.markdown.parser.inline;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Italic;
-import bienew.blog.backend.markdown.parser.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.InlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 

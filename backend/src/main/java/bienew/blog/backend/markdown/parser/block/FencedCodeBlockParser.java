@@ -2,7 +2,6 @@ package bienew.blog.backend.markdown.parser.block;
 
 import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.FencedCodeBlock;
-import bienew.blog.backend.markdown.parser.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class FencedCodeBlockParser extends AbstractBlockParser {

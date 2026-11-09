@@ -1,7 +1,6 @@
 package bienew.blog.backend.markdown.parser.inline;
 
 import bienew.blog.backend.markdown.ast.inline.InlineCode;
-import bienew.blog.backend.markdown.parser.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class InlineCodeParser extends AbstractInlineParser {

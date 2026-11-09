@@ -2,13 +2,13 @@ package bienew.blog.backend.markdown.parser;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Text;
+import bienew.blog.backend.markdown.parser.inline.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.inline.BoldParser;
 import bienew.blog.backend.markdown.parser.inline.InlineCodeParser;
 import bienew.blog.backend.markdown.parser.inline.ItalicParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public enum InlineParser {
     INSTANCE;
@@ -81,7 +81,7 @@ public enum InlineParser {
  *
  * import bienew.blog.backend.markdown.ast.ASTNode;
  * import bienew.blog.backend.markdown.ast.inline.Text;
- * import bienew.blog.backend.markdown.parser.AbstractInlineParser;
+ * import bienew.blog.backend.markdown.parser.inline.AbstractInlineParser;
  * import bienew.blog.backend.markdown.parser.ParseResult;
  * import bienew.blog.backend.markdown.parser.inline.*;
  *

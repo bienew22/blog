@@ -3,11 +3,11 @@ package bienew.blog.backend.markdown.parser;
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.Document;
+import bienew.blog.backend.markdown.parser.block.AbstractBlockParser;
 import bienew.blog.backend.markdown.parser.block.FencedCodeBlockParser;
 import bienew.blog.backend.markdown.parser.block.HeadingParser;
 import bienew.blog.backend.markdown.parser.block.ParagraphParser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public enum BlockParser {
@@ -44,8 +44,8 @@ public enum BlockParser {
 
             boolean parsed = false;
 
-            for (AbstractBlockParser abstractBlockParser : parsers) {
-                ParseResult<? extends BlockNode> result = abstractBlockParser.parse(lines, lineIndex);
+            for (AbstractBlockParser parser : parsers) {
+                ParseResult<? extends BlockNode> result = parser.parse(lines, lineIndex);
 
                 if (result.isParsed()) {
                     if (result.nextIndex() <= lineIndex) {

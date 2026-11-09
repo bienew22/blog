@@ -1,6 +1,7 @@
-package bienew.blog.backend.markdown.parser;
+package bienew.blog.backend.markdown.parser.inline;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.parser.ParseResult;
 
 /**
  * AbstractInlineParser 인터페이스는 마크다운 문서의 인라인 요소를 파싱하는 기능을 정의합니다.

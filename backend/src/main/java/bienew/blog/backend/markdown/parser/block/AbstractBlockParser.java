@@ -1,6 +1,7 @@
-package bienew.blog.backend.markdown.parser;
+package bienew.blog.backend.markdown.parser.block;
 
 import bienew.blog.backend.markdown.ast.BlockNode;
+import bienew.blog.backend.markdown.parser.ParseResult;
 
 /**
  * AbstractBlockParser 인터페이스는 마크다운 문서의 블록 요소를 파싱하는 기능을 정의합니다.
