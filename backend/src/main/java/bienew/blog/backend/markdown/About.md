@@ -13,7 +13,7 @@
    - 입력된 마크 다운 분석하고 AST(Abstract Syntax Tree) 생성.
 3. AST
    - Markdown 문서의 구조를 나타내는 트리 구조.
-4.  HTML Generator
+4.  HTML Renderer
    - AST를 기반으로 HTML 문서를 생성.
 
 - 각 구성요소는 명확하게 분리된 책임을 가짐.
@@ -38,7 +38,7 @@
 - 블록 노드는 자식 노드으로 블록 노드와 인라인 노드를 가질 수 있음.
 - 인라인 노드는 자식 노드으로 인라인 노드만 가질 수 있음.
 
-### HTML Generator
+### HTML Renderer
 - AST를 기반으로 HTML 문서를 생성하는 역할을 담당.
 
 ---
@@ -47,11 +47,11 @@
 
 ### 각 계층은 독립적인 책임을 가진다.
 
-- Parser, HTML Generator는 서로 독립적인 책임을 가지며, 각 계층은 다른 계층에 의존하지 않음.
-- Parser 내부에서 HTML Generator를 호출하지 않음.
-- HTML Generator 내부에서 Parser를 호출하지 않음.
+- Parser, HTML Renderer는 서로 독립적인 책임을 가지며, 각 계층은 다른 계층에 의존하지 않음.
+- Parser 내부에서 HTML Renderer를 호출하지 않음.
+- HTML Renderer 내부에서 Parser를 호출하지 않음.
 
-### 중척 구조를 가진다.
+### 중첩 구조를 가진다.
 
 - BlockNode와 InlineNode는 서로 다른 계층에 속하며, BlockNode는 InlineNode를 포함할 수 있음.
 
@@ -61,21 +61,3 @@
 - 전체 파싱 흐름은 BlockParser와 InlineParser가 관리함.
 - 예를들어 BlockquoteParser는 ListParser를 직접 호출하지 않고 BlockParser를 통해 내부 내용의 파싱을 요청 함.
 
-
-
-
-
-
-1. 각 구성 요소는 단일 책임 원칙(Single Responsibility Principle)을 준수해야 함.
-    - 
-- 
-
-- Markdown to HTML 변환기는 다음과 같은 구조를 가지고 있습니다.
-
-```
-src/main/java/bienew/blog/backend/markdown/
-├── About.md
-├── MarkdownConverter.java
-├── MarkdownParser.java
-├── HtmlGenerator.java
-``` 

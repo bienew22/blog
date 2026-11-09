@@ -1,14 +1,16 @@
 package bienew.blog.backend.markdown.parser;
 
+import bienew.blog.backend.markdown.ast.BlockNode;
+
 /**
  * AbstractBlockParser 인터페이스는 마크다운 문서의 블록 요소를 파싱하는 기능을 정의합니다.
  * 각 block ast node는 해당 parser을 구현해야함.
  */
 public abstract class AbstractBlockParser {
 
-    public final ParseResult parse(String[] lines, int startLineIndex) {
+    public final ParseResult<? extends BlockNode> parse(String[] lines, int startLineIndex) {
         if (!canParse(lines[startLineIndex])) {
-            return new ParseResult(null, startLineIndex, false);
+            return ParseResult.blockNotParsed();
         }
         return parseNode(lines, startLineIndex);
 
@@ -16,5 +18,5 @@ public abstract class AbstractBlockParser {
 
     protected abstract boolean canParse(String line);
 
-    protected abstract ParseResult parseNode(String[] lines, int startLineIndex);
+    protected abstract ParseResult<? extends BlockNode> parseNode(String[] lines, int startLineIndex);
 }

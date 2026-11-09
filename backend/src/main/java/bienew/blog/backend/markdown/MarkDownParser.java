@@ -2,11 +2,13 @@ package bienew.blog.backend.markdown;
 
 
 import bienew.blog.backend.markdown.ast.ASTNode;
+import bienew.blog.backend.markdown.ast.block.Document;
+import bienew.blog.backend.markdown.parser.BlockParser;
 
 
 public class MarkDownParser {
 
-    public static String toHtml(String markdown) {
+    public static ASTNode parse(String markdown) {
 
         // 0. html escape 처리
         markdown = markdown.replace("&", "&amp;")
@@ -15,16 +17,8 @@ public class MarkDownParser {
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
 
-        ASTNode document = BlockParser.INSTANCE.parse(markdown);
-
-        StringBuilder sb = new StringBuilder();
-
-        while (document != null) {
-            sb.append(document.toHtml());
-            document = document.getNext();
-        }
-
-        return sb.toString();
+        // 1. BlockParser를 사용하여 ASTNode로 변환
+        return BlockParser.INSTANCE.parse(markdown);
     }
 
 }
