@@ -7,8 +7,12 @@ import bienew.blog.backend.markdown.parser.BlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListNodeParser extends AbstractBlockParser {
+
+    private static final int MAX_NESTING_DEPTH = 5;
+
     @Override
     protected boolean canParse(String line) {
         return line.startsWith("- ")
@@ -20,7 +24,7 @@ public class ListNodeParser extends AbstractBlockParser {
     protected ParseResult<? extends BlockNode> parseNode(String[] lines, int startLineIndex) {
         boolean isOrdered = lines[startLineIndex].matches("^(\\t)*\\d+\\.\\s.*");
 
-        java.util.List<String> listLines = new ArrayList<>();
+        List<String> listLines = new ArrayList<>();
         listLines.add(lines[startLineIndex++]);
 
         // 1. 현재 줄이 리스트 항목인지 확인하고, 리스트 항목이면 listLines에 추가
@@ -36,10 +40,30 @@ public class ListNodeParser extends AbstractBlockParser {
             }
         }
 
-        // 2. ListItem인 경우 ~ 으로 변경하고, 중첩 리스트인 경우 indent를 한개 제거
-        java.util.List<String> convertedLines = new ArrayList<>();
+        // 2. 데이터 정리
+        List<String> convertedLines = new ArrayList<>();
 
         for (String line: listLines) {
+            // 구조 평탄화 : 최대 5단계까지 중첩 리스트를 허용하고, 그 이상은 상위 리스트로 병합
+            int indentCount = 0;
+            int indentLength = 0;
+            while (true) {
+                if (line.startsWith("\t", indentLength)) {
+                    indentLength += 1;
+                } else if (line.startsWith("    ", indentLength)) {
+                    indentLength += 4;
+                } else {
+                    break;
+                }
+                indentCount++;
+            }
+
+            if (indentCount > MAX_NESTING_DEPTH) {
+                line = "\t".repeat(MAX_NESTING_DEPTH) + line.substring(indentLength);
+            }
+
+            // 리스트 항목이면 리스트 표시 제거 후 <ITEM> prefix을 추가
+            // 중첩 리스트인 경우 indent 한개 제거 후 <LIST> prefix을 추가
             String convertedLine = line.replaceFirst("^(?:\\d+\\.\\s|[*-]\\s)", "<ITEM>")
                     .replaceFirst("^(\\t| {4})", "<LIST>"); // 중첩 리스트의 경우 indent 제거
             convertedLines.add(convertedLine);
