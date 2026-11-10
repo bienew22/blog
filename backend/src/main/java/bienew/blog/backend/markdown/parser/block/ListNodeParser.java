@@ -12,6 +12,8 @@ import java.util.List;
 public class ListNodeParser extends AbstractBlockParser {
 
     private static final int MAX_NESTING_DEPTH = 5;
+    private final ListItemParser listItemParser = new ListItemParser();
+
 
     @Override
     protected boolean canParse(String line) {
@@ -69,10 +71,24 @@ public class ListNodeParser extends AbstractBlockParser {
             convertedLines.add(convertedLine);
         }
 
-        ASTNode document = BlockParser.INSTANCE.parse(convertedLines.toArray(String[]::new));
+        // 3. ListItemParser를 사용하여 각 항목을 파싱
+        List<BlockNode> result = new ArrayList<>();
+
+        String[] data = convertedLines.toArray(String[]::new);
+        int dataIndex = 0;
+        while (dataIndex < data.length) {
+            ParseResult<? extends BlockNode> res = listItemParser.parseNode(data, dataIndex);
+
+            if (!res.isParsed()) {
+                throw new IllegalStateException("ListItemParser failed to parse line " + dataIndex + ".");
+            }
+
+            result.add(res.node());
+            dataIndex = res.nextIndex();
+        }
 
        return new ParseResult<>(
-               new ListNode(isOrdered, document.getChildren()),
+               new ListNode(isOrdered, result),
                startLineIndex, true);
     }
 }

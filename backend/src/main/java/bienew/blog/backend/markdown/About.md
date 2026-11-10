@@ -58,6 +58,8 @@
 ### Parser는 독립적이야 한다.
 
 - 개별 Parser는 다른 Parser를 직접 호출하지 않음.
+  - 단, 독립적으로 존재할 수 없는 하위 요소를 파싱하는 Parser는 상위 요소의 Parser에 의해 호출될 수 있음.
+  - 예를 들어, ListItem은 독립적으로 존재하지 않고 ListNode 내부에 포함되므로 ListNodeParser가 ListItemParser를 호출하여 파싱함.
 - 전체 파싱 흐름은 BlockParser와 InlineParser가 관리함.
 - 예를들어 BlockquoteParser는 ListParser를 직접 호출하지 않고 BlockParser를 통해 내부 내용의 파싱을 요청 함.
 

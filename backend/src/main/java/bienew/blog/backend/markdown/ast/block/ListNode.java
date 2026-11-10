@@ -15,7 +15,7 @@ public class ListNode extends BlockNode {
 
     private final boolean ordered;
 
-    public ListNode(boolean ordered, List<? extends ASTNode> children) {
+    public ListNode(boolean ordered, List<? extends BlockNode> children) {
         this.ordered = ordered;
         children.forEach(this::addChild);
     }

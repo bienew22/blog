@@ -12,8 +12,9 @@ import java.util.List;
 public class ListItemParser extends AbstractBlockParser {
     @Override
     protected boolean canParse(String line) {
-
-        return line.startsWith("<LIST>") || line.startsWith("<ITEM>");
+        //return line.startsWith("<LIST>") || line.startsWith("<ITEM>");
+        // 외부(ListNodeParser 제외)에서 ListItemParser를 직접 호출하지 않도록 수정
+        return false;
     }
 
     @Override
