@@ -3,10 +3,7 @@ package bienew.blog.backend.markdown.parser;
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.Document;
-import bienew.blog.backend.markdown.parser.block.AbstractBlockParser;
-import bienew.blog.backend.markdown.parser.block.FencedCodeBlockParser;
-import bienew.blog.backend.markdown.parser.block.HeadingParser;
-import bienew.blog.backend.markdown.parser.block.ParagraphParser;
+import bienew.blog.backend.markdown.parser.block.*;
 
 import java.util.List;
 
@@ -22,16 +19,16 @@ public enum BlockParser {
                 new HeadingParser(),
                 // ```로 시작하는 문장을 Parse
                 new FencedCodeBlockParser(),
+                // -, *, d. 로 시작하는 문장을 Parse
+                new ListNodeParser(),
+                // LIST_ITEM로 시작하는 문장을 Parse
+                new ListItemParser(),
                 // 그 외의 문장을 Parse
                 new ParagraphParser()
         );
     }
 
-    public ASTNode parse(String markdown) {
-        String[] lines = markdown
-                .replace("\r\n", "\n")
-                .replace("\r", "")
-                .split("\n", -1);
+    public ASTNode parse(String[] lines) {
 
         Document document = new Document();
         int lineIndex = 0;

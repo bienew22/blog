@@ -16,8 +16,13 @@ public class MarkdownConverter {
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
 
+        String[] lines = markdown
+                .replace("\r\n", "\n")
+                .replace("\r", "")
+                .split("\n", -1);
+
         // 1. BlockParser를 사용하여 ASTNode로 변환
-        return ASTRenderer.render(BlockParser.INSTANCE.parse(markdown));
+        return ASTRenderer.render(BlockParser.INSTANCE.parse(lines));
     }
 
 }

@@ -1,9 +1,12 @@
 package bienew.blog.backend.markdown.parser.block;
 
-import bienew.blog.backend.markdown.ast.block.Paragraph;
+import bienew.blog.backend.markdown.ast.ASTNode;
+import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.block.ListNode;
-import bienew.blog.backend.markdown.parser.AbstractBlockParser;
+import bienew.blog.backend.markdown.parser.BlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
+
+import java.util.ArrayList;
 
 public class ListNodeParser extends AbstractBlockParser {
     @Override
@@ -14,62 +17,37 @@ public class ListNodeParser extends AbstractBlockParser {
     }
 
     @Override
-    protected ParseResult parseNode(String[] lines, int startLineIndex) {
+    protected ParseResult<? extends BlockNode> parseNode(String[] lines, int startLineIndex) {
         boolean isOrdered = lines[startLineIndex].matches("^(\\t)*\\d+\\.\\s.*");
 
-        int currentIndent = countIndent(lines[startLineIndex]);
+        java.util.List<String> listLines = new ArrayList<>();
+        listLines.add(lines[startLineIndex++]);
 
-        // 부모 리스트
-        ListNode parent = new ListNode(isOrdered, currentIndent);
-
+        // 1. 현재 줄이 리스트 항목인지 확인하고, 리스트 항목이면 listLines에 추가
         while (startLineIndex < lines.length) {
             String line = lines[startLineIndex];
             String strippedLine = line.strip();
 
             if (canParse(strippedLine)) {
-                // 현재 줄의 들여쓰기 수준을 계산
-                int indent = countIndent(line);
-
-                if (indent > currentIndent) {
-                    // 현재 줄이 부모 노드보다 더 깊은 들여쓰기 수준이면, 재귀적으로 하위 노드를 파싱
-                    ParseResult childResult = parseNode(lines, startLineIndex);
-                    if (childResult.isParsed()) {
-                        parent.getLastChild().addChild(childResult.node());
-                        startLineIndex = childResult.nextIndex();
-                        continue;
-                    }
-                } else if (indent == currentIndent) {
-                    // 현재 줄이 부모 노드와 같은 수준이면, 새로운 ListNode를 생성하고 부모 노드에 추가
-                    boolean ordered = strippedLine.matches("^\\d+\\.\\s.*");
-
-                    String content = strippedLine.replaceFirst("^(?:\\d+\\.\\s|[*-]\\s)", "");
-
-                    parent.addChild(new Paragraph(content));
-                } else {
-                    // 현재 줄이 부모 노드보다 덜 들여쓰기 수준이면, 파싱을 종료
-                    break;
-                }
+                listLines.add(line);
+                startLineIndex++;
             } else {
                 break;
             }
-
-            startLineIndex++;
         }
 
-        if (!parent.getChildren().isEmpty()) {
-            return new ParseResult(parent, startLineIndex, true);
+        // 2. ListItem인 경우 ~ 으로 변경하고, 중첩 리스트인 경우 indent를 한개 제거
+        java.util.List<String> convertedLines = new ArrayList<>();
+
+        for (String line: listLines) {
+            String convertedLine = line.replaceFirst("^(?:\\t| {4}|\\d+\\.\\s|[*-]\\s)", "LIST_ITEM");
+            convertedLines.add(convertedLine);
         }
 
-        return ParseResult.notParsed();
-    }
+        ASTNode document = BlockParser.INSTANCE.parse(convertedLines.toArray(String[]::new));
 
-    private int countIndent(String line) {
-        int indent = 0;
-
-        while (indent < line.length() && line.charAt(indent) == '\t') {
-            indent++;
-        }
-
-        return indent;
+       return new ParseResult<>(
+               new ListNode(isOrdered, document.getChildren()),
+               startLineIndex, true);
     }
 }
