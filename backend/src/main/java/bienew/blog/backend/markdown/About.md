@@ -18,6 +18,8 @@
 
 - 각 구성요소는 명확하게 분리된 책임을 가짐.
 
+---
+
 ## 구성 요소
 
 ### Parser
@@ -40,6 +42,7 @@
 
 ### HTML Renderer
 - AST를 기반으로 HTML 문서를 생성하는 역할을 담당.
+- 각 ASTNode가 서로 다르게 렌더링할 때 Visitor 패턴 기반으로 동작을 수행.
 
 ---
 
@@ -63,3 +66,28 @@
 - 전체 파싱 흐름은 BlockParser와 InlineParser가 관리함.
 - 예를들어 BlockquoteParser는 ListParser를 직접 호출하지 않고 BlockParser를 통해 내부 내용의 파싱을 요청 함.
 
+---
+
+## 추가 시 규칙 
+
+### 신규 Node를 추가할 때는 다음과 같은 규칙을 따라야 함.
+- ASTVisitor에 해당 Node를 처리하는 visit 메서드를 등록해야 함.
+- 해당 Node를 처리하는 Parser를 구현해야 함.
+- 신규 Node의 타입에 맞게 BlockParser 또는 InlineParser에 등록해야 함.
+- Parser 파일 기준으로 테스트 파일을 작성해야 함.
+
+### 신규 Renderer를 추가할 때는 다음과 같은 규칙을 따라야 함.
+- ASTRenderer을 구현해야 함.
+- 각 노드를 다른 로직으로 렌더링할 때 ASTVisitor 도 구현해야함.
+- MarkdownRenderer에 해당 메소드를 생성해야함.
+  - `public static {type} parseTo{name}(String markdown, ...)` 형식의 함수를 생성해야함.
+
+### 테스트 파일 규칙
+- 테스트 파일은 Parser 파일과 동일한 패키지에 위치해야 함.
+- 테스트의 진입점은 `MarkdownConverter.parseTo{name}`의 함수를 호출하여 테스트해야 함.
+
+--- 
+
+## 사용법
+
+- 마크다운을 변화하려고 하는 타입에 맞게 `MarkdownConverter`의 함수를 호출하면 됨.
