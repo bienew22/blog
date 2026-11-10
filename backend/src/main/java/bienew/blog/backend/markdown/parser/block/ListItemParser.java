@@ -28,7 +28,7 @@ public class ListItemParser extends AbstractBlockParser {
         while (endLineIndex < lines.length) {
 
             if (lines[endLineIndex].startsWith("<LIST>")) {
-                String listContent = lines[endLineIndex].substring("<LIST>".length()).strip();
+                String listContent = lines[endLineIndex].substring("<LIST>".length());
                 contents.add(listContent);
                 endLineIndex++;
             } else {

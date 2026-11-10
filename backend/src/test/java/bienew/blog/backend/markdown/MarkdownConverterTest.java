@@ -506,6 +506,32 @@ class MarkdownConverterTest {
         assertEquals(regString(expected), regString(document));
     }
 
+    @Test
+    void parseWeirdNestedList() {
+        String markdown = "1. Item 1\n\t\t1. Nested Item 1.1\n\t- weird\n- Item 2";
+
+        String document = MarkdownConverter.parseToAST(markdown);
+
+        System.out.println(document);
+
+        String expected = "Document\n" +
+                "\tListNode: ordered=true \n" +
+                "\t\tListItem\n" +
+                "\t\t\tParagraph\n" +
+                "\t\t\t\tText: text=Item 1 \n" +
+                "\t\t\tParagraph \n" +
+                "\t\t\t\tText: text=\t1. Nested Item 1.1 \n" +
+                "\t\t\tListNode: ordered=false\n" +
+                "\t\t\t\tListItem\n" +
+                "\t\t\t\t\tParagraph\n" +
+                "\t\t\t\t\t\tText: text=weird \n" +
+                "\tListItem\n" +
+                "\t\tParagraph\n" +
+                "\t\t\tText: text=Item 2";
+
+        assertEquals(regString(expected), regString(document));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*]", "");
     }
