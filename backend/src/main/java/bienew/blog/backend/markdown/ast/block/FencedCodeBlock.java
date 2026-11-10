@@ -1,6 +1,7 @@
 package bienew.blog.backend.markdown.ast.block;
 
 import bienew.blog.backend.markdown.ast.BlockNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 import lombok.Getter;
 
 /**
@@ -15,5 +16,10 @@ public class FencedCodeBlock extends BlockNode {
     public FencedCodeBlock(String language, String code) {
         this.language = language;
         this.code = code;
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

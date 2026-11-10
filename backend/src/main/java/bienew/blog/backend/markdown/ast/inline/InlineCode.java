@@ -1,6 +1,7 @@
 package bienew.blog.backend.markdown.ast.inline;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 import lombok.Getter;
 
 /**
@@ -14,5 +15,10 @@ public class InlineCode extends InlineNode {
 
     public InlineCode(String code) {
         this.code = code;
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

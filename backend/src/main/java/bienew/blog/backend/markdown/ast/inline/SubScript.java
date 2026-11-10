@@ -2,6 +2,7 @@ package bienew.blog.backend.markdown.ast.inline;
 
 
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 
 /**
  * SubScript 클래스는 마크다운 문서의 아래첨자 텍스트 노드를 나타내는 InlineNode.
@@ -13,5 +14,10 @@ public class SubScript extends InlineNode {
 
     public SubScript(String text) {
         this.text = text;
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

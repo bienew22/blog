@@ -2,6 +2,7 @@ package bienew.blog.backend.markdown.ast.inline;
 
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 import lombok.Getter;
 
 import java.util.List;
@@ -18,5 +19,10 @@ public class Link  extends InlineNode {
 	public Link(List<? extends InlineNode> children, String url) {
 		children.forEach(this::addChild);
 		this.url = url;
+	}
+
+	@Override
+	public void accept(ASTVisitor visitor) {
+		visitor.visit(this);
 	}
 }

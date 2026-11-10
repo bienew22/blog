@@ -1,6 +1,7 @@
 package bienew.blog.backend.markdown.ast.inline;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 
 /**
  * SupScript 클래스는 마크다운 문서의 위첨자 텍스트 노드를 나타내는 InlineNode.
@@ -11,5 +12,10 @@ public class SupScript extends InlineNode {
 
     public SupScript(String text) {
         this.text = text;
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

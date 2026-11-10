@@ -2,6 +2,7 @@ package bienew.blog.backend.markdown.ast.block;
 
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.BlockNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 import lombok.Getter;
 
 import java.util.List;
@@ -19,5 +20,10 @@ public class Heading extends BlockNode {
         this.level = level;
 
         children.forEach(this::addChild);
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

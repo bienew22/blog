@@ -1,5 +1,6 @@
 package bienew.blog.backend.markdown.ast;
 
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,4 +13,6 @@ import java.util.List;
  */
 public interface ASTNode {
      List<? extends ASTNode> getChildren();
+
+     void accept(ASTVisitor visitor);
 }

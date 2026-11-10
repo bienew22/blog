@@ -1,6 +1,7 @@
 package bienew.blog.backend.markdown.ast.inline;
 
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 
 import java.util.List;
 
@@ -12,5 +13,10 @@ public class UnderLine extends InlineNode {
 
     public UnderLine(List<? extends InlineNode> children) {
         children.forEach(this::addChild);
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -2,6 +2,7 @@ package bienew.blog.backend.markdown.ast.block;
 
 import bienew.blog.backend.markdown.ast.BlockNode;
 import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 
 import java.util.List;
 
@@ -13,5 +14,10 @@ public class Paragraph extends BlockNode {
 
     public Paragraph(List<? extends InlineNode> children) {
         children.forEach(this::addChild);
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }
