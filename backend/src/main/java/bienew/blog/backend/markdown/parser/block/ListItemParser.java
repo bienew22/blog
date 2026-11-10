@@ -7,30 +7,29 @@ import bienew.blog.backend.markdown.parser.BlockParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListItemParser extends AbstractBlockParser {
     @Override
     protected boolean canParse(String line) {
-        return line.startsWith("LIST_ITEM");
+
+        return line.startsWith("<LIST>") || line.startsWith("<ITEM>");
     }
 
     @Override
     protected ParseResult<? extends BlockNode> parseNode(String[] lines, int startLineIndex) {
-        String content = lines[startLineIndex].substring("LIST_ITEM".length()).strip();
+        String content = lines[startLineIndex].substring("<ITEM>".length()).strip();
 
         int endLineIndex = startLineIndex + 1;
 
         List<String> contents = new ArrayList<>();
         contents.add(content);
 
-        ListNodeParser listNodeParser = new ListNodeParser();
         while (endLineIndex < lines.length) {
-            String stripLine = lines[endLineIndex].replace("LIST_ITEM", "").strip();
 
-            if (listNodeParser.canParse(stripLine)) {
-                contents.add(stripLine);
+            if (lines[endLineIndex].startsWith("<LIST>")) {
+                String listContent = lines[endLineIndex].substring("<LIST>".length()).strip();
+                contents.add(listContent);
                 endLineIndex++;
             } else {
                 break;

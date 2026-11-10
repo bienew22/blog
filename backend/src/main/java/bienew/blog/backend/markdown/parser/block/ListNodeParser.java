@@ -40,7 +40,8 @@ public class ListNodeParser extends AbstractBlockParser {
         java.util.List<String> convertedLines = new ArrayList<>();
 
         for (String line: listLines) {
-            String convertedLine = line.replaceFirst("^(?:\\t| {4}|\\d+\\.\\s|[*-]\\s)", "LIST_ITEM");
+            String convertedLine = line.replaceFirst("^(?:\\d+\\.\\s|[*-]\\s)", "<ITEM>")
+                    .replaceFirst("^(\\t| {4})", "<LIST>"); // 중첩 리스트의 경우 indent 제거
             convertedLines.add(convertedLine);
         }
 
