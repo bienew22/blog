@@ -26,6 +26,30 @@ class HtmlRendererTest {
         assertEquals(regString(expectedHtml), regString(actualHtml));
     }
 
+    @Test
+    void renderTableTest() {
+        String markdown = "| Header 1 | Header 2 |\n" +
+                "|---|---|\n" +
+                "| Cell 1   | Cell 2   |\n" +
+                "| Cell 3   | Cell 4   |";
+
+        String expectedHtml = "<table>\n" +
+                "<thead>\n" +
+                "<tr><th>Header 1</th><th>Header 2</th></tr>\n" +
+                "</thead>\n" +
+                "<tbody>\n" +
+                "<tr><td>Cell 1</td><td>Cell 2</td></tr>\n" +
+                "<tr><td>Cell 3</td><td>Cell 4</td></tr>\n" +
+                "</tbody>\n" +
+                "</table>";
+
+        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+
+        System.out.println("result: " + actualHtml);
+
+        assertEquals(regString(expectedHtml), regString(actualHtml));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*<>/]", "");
     }

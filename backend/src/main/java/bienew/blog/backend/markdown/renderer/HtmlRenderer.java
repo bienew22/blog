@@ -4,6 +4,9 @@ import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.ast.block.*;
 import bienew.blog.backend.markdown.ast.inline.*;
 
+import java.util.List;
+import java.util.Objects;
+
 public class HtmlRenderer implements ASTRenderer, ASTVisitor {
 
     private final StringBuilder builder = new StringBuilder();
@@ -117,5 +120,46 @@ public class HtmlRenderer implements ASTRenderer, ASTVisitor {
         builder.append("<u>");
         underLine.getChildren().forEach(child -> child.accept(this));
         builder.append("</u>");
+    }
+
+    @Override
+    public void visit(Table table) {
+        builder.append("<table>");
+        table.getChildren().forEach(child -> child.accept(this));
+        builder.append("</table>");
+    }
+
+    @Override
+    public void visit(Table.TableHead tableHead) {
+        builder.append("<thead>");
+        tableHead.getChildren().forEach(child -> child.accept(this));
+        builder.append("</thead>");
+    }
+
+    @Override
+    public void visit(Table.TableBody tableBody) {
+        builder.append("<tbody>");
+        tableBody.getChildren().forEach(child -> child.accept(this));
+        builder.append("</tbody>");
+    }
+
+    @Override
+    public void visit(TableRow tableRow) {
+        builder.append("<tr>");
+
+        String tag = tableRow.getType().getTag();
+
+        for (ASTNode child : tableRow.getChildren()) {
+            builder.append("<").append(tag).append(">");
+            child.accept(this);
+            builder.append("</").append(tag).append(">");
+        }
+
+        builder.append("</tr>");
+    }
+
+    @Override
+    public void visit(TableRow.TableItem tableItem) {
+        tableItem.getChildren().forEach(child -> child.accept(this));
     }
 }
