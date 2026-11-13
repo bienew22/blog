@@ -11,7 +11,7 @@ class TableParserTest {
     void rejectsLineWithOnlyPipeCharacters() {
         String markdown = "||||";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         String expected = "Document\n" +
                 "\tParagraph\n" +
@@ -26,7 +26,7 @@ class TableParserTest {
     void rejectsLineWithCellContent() {
         String markdown = "|header|";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         String expected = "Document\n" +
                 "\tParagraph\n" +
@@ -42,7 +42,7 @@ class TableParserTest {
         String markdown = "|header1|header2|\n" +
                 "|---|---|";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         String expected = "Document\n" +
                 "\tTable\n" +
@@ -66,7 +66,7 @@ class TableParserTest {
                 "|cell1|cell2|\n" +
                 "|cell3|cell4|";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         String expected = "Document\n" +
                 "\tTable\n" +

@@ -10,7 +10,7 @@ class ListNodeParserTest {
     void parseOrderedList() {
         String markdown = "1. Item 1\n2. Item 2\n3. Item 3";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -33,7 +33,7 @@ class ListNodeParserTest {
     void parseNestedList() {
         String markdown = "- Item 1\n\t- Nested Item 1.1\n\t- Nested Item 1.2\n- Item 2";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -60,7 +60,7 @@ class ListNodeParserTest {
     void parseNestedOrderedList() {
         String markdown = "1. Item 1\n\t1. Nested Item 1.1\n\t2. Nested Item 1.2\n2. Item 2";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -87,7 +87,7 @@ class ListNodeParserTest {
     void parseNestedListWithDifferentTypes() {
         String markdown = "- Item 1\n\t1. Nested Item 1.1\n\t2. Nested Item 1.2\n- Item 2";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -114,7 +114,7 @@ class ListNodeParserTest {
     void parseWeirdNestedList() {
         String markdown = "1. Item 1\n\t\t1. Nested Item 1.1\n\t- weird\n- Item 2";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 

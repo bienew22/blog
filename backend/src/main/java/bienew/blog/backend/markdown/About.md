@@ -84,11 +84,14 @@
 - ASTRenderer을 구현해야 함.
 - 각 노드를 다른 로직으로 렌더링할 때 ASTVisitor 도 구현해야함.
 - MarkdownRenderer에 해당 메소드를 생성해야함.
-  - `public static {type} parseTo{name}(String markdown, ...)` 형식의 함수를 생성해야함.
+  - `public static {type} to{name}(String markdown, ...)` 형식의 함수를 생성해야함.
 
 ### 테스트 파일 규칙
 - 테스트 파일은 Parser 파일과 동일한 패키지에 위치해야 함.
-- 테스트의 진입점은 `MarkdownConverter.parseTo{name}`의 함수를 호출하여 테스트해야 함.
+- Parser에서 AST를 생성하는 로직을 테스트해야함.
+  - 해당 테스트의 진입점은 `MarkdownConverter.toAST`의 함수를 호출하여 테스트해야 함.
+- AST에서 {type}으로 변환하는 로직을 테스트해야함.
+  - 해당 테스트의 진입점은 `MarkdownConverter.to{name}`의 함수를 호출하여 테스트해야 함.
 
 --- 
 

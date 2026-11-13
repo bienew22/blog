@@ -10,11 +10,11 @@ import bienew.blog.backend.markdown.renderer.TreeRenderer;
 
 public class MarkdownConverter {
 
-    public static String parseToAST(String markdown) {
+    public static String toAST(String markdown) {
         return convert(markdown, new TreeRenderer());
     }
 
-    public static String parseToHTML(String markdown) {
+    public static String toHTML(String markdown) {
         return convert(markdown, new HtmlRenderer());
     }
 

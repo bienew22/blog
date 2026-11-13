@@ -19,7 +19,7 @@ class HtmlRendererTest {
                 "<li><p>Item 3</p></li>\n" +
                 "</ul>";
 
-        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+        String actualHtml = MarkdownConverter.toHTML(markdown);
 
         System.out.println("result: " + actualHtml);
 
@@ -43,7 +43,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+        String actualHtml = MarkdownConverter.toHTML(markdown);
 
         System.out.println("result: " + actualHtml);
 
@@ -63,7 +63,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+        String actualHtml = MarkdownConverter.toHTML(markdown);
 
         System.out.println("result: " + actualHtml);
 
@@ -87,7 +87,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+        String actualHtml = MarkdownConverter.toHTML(markdown);
 
         System.out.println("result: " + actualHtml);
 
@@ -109,7 +109,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+        String actualHtml = MarkdownConverter.toHTML(markdown);
 
         System.out.println("result: " + actualHtml);
 

@@ -11,7 +11,7 @@ class MarkdownConverterTest {
     void parsesParagraph() {
         String markdown = "This is a paragraph.\nHere is another line of the paragraph.";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -30,7 +30,7 @@ class MarkdownConverterTest {
                 "\n#### this is a level 4 heading\n##### this is a level 5 heading" +
                 "\n###### this is a level 6 heading\n####### this is a level 7 heading";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -57,7 +57,7 @@ class MarkdownConverterTest {
     void parsesBoldText() {
         String markdown = "This is **bold** text.\n# Heading with **bold** text";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -80,7 +80,7 @@ class MarkdownConverterTest {
     void parsesItalicText() {
         String markdown = "This is _italic_ text.\n# Heading with _italic_ text";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -103,7 +103,7 @@ class MarkdownConverterTest {
     void parsesBoldAndItalicText() {
         String markdown = "This is _**italic after bold**_ and **_bold after italic_**";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -125,7 +125,7 @@ class MarkdownConverterTest {
     void parsesNotItalicText() {
         String markdown = "This is not _italic text.\n# Heading with not _italic text a_b_c is not italic";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -142,7 +142,7 @@ class MarkdownConverterTest {
     void parsesInlineCode() {
         String markdown = "This is `inline code` text.\n# Heading with `inline code` text";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -163,7 +163,7 @@ class MarkdownConverterTest {
     void parsesNotInlineCode() {
         String markdown = "This is not ````inline code text.\n# Heading with not `inline code text is not inline code";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -180,7 +180,7 @@ class MarkdownConverterTest {
     void parseBoldAndInlineCode() {
         String markdown = "This is **`bold and inline`** and only `**inline code**`";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -205,7 +205,7 @@ class MarkdownConverterTest {
                 "}\n" +
                 "```";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -230,7 +230,7 @@ class MarkdownConverterTest {
                 "}\n" +
                 "# heading 1";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -252,7 +252,7 @@ class MarkdownConverterTest {
         String markdown = "This is a [link](https://example.com) in a paragraph.\n" +
                 "# Heading with a [link](https://example.com)";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -276,7 +276,7 @@ class MarkdownConverterTest {
                 "Heading with a [link(https://example.com) is not a link\n" +
                 "This is not a [link](https://example.com in a paragraph.)";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -296,7 +296,7 @@ class MarkdownConverterTest {
     void parsesUnderLineText() {
         String markdown = "This is __underline__ text.\n# Heading with __underline__ text";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -319,7 +319,7 @@ class MarkdownConverterTest {
     void parseUnderLineAndOtherText() {
         String markdown = "This is __**underline and bold**__\n[_link_](https://example.com)";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -341,7 +341,7 @@ class MarkdownConverterTest {
     void parseSubScriptText() {
         String markdown = "This is a_{subscript} text.\n# Heading with _{subscript} text";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
@@ -362,7 +362,7 @@ class MarkdownConverterTest {
     void parseSupScriptText() {
         String markdown = "This is a^{superscript} text.\n# Heading with ^{superscript} text";
 
-        String document = MarkdownConverter.parseToAST(markdown);
+        String document = MarkdownConverter.toAST(markdown);
 
         System.out.println(document);
 
