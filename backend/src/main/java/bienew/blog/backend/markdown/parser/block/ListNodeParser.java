@@ -80,7 +80,7 @@ public class ListNodeParser extends AbstractBlockParser {
             ParseResult<? extends BlockNode> res = listItemParser.parseNode(data, dataIndex);
 
             if (!res.isParsed()) {
-                throw new IllegalStateException("ListItemParser failed to parse line " + dataIndex + ".");
+                return ParseResult.blockNotParsed();
             }
 
             result.add(res.node());
