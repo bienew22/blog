@@ -61,7 +61,7 @@
 ### Parser는 독립적이야 한다.
 
 - 개별 Parser는 다른 Parser를 직접 호출하지 않음.
-  - 단, 독립적으로 존재할 수 없는 하위 요소를 파싱하는 Parser는 상위 요소의 Parser에 의해 호출될 수 있음.
+  - 단, 독립적으로 존재할 수 없는 하위 요소를 파싱하는 Parser는 상위 요소의 Parser에 의해 호출되어야 함.
   - 예를 들어, ListItem은 독립적으로 존재하지 않고 ListNode 내부에 포함되므로 ListNodeParser가 ListItemParser를 호출하여 파싱함.
 - 전체 파싱 흐름은 BlockParser와 InlineParser가 관리함.
 - 예를들어 BlockquoteParser는 ListParser를 직접 호출하지 않고 BlockParser를 통해 내부 내용의 파싱을 요청 함.
@@ -72,9 +72,13 @@
 
 ### 신규 Node를 추가할 때는 다음과 같은 규칙을 따라야 함.
 - ASTVisitor에 해당 Node를 처리하는 visit 메서드를 등록해야 함.
-- 해당 Node를 처리하는 Parser를 구현해야 함.
+- 독립적으로 존재하는 Node인 경우 이를 처리하는 Parser를 구현해야 함.
 - 신규 Node의 타입에 맞게 BlockParser 또는 InlineParser에 등록해야 함.
 - Parser 파일 기준으로 테스트 파일을 작성해야 함.
+
+### 시균 Parser 를 추가할 때는 다음과 같은 규칙을 따라야 함.
+- Parser는 BlockParser 또는 InlineParser 에서만 new 되어야 함.
+- Parser는 싱글톤 객체 취급되므로 상태를 가지지 않아야 함.
 
 ### 신규 Renderer를 추가할 때는 다음과 같은 규칙을 따라야 함.
 - ASTRenderer을 구현해야 함.
