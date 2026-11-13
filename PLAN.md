@@ -1,11 +1,13 @@
 # TODO (2026-11-09 ~ 2026-11-15)
 - Markdown to HTML V2 개발
+- 구조 리팩토링
+- 표(테이블) 추가
 
 # TODO
 - ci-cd : 배포용 docker-compose 구축 (연기 : 개인 휴식)
 - 관리자 페이지
 - markdown to html 컴포넌트 추가 구현
-    - 수평선, 개행, 표, 인용, 사진
+    - 수평선, 개행, 인용, 사진
 - 에러 처리 획일화
 - id 키 생성 규칙 변경 : 10진수 기준
     - YYYYMMDDHHMMSS * 100000 + {SEQ:0 ~ 99} * 1000 + {RAND:0 ~ 999}
