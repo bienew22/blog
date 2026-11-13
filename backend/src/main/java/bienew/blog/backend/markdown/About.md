@@ -76,7 +76,7 @@
 - 신규 Node의 타입에 맞게 BlockParser 또는 InlineParser에 등록해야 함.
 - Parser 파일 기준으로 테스트 파일을 작성해야 함.
 
-### 시균 Parser 를 추가할 때는 다음과 같은 규칙을 따라야 함.
+### 신규 Parser 를 추가할 때는 다음과 같은 규칙을 따라야 함.
 - Parser는 BlockParser 또는 InlineParser 에서만 new 되어야 함.
 - Parser는 싱글톤 객체 취급되므로 상태를 가지지 않아야 함.
 
