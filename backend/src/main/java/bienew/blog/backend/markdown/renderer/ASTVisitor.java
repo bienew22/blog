@@ -19,4 +19,10 @@ public interface ASTVisitor {
     void visit(SupScript superScript);
     void visit(Text text);
     void visit(UnderLine underLine);
+
+    void visit(Table table);
+    void visit(Table.TableHead tableHead);
+    void visit(Table.TableBody tableBody);
+    void visit(TableRow tableRow);
+    void visit(TableRow.TableItem tableItem);
 }

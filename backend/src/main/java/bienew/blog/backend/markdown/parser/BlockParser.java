@@ -21,6 +21,8 @@ public enum BlockParser {
                 new FencedCodeBlockParser(),
                 // -, *, d. 로 시작하는 문장을 Parse
                 new ListNodeParser(),
+                // |로 시작하고 |으로 끝나는 문장을 Parse
+                new TableParser(),
                 // 그 외의 문장을 Parse
                 new ParagraphParser()
         );
