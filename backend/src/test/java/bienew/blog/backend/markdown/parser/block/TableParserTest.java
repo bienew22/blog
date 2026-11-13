@@ -46,13 +46,13 @@ class TableParserTest {
 
         String expected = "Document\n" +
                 "\tTable\n" +
-                "\t\tTableHead: delimiters=[center, center] \n" +
-                "\t\t\tTableRow: TH_TYPE=1 TD_TYPE=2 type=1 \n" +
+                "\t\tTableHead\n" +
+                "\t\t\tTableRow: type=TH delimiters=[center, center] \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=header1 \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=header2 \n" +
-                "\t\tTableBody: delimiters=[center, center] ";
+                "\t\tTableBody";
 
         System.out.println(document);
 
@@ -70,23 +70,23 @@ class TableParserTest {
 
         String expected = "Document\n" +
                 "\tTable\n" +
-                "\t\tTableHead: delimiters=[center, center] \n" +
-                "\t\t\tTableRow: TH_TYPE=1 TD_TYPE=2 type=1 \n" +
+                "\t\tTableHead\n" +
+                "\t\t\tTableRow: type=TH delimiters=[center, center] \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=header1 \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=header2 \n" +
-                "\t\tTableBody: delimiters=[center, center] \n" +
-                "\t\t\tTableRow: TH_TYPE=1 TD_TYPE=2 type=2 \n" +
+                "\t\tTableBody\n" +
+                "\t\t\tTableRow: type=TD delimiters=[center, center] \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=cell1 \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=cell2 \n" +
-                "\t\t\tTableRow: TH_TYPE=1 TD_TYPE=2 type=2 \n" +
+                "\t\t\tTableRow: type=TD delimiters=[center, center] \n" +
                 "\t\t\t\tTableItem\n" +
                 "\t\t\t\t\tText: text=cell3 \n" +
                 "\t\t\t\tTableItem\n" +
-                "\t\t\t\t\tText: text=cell4 \n";
+                "\t\t\t\t\tText: text=cell4";
 
         System.out.println(document);
 

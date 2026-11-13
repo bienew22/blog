@@ -28,12 +28,9 @@ public class Table extends BlockNode {
      */
     public static class TableHead extends BlockNode {
 
-        List<String> delimiters;
-
         public TableHead(TableRow node, List<String> delimiters) {
-            this.delimiters = delimiters;
-
             node.setType(TableRow.TableRowType.TH);
+            node.setDelimiters(delimiters);
             addChild(node);
         }
 
@@ -49,13 +46,15 @@ public class Table extends BlockNode {
      */
     public static class TableBody extends BlockNode {
 
-        List<String> delimiters;
 
         public TableBody(List<TableRow> blockNodes, List<String> delimiters) {
-            this.delimiters = delimiters;
 
-            blockNodes.forEach(a -> a.setType(TableRow.TableRowType.TD));
-            blockNodes.forEach(this::addChild);
+            blockNodes.forEach(node -> {
+                node.setDelimiters(delimiters);
+                node.setType(TableRow.TableRowType.TD);
+
+                addChild(node);
+            });
         }
 
         @Override

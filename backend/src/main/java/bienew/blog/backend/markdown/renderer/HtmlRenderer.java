@@ -149,8 +149,18 @@ public class HtmlRenderer implements ASTRenderer, ASTVisitor {
 
         String tag = tableRow.getType().getTag();
 
-        for (ASTNode child : tableRow.getChildren()) {
-            builder.append("<").append(tag).append(">");
+        for (int i = 0; i < tableRow.getChildren().size(); i++) {
+            ASTNode child = tableRow.getChildren().get(i);
+
+            builder.append("<").append(tag);
+
+            if (tableRow.getDelimiters() == null || i >= tableRow.getDelimiters().size()) {
+                builder.append(">");
+            } else {
+                String delimiter = tableRow.getDelimiters().get(i);
+                builder.append(" style=\"text-align:").append(delimiter).append(";\">");
+            }
+
             child.accept(this);
             builder.append("</").append(tag).append(">");
         }

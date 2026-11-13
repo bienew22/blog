@@ -35,11 +35,77 @@ class HtmlRendererTest {
 
         String expectedHtml = "<table>\n" +
                 "<thead>\n" +
-                "<tr><th>Header 1</th><th>Header 2</th></tr>\n" +
+                "<tr><th style=\"text-align:center;\">Header 1</th><th style=\"text-align:center;\">Header 2</th></tr>\n" +
                 "</thead>\n" +
                 "<tbody>\n" +
-                "<tr><td>Cell 1</td><td>Cell 2</td></tr>\n" +
-                "<tr><td>Cell 3</td><td>Cell 4</td></tr>\n" +
+                "<tr><td style=\"text-align:center;\">Cell 1</td><td style=\"text-align:center;\">Cell 2</td></tr>\n" +
+                "<tr><td style=\"text-align:center;\">Cell 3</td><td style=\"text-align:center;\">Cell 4</td></tr>\n" +
+                "</tbody>\n" +
+                "</table>";
+
+        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+
+        System.out.println("result: " + actualHtml);
+
+        assertEquals(regString(expectedHtml), regString(actualHtml));
+    }
+
+    @Test
+    void renderTableWithOnlyHeaderTest() {
+        String markdown = "| Header 1 | Header 2 |\n" +
+                "|---|---|";
+
+        String expectedHtml = "<table>\n" +
+                "<thead>\n" +
+                "<tr><th style=\"text-align:center;\">Header 1</th><th style=\"text-align:center;\">Header 2</th></tr>\n" +
+                "</thead>\n" +
+                "<tbody>\n" +
+                "</tbody>\n" +
+                "</table>";
+
+        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+
+        System.out.println("result: " + actualHtml);
+
+        assertEquals(regString(expectedHtml), regString(actualHtml));
+    }
+
+    @Test
+    void renderTableWithAlignTest() {
+        String markdown = "| Header 1 | Header 2 | Header 3 |\n" +
+                "|:---|:---:|---:|\n" +
+                "| Cell 1   | Cell 2   | Cell 3   |\n" +
+                "| Cell 4   | Cell 5   | Cell 6   |";
+
+        String expectedHtml = "<table>\n" +
+                "<thead>\n" +
+                "<tr><th style=\"text-align:left;\">Header 1</th><th style=\"text-align:center;\">Header 2</th><th style=\"text-align:right;\">Header 3</th></tr>\n" +
+                "</thead>\n" +
+                "<tbody>\n" +
+                "<tr><td style=\"text-align:left;\">Cell 1</td><td style=\"text-align:center;\">Cell 2</td><td style=\"text-align:right;\">Cell 3</td></tr>\n" +
+                "<tr><td style=\"text-align:left;\">Cell 4</td><td style=\"text-align:center;\">Cell 5</td><td style=\"text-align:right;\">Cell 6</td></tr>\n" +
+                "</tbody>\n" +
+                "</table>";
+
+        String actualHtml = MarkdownConverter.parseToHTML(markdown);
+
+        System.out.println("result: " + actualHtml);
+
+        assertEquals(regString(expectedHtml), regString(actualHtml));
+    }
+
+    @Test
+    void renderTableWithMoreHeadersThanCellsTest() {
+        String markdown = "| Header 1 | Header 2 | Header 3 |\n" +
+                "|---|---|---|\n" +
+                "| Cell 1   | Cell 2   |";
+
+        String expectedHtml = "<table>\n" +
+                "<thead>\n" +
+                "<tr><th style=\"text-align:center;\">Header 1</th><th style=\"text-align:center;\">Header 2</th><th style=\"text-align:center;\">Header 3</th></tr>\n" +
+                "</thead>\n" +
+                "<tbody>\n" +
+                "<tr><td style=\"text-align:center;\">Cell 1</td><td style=\"text-align:center;\">Cell 2</td></tr>\n" +
                 "</tbody>\n" +
                 "</table>";
 

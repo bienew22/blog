@@ -26,6 +26,7 @@ public class TableRow extends BlockNode {
     }
 
     private TableRowType type;
+    private List<String> delimiters;
 
     public TableRow(List<TableItem> children) {
         children.forEach(this::addChild);
