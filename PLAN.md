@@ -1,11 +1,13 @@
 # TODO (2026-11-09 ~ 2026-11-15)
 - Markdown to HTML V2 개발
+- 구조 리팩토링
+- 표(테이블) 추가
 
 # TODO
 - ci-cd : 배포용 docker-compose 구축 (연기 : 개인 휴식)
 - 관리자 페이지
 - markdown to html 컴포넌트 추가 구현
-    - 수평선, 개행, 표, 인용, 사진
+    - 수평선, 개행, 인용, 사진
 - 에러 처리 획일화
 - id 키 생성 규칙 변경 : 10진수 기준
     - YYYYMMDDHHMMSS * 100000 + {SEQ:0 ~ 99} * 1000 + {RAND:0 ~ 999}
@@ -16,6 +18,8 @@
 - 태그 목록 조회 부분을 카테고리 처럼 분리 (백엔드)
     - 게시글 작성에서 태그별 게시글 개수 값을 사용하지 않고 있음.
 - 각 조회의 정렬은 백에서 수행 할 것
+- Markdown converter에서 `___some___`인 경우에는 `UnderLine: Text= _some`으로 파싱됨.
+    - UnderLine 안에 Italic 또는 Italic 안에 UnderLine 추가되게 하기.
 ---
 
 # front 폴더 정리
