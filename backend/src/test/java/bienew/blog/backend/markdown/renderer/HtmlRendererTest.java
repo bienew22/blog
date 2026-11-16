@@ -116,6 +116,23 @@ class HtmlRendererTest {
         assertEquals(regString(expectedHtml), regString(actualHtml));
     }
 
+    @Test
+    void renderThematicBreakTest() {
+        String markdown = "- hello\n" +
+                "---\n" +
+                "- world";
+
+        String expectedHtml = "<ul><li><p>hello</p></li></ul>\n" +
+                "<hr />\n" +
+                "<ul><li><p>world</p></li></ul>";
+
+        String actualHtml = MarkdownConverter.toHTML(markdown);
+
+        System.out.println("result: " + actualHtml);
+
+        assertEquals(regString(expectedHtml), regString(actualHtml));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*<>/]", "");
     }

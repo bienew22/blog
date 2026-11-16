@@ -169,6 +169,11 @@ public class HtmlRenderer implements ASTRenderer, ASTVisitor {
     }
 
     @Override
+    public void visit(ThematicBreak thematicBreak) {
+        builder.append("<hr />");
+    }
+
+    @Override
     public void visit(TableRow.TableItem tableItem) {
         tableItem.getChildren().forEach(child -> child.accept(this));
     }

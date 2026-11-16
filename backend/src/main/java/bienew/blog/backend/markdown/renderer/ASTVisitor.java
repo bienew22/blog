@@ -25,4 +25,6 @@ public interface ASTVisitor {
     void visit(Table.TableBody tableBody);
     void visit(TableRow tableRow);
     void visit(TableRow.TableItem tableItem);
+
+    void visit(ThematicBreak thematicBreak);
 }
