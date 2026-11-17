@@ -24,12 +24,12 @@ export const dummyPost = {
 <table>
 <thead>
 <tr>
-<th scope="col"><p>n</p></th>
-<th scope="col"><p>3</p></th>
-<th scope="col"><p>...</p></th>
-<th scope="col"><p>18</p></th>
-<th scope="col"><p>...</p></th>
-<th scope="col"><p>25</p></th>
+<th><p>n</p></th>
+<th><p>3</p></th>
+<th><p>...</p></th>
+<th><p>18</p></th>
+<th><p>...</p></th>
+<th><p>25</p></th>
 </tr>
 </thead>
 <tbody>

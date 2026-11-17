@@ -1,7 +1,7 @@
 /* Styles for post HTML rendered via v-html, scoped under .post-content */
 
 .post-content {
-  --post-code-bg: #edf2f7;
+  --post-code-bg: var(--color-surface);
   --post-code-toolbar-bg: var(--color-background-mute);
   --post-code-text: var(--color-text);
   --post-inline-code-bg: #e2e8f0;
@@ -29,8 +29,6 @@
 }
 
 :root.dark .post-content {
-  --post-code-bg: #172033;
-  --post-code-toolbar-bg: #1f2937;
   --post-code-text: #f1f5f9;
   --post-inline-code-bg: #374151;
   --post-inline-code-text: #e2e8f0;
@@ -211,30 +209,52 @@
 }
 
 /* tables */
-.post-content table {
-  display: block;
+.post-content .table-scroll {
   width: 100%;
-  margin: 0 0 1.25em;
+  margin: 1.5em 0;
   overflow-x: auto;
-  border-collapse: collapse;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.post-content table {
+  width: 100%;
+  border-spacing: 0;
   font-size: 0.9375em;
 }
 
 .post-content th,
 .post-content td {
-  padding: 0.6em 1em;
-  border: 1px solid var(--color-border);
-  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  text-align: center;
+  vertical-align: middle;
 }
 
 .post-content th {
-  background-color: var(--color-background-soft);
+  background-color: var(--color-background-mute);
   color: var(--color-heading);
   font-weight: 700;
 }
 
 .post-content tbody tr:nth-child(even) {
   background-color: var(--color-background-soft);
+}
+
+.post-content tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.post-content th p,
+.post-content td p {
+  margin: 0 0 0.75em;
+  font-weight: inherit;
+}
+
+.post-content th p:last-child,
+.post-content td p:last-child {
+  margin-bottom: 0;
 }
 
 /* inline code */
@@ -252,10 +272,9 @@
 .post-content .code-window {
   margin: 1.5em 0;
   overflow: hidden;
-  border: 1px solid var(--color-border-hover);
-  border-radius: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   background-color: var(--post-code-bg);
-  box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
 .post-content .code-window__toolbar {
@@ -265,7 +284,7 @@
   justify-content: space-between;
   min-height: 2.75rem;
   padding: 0.4rem 1rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-subtle);
   background-color: var(--post-code-toolbar-bg);
   color: var(--color-text-secondary);
 }
@@ -330,8 +349,8 @@
   margin: 1.5em 0;
   padding: 1rem;
   overflow: auto;
-  border: 1px solid var(--color-border-hover);
-  border-radius: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   background-color: var(--post-code-bg);
   color: var(--post-code-text);
   font-size: 0.875rem;
