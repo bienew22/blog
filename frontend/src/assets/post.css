@@ -1,7 +1,8 @@
 /* Styles for post HTML rendered via v-html, scoped under .post-content */
 
 .post-content {
-  --post-code-bg: var(--color-background-soft);
+  --post-code-bg: #edf2f7;
+  --post-code-toolbar-bg: var(--color-background-mute);
   --post-code-text: var(--color-text);
   --post-inline-code-bg: var(--color-background-soft);
   --post-inline-code-text: var(--color-primary);
@@ -28,7 +29,8 @@
 }
 
 :root.dark .post-content {
-  --post-code-bg: #0b1120;
+  --post-code-bg: #172033;
+  --post-code-toolbar-bg: #1f2937;
   --post-code-text: #f1f5f9;
   --post-inline-code-bg: #172033;
   --post-inline-code-text: #93c5fd;
@@ -184,7 +186,7 @@
 .post-content hr {
   margin: 2em 0;
   border: none;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-hover);
 }
 
 /* images */
@@ -250,9 +252,10 @@
 .post-content .code-window {
   margin: 1.5em 0;
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-hover);
   border-radius: 0.6rem;
   background-color: var(--post-code-bg);
+  box-shadow: 0 2px 6px var(--color-card-shadow);
 }
 
 .post-content .code-window__toolbar {
@@ -263,6 +266,7 @@
   min-height: 2.75rem;
   padding: 0.4rem 1rem;
   border-bottom: 1px solid var(--color-border);
+  background-color: var(--post-code-toolbar-bg);
   color: var(--color-text-secondary);
 }
 
@@ -326,6 +330,8 @@
   margin: 1.5em 0;
   padding: 1rem;
   overflow: auto;
+  border: 1px solid var(--color-border-hover);
+  border-radius: 0.6rem;
   background-color: var(--post-code-bg);
   color: var(--post-code-text);
   font-size: 0.875rem;
@@ -344,6 +350,8 @@
 
 .post-content .code-window > pre {
   margin: 0;
+  border: 0;
+  border-radius: 0;
   background-color: transparent;
 }
 
