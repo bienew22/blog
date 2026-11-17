@@ -4,8 +4,8 @@
   --post-code-bg: #edf2f7;
   --post-code-toolbar-bg: var(--color-background-mute);
   --post-code-text: var(--color-text);
-  --post-inline-code-bg: var(--color-background-soft);
-  --post-inline-code-text: var(--color-primary);
+  --post-inline-code-bg: #e2e8f0;
+  --post-inline-code-text: #374151;
   --post-line-number: var(--color-text-muted);
   --post-line-number-border: var(--color-border-subtle);
 
@@ -32,8 +32,8 @@
   --post-code-bg: #172033;
   --post-code-toolbar-bg: #1f2937;
   --post-code-text: #f1f5f9;
-  --post-inline-code-bg: #172033;
-  --post-inline-code-text: #93c5fd;
+  --post-inline-code-bg: #374151;
+  --post-inline-code-text: #e2e8f0;
   --post-line-number: #94a3b8;
   --post-line-number-border: #273449;
 
@@ -242,7 +242,7 @@
   font-family:
     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 0.875em;
-  padding: 0.15em 0.4em;
+  padding: 0.2em 0.3em;
   border-radius: 0.3em;
   background-color: var(--post-inline-code-bg);
   color: var(--post-inline-code-text);
