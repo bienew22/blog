@@ -1,25 +1,23 @@
 package bienew.blog.backend.markdown.ast.inline;
 
 import bienew.blog.backend.markdown.ast.ASTNode;
+import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Bold 클래스는 마크다운 문서의 굵은 텍스트 노드를 나타내는 ASTNode의 하위 클래스입니다.
- * 이 클래스는 굵게 표시될 텍스트 내용을 저장하며, 마크다운 문서 내에서 굵은 텍스트 블록을 나타냅니다.
+ * Bold 클래스는 마크다운 문서의 굵은 텍스트 노드를 나타내는 InlineNode.
  */
-public class Bold extends ASTNode {
+public class Bold extends InlineNode {
 
-    public Bold(String source) {
-        this.source = source;
+    public Bold(List<? extends InlineNode> children) {
+        children.forEach(this::addChild);
     }
 
     @Override
-    public String toHtml() {
-        return "<strong>"
-                + children.stream()
-                    .map(ASTNode::toHtml)
-                    .collect(Collectors.joining())
-                + "</strong>";
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

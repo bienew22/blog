@@ -21,11 +21,36 @@ export const dummyPost = {
 }
 </code></pre>
 <p>이렇게 하면 동일한 상태(n)를 여러 번 계산할 필요가 없습니다. 결과적으로 각 상태는 한 번만 계산되므로 시간 복잡도는 <code>O(N)</code>으로 줄일 수 있습니다.</p>
-<p>| n     | 3     | ...   | 18    |  ...  | 25    |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| fib(1) 호출 횟수 | 2 | ... | 2584 | ... | 75025 |
-| fib2(1) 호출 횟수 | 2 | ... | 2 | ... | 2 |
-{: .w-100 }</p>
+<table>
+<thead>
+<tr>
+<th><p>n</p></th>
+<th><p>3</p></th>
+<th><p>...</p></th>
+<th><p>18</p></th>
+<th><p>...</p></th>
+<th><p>25</p></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>fib(1) 호출 횟수</p></td>
+<td><p>2</p></td>
+<td><p>...</p></td>
+<td><p>2584</p></td>
+<td><p>...</p></td>
+<td><p>75025</p></td>
+</tr>
+<tr>
+<td><p>fib2(1) 호출 횟수</p></td>
+<td><p>2</p></td>
+<td><p>...</p></td>
+<td><p>2</p></td>
+<td><p>...</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
 <p>위 표는 각 함수가 <code>fib(1)</code>을 몇 번 호출하는지를 나타냅니다. DP가 중복 계산을 제거하여 호출 횟수를 크게 줄이는 것을 확인할 수 있습니다.</p>
 <p>따라서 DP의 핵심은 <strong>중복 계산을 제거</strong>하는 것입니다. 따라서 문제를 분석할 때 &quot;같은 상태가 반복해서 등장하는가?&quot;를 먼저 확인해 보는 것이 DP를 떠올리는 좋은 출발점이 됩니다.</p>
 <hr />
@@ -44,7 +69,7 @@ export const dummyPost = {
 </code></pre>
 <p>위 그림에서 <code>(1, 1)</code>에 도달하는 경우가 여러 경로에서 반복됩니다.
 이 처럼 동일한 상태를 여러 번 계산하는 성질을 <strong>중복되는 부분 문제</strong> 라고 합니다.</p>
-<h4><strong>Optimal Substructure (최적 부분 구조)</strong></h4>
+<h3><strong>Optimal Substructure (최적 부분 구조)</strong></h3>
 <p><strong>최적 부분 구조</strong>란, 전체 문제의 최적해가 하위 문제들의 최적해를 이용해 구성할 수 있는 성질을 의미합니다.</p>
 <p>예를들어 <code>a -&gt; d</code>으로 가는 최단 경로가 <code>a -&gt; b -&gt; c -&gt; d</code>라고 가정해 보겠습니다.
 그렇다면 <code>a -&gt; c</code>으로 가는 최단 경로도 <code>a -&gt; b -&gt; c</code>여야 합니다.</p>

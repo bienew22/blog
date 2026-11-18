@@ -7,10 +7,10 @@ import bienew.blog.backend.auth.repository.UserRepository;
 import bienew.blog.backend.category.entity.Category;
 import bienew.blog.backend.category.repository.CategoryRepository;
 import bienew.blog.backend.common.snowflake.Snowflake;
+import bienew.blog.backend.markdown.MarkdownConverter;
 import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.post.entity.Post;
 import bienew.blog.backend.tag.entity.Tag;
-import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
 import bienew.blog.backend.post.dto.PostResponse;
@@ -103,7 +103,7 @@ public class PostService {
                 postCreateRequest.title(),
                 postCreateRequest.title(),
                 postCreateRequest.contentMd(),
-                MarkDownParser.toHtml(postCreateRequest.contentMd()),
+                MarkdownConverter.toHTML(postCreateRequest.contentMd()),
                 "bienew22",
                 tags,
                 PostStatus.fromString(postCreateRequest.status()),
@@ -154,7 +154,7 @@ public class PostService {
         post.update(
                 postUpdateRequest.title(),
                 postUpdateRequest.contentMd(),
-                MarkDownParser.toHtml(postUpdateRequest.contentMd()),
+                MarkdownConverter.toHTML(postUpdateRequest.contentMd()),
                 PostStatus.fromString(postUpdateRequest.status()),
                 category
         );

@@ -104,6 +104,15 @@ watch(
     if (contentRef.value) {
       Prism.highlightAllUnder(contentRef.value)
 
+      contentRef.value.querySelectorAll('table').forEach((table) => {
+        if (table.parentElement?.classList.contains('table-scroll')) return
+
+        const wrapper = document.createElement('div')
+        wrapper.className = 'table-scroll'
+        table.before(wrapper)
+        wrapper.append(table)
+      })
+
       contentRef.value.querySelectorAll('pre').forEach((pre) => {
         if (pre.parentElement?.classList.contains('code-window')) return
 
