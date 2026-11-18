@@ -69,7 +69,7 @@ export const dummyPost = {
 </code></pre>
 <p>위 그림에서 <code>(1, 1)</code>에 도달하는 경우가 여러 경로에서 반복됩니다.
 이 처럼 동일한 상태를 여러 번 계산하는 성질을 <strong>중복되는 부분 문제</strong> 라고 합니다.</p>
-<h4><strong>Optimal Substructure (최적 부분 구조)</strong></h4>
+<h3><strong>Optimal Substructure (최적 부분 구조)</strong></h3>
 <p><strong>최적 부분 구조</strong>란, 전체 문제의 최적해가 하위 문제들의 최적해를 이용해 구성할 수 있는 성질을 의미합니다.</p>
 <p>예를들어 <code>a -&gt; d</code>으로 가는 최단 경로가 <code>a -&gt; b -&gt; c -&gt; d</code>라고 가정해 보겠습니다.
 그렇다면 <code>a -&gt; c</code>으로 가는 최단 경로도 <code>a -&gt; b -&gt; c</code>여야 합니다.</p>
