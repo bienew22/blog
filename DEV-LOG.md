@@ -1,3 +1,11 @@
+# 2026-11-18 개발 로그
+- front
+    - 게시글 조회 관련 CSS 수정
+    - 게시글 조회에서 Table 및 Hr에 대한 CSS 추가
+- back
+    - Markdown Converter 구조 개선
+    - Markdown Converter에 Table 및 Hr 문법 추가
+
 # 2026-11-08 개발 로그
 - front
     - 카테고리 및 카테고리 별 게시글 목록 화면 추가
