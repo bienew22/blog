@@ -1,7 +1,8 @@
 package bienew.blog.backend.markdown.parser.inline;
 
+import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.UnderLine;
-import bienew.blog.backend.markdown.parser.AbstractInlineParser;
+import bienew.blog.backend.markdown.parser.InlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class UnderLineParser extends AbstractInlineParser {
@@ -23,16 +24,13 @@ public class UnderLineParser extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult parseNode(String text, int startIndex) {
+    protected ParseResult<? extends InlineNode> parseNode(String text, int startIndex) {
 
         int startUnderLineIndex = startIndex + 2;
         int endUnderLineIndex = text.indexOf("__", startUnderLineIndex);
 
-        // parsing
-        if (endUnderLineIndex != -1) {
-            String underLineText = text.substring(startUnderLineIndex, endUnderLineIndex);
-            return new ParseResult(new UnderLine(underLineText), endUnderLineIndex + 2, true);
-        }
-        return ParseResult.notParsed();
+        String underLineText = text.substring(startUnderLineIndex, endUnderLineIndex);
+        return new ParseResult<>(new UnderLine(InlineParser.INSTANCE.parse(underLineText)),
+                endUnderLineIndex + 2, true);
     }
 }

@@ -1,4 +1,7 @@
-package bienew.blog.backend.markdown.parser;
+package bienew.blog.backend.markdown.parser.inline;
+
+import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.parser.ParseResult;
 
 /**
  * AbstractInlineParser 인터페이스는 마크다운 문서의 인라인 요소를 파싱하는 기능을 정의합니다.
@@ -6,14 +9,14 @@ package bienew.blog.backend.markdown.parser;
  */
 public abstract class AbstractInlineParser {
 
-    public final ParseResult parse(String text, int startIndex) {
+    public final ParseResult<? extends InlineNode> parse(String text, int startIndex) {
         if (!canParse(text, startIndex)) {
-            return new ParseResult(null, startIndex, false);
+            return ParseResult.inlineNotParsed();
         }
         return parseNode(text, startIndex);
     }
 
     protected abstract boolean canParse(String text, int startIndex);
 
-    protected abstract ParseResult parseNode(String text, int startIndex);
+    protected abstract ParseResult<? extends InlineNode> parseNode(String text, int startIndex);
 }

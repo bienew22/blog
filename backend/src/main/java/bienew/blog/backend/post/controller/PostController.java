@@ -3,12 +3,12 @@ package bienew.blog.backend.post.controller;
 
 import bienew.blog.backend.category.dto.CategoryResponse;
 import bienew.blog.backend.common.annotation.JwtUserId;
+import bienew.blog.backend.markdown.MarkdownConverter;
 import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.post.dto.PostCreateRequest;
 import bienew.blog.backend.post.dto.PostDetailResponse;
 import bienew.blog.backend.post.dto.PostPreviewRequest;
 import bienew.blog.backend.post.dto.PostResponse;
-import bienew.blog.backend.markdown.MarkDownParser;
 import bienew.blog.backend.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -106,7 +106,7 @@ public class PostController {
                 request.title() == null ? "" : request.title(),
                 "preview",
                 LocalDateTime.now(),
-                MarkDownParser.toHtml(isContentMdEmpty ? "" : request.contentMd()),
+                MarkdownConverter.toHTML(isContentMdEmpty ? "" : request.contentMd()),
                 isContentMdEmpty ? "" : request.contentMd(),
                 new CategoryResponse("1", "미리보기"),
                 request.tags() == null ? List.of() : request.tags()

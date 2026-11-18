@@ -1,7 +1,7 @@
 package bienew.blog.backend.markdown.parser.inline;
 
+import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.SubScript;
-import bienew.blog.backend.markdown.parser.AbstractInlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class SubScriptParser extends AbstractInlineParser {
@@ -21,17 +21,12 @@ public class SubScriptParser extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult parseNode(String text, int startIndex) {
+    protected ParseResult<? extends InlineNode> parseNode(String text, int startIndex) {
 
         int startSubscriptIndex = startIndex + 2;
         int endSubscriptIndex = text.indexOf("}", startSubscriptIndex);
 
-        // parsing
-        if (endSubscriptIndex != -1) {
-            String subscriptText = text.substring(startSubscriptIndex, endSubscriptIndex);
-            return new ParseResult(new SubScript(subscriptText), endSubscriptIndex + 1, true);
-        }
-
-        return ParseResult.notParsed();
+        String subscriptText = text.substring(startSubscriptIndex, endSubscriptIndex);
+        return new ParseResult<>(new SubScript(subscriptText), endSubscriptIndex + 1, true);
     }
 }

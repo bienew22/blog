@@ -1,7 +1,8 @@
 package bienew.blog.backend.markdown.parser.inline;
 
+import bienew.blog.backend.markdown.ast.InlineNode;
 import bienew.blog.backend.markdown.ast.inline.Link;
-import bienew.blog.backend.markdown.parser.AbstractInlineParser;
+import bienew.blog.backend.markdown.parser.InlineParser;
 import bienew.blog.backend.markdown.parser.ParseResult;
 
 public class LinkParser  extends AbstractInlineParser {
@@ -30,23 +31,18 @@ public class LinkParser  extends AbstractInlineParser {
     }
 
     @Override
-    protected ParseResult parseNode(String text, int startIndex) {
+    protected ParseResult<? extends InlineNode> parseNode(String text, int startIndex) {
 
         int startTextIndex = startIndex + 1;
         int endTextIndex = text.indexOf(']', startIndex);
 
-        if (endTextIndex != -1 && endTextIndex + 1 < text.length() && text.charAt(endTextIndex + 1) == '(') {
-            int startUrlIndex = endTextIndex + 2;
-            int endUrlIndex = text.indexOf(')', startUrlIndex);
+        int startUrlIndex = endTextIndex + 2;
+        int endUrlIndex = text.indexOf(')', startUrlIndex);
 
-            if (endUrlIndex != -1) {
-                String linkText = text.substring(startTextIndex, endTextIndex);
-                String linkUrl = text.substring(startUrlIndex, endUrlIndex);
-                return new ParseResult(new Link(linkText, linkUrl), endUrlIndex + 1, true);
-            }
-        }
-
-
-        return ParseResult.notParsed();
+        String linkText = text.substring(startTextIndex, endTextIndex);
+        String linkUrl = text.substring(startUrlIndex, endUrlIndex);
+        return new ParseResult<>(
+                new Link(InlineParser.INSTANCE.parse(linkText), linkUrl),
+                endUrlIndex + 1, true);
     }
 }

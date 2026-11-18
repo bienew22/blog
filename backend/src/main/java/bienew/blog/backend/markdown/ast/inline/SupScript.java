@@ -1,12 +1,13 @@
 package bienew.blog.backend.markdown.ast.inline;
 
-import bienew.blog.backend.markdown.ast.ASTNode;
+import bienew.blog.backend.markdown.ast.InlineNode;
+import bienew.blog.backend.markdown.renderer.ASTVisitor;
 
 /**
- * SupScript 클래스는 마크다운 문서의 위첨자 텍스트 노드를 나타내는 ASTNode의 하위 클래스입니다.
+ * SupScript 클래스는 마크다운 문서의 위첨자 텍스트 노드를 나타내는 InlineNode.
  * 이 클래스는 위첨자로 표시될 텍스트 내용을 저장하며, 마크다운 문서 내에서 위첨자 텍스트 블록을 나타냅니다.
  */
-public class SupScript extends ASTNode {
+public class SupScript extends InlineNode {
     String text;
 
     public SupScript(String text) {
@@ -14,7 +15,7 @@ public class SupScript extends ASTNode {
     }
 
     @Override
-    public String toHtml() {
-        return "<sup>" + text + "</sup>";
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }
