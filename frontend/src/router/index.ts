@@ -50,6 +50,13 @@ const router = createRouter({
       name: 'post',
       component: () => import('../views/PostView.vue'),
     },
+    ...(import.meta.env.DEV
+      ? [{
+          path: '/dev/post',
+          name: 'dev-post',
+          component: () => import('../views/DevPostView.vue'),
+        }]
+      : []),
     {
       path: '/404',
       name: 'not-found',
