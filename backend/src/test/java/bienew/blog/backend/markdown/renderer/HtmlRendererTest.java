@@ -133,6 +133,19 @@ class HtmlRendererTest {
         assertEquals(regString(expectedHtml), regString(actualHtml));
     }
 
+    @Test
+    void renderImageTest() {
+        String markdown = "![alt text](/api/v1/images/astr)";
+
+        String expectedHtml = "<img src=\"/api/v1/images/astr\" alt=\"alt text\" />";
+
+        String actualHtml = MarkdownConverter.toHTML(markdown);
+
+        System.out.println("result: " + actualHtml);
+
+        assertEquals(regString(expectedHtml), regString(actualHtml));
+    }
+
     private String regString(String str) {
         return str.replaceAll("[^a-zA-Z0-9:=.`*<>/]", "");
     }
