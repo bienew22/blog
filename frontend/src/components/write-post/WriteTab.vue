@@ -352,7 +352,7 @@ async function addTag(tagName: string, tagDesc: string) {
     </section>
 
     <!-- 본문 입력 -->
-    <PostContentEditor v-model="content" />
+    <PostContentEditor v-model="content" @toast="(message, type, duration) => emit('toast', message, type, duration)" />
 
     <TagCreateDialog
       :open="isTagDialogOpen"
