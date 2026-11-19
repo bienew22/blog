@@ -4,7 +4,7 @@ import { LayoutList } from 'lucide-vue-next'
 import { useRoute, useRouter } from 'vue-router'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import BlogHeader from '@/components/layout/BlogHeader.vue'
-import TagPostCard from '@/components/blog/TagPostCard.vue'
+import TagPostCard from '@/components/card/TagPostCard.vue'
 import { fetchCategoryPosts, type CategoryPosts } from '@/api/categories'
 import type { PostSummary } from '@/api/posts'
 

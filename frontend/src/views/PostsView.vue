@@ -4,7 +4,7 @@ import BlogHeader from '@/components/layout/BlogHeader.vue'
 import BlogLayout from '@/components/layout/BlogLayout.vue'
 import { Book } from 'lucide-vue-next'
 import { fetchPosts, type Post } from '@/api/posts'
-import PostCard from '@/components/blog/PostCard.vue'
+import PostCard from '@/components/card/PostCard.vue'
 
 const posts = ref<Post[]>([])
 const isLoading = ref(true)
