@@ -1,5 +1,6 @@
 package bienew.blog.backend.image.entity;
 
+import bienew.blog.backend.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,4 +27,13 @@ public class Image {
 
     @Column(nullable = false, updatable = false, insertable = false)
     private LocalDateTime createAt;
+
+    public static Image image(String imageType, Long imageSize) {
+        Image image = new Image();
+
+        image.imageType = imageType;
+        image.imageSize = imageSize;
+
+        return image;
+    }
 }
