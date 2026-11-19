@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Tooltip from './Tooltip.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { useThemeStore } from '@/stores/theme'
 import { LightThemeIcon, DarkThemeIcon } from '@/components/icon'
 

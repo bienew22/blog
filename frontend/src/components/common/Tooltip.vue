@@ -13,6 +13,8 @@
  * </div>
  */
 
+defineOptions({ name: 'CommonTooltip' })
+
 defineProps<{
   content: string
 }>()
