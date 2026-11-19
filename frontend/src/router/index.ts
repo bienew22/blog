@@ -56,9 +56,9 @@ const router = createRouter({
           name: 'dev-post',
           component: () => import('../views-dev/DevPostView.vue'),
         }, {
-          path: '/dev/image-upload',
-          name: 'dev-image-upload',
-          component: () => import('../views-dev/DevImageUploadView.vue'),
+          path: '/dev/test',
+          name: 'test',
+          component: () => import('../views-dev/DevTestView.vue'),
         }]
       : []),
     {
