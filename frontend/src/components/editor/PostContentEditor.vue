@@ -2,6 +2,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Paperclip } from 'lucide-vue-next'
 import { apiFetch } from '@/api/client'
+import Tooltip from '../common/Tooltip.vue';
+import AttachFileButon from './AttachFileButon.vue';
 
 const content = defineModel<string>({ required: true })
 const emit = defineEmits<{
@@ -301,16 +303,8 @@ function handleEnter(e: KeyboardEvent) {
     </div>
 
     <div role="toolbar" aria-label="본문 편집 도구" class="mb-2 flex flex-wrap items-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) p-2">
-      <button
-        ref="attachButton"
-        type="button"
-        aria-label="이미지 첨부"
-        title="이미지 첨부"
-        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-(--color-border) text-(--color-text) hover:cursor-pointer hover:border-(--color-primary) hover:text-(--color-primary)"
-        @click="fileInput?.click()"
-      >
-        <Paperclip aria-hidden="true" class="h-4 w-4" />
-      </button>
+      <AttachFileButon @click="fileInput?.click()" />   <!-- 이미지 첨부 버튼 -->
+
       <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="onFileChange" />
     </div>
 

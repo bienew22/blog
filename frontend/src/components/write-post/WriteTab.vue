@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import PostContentEditor from '@/components/write-post/PostContentEditor.vue'
+import PostContentEditor from '@/components/editor/PostContentEditor.vue'
 import TagCreateDialog from '@/components/common/TagCreateDialog.vue'
 import CategoryCreateDialog from '@/components/common/CategoryCreateDialog.vue'
 import { ChevronDown, Plus, Search } from 'lucide-vue-next'
