@@ -3,10 +3,9 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { House, Menu, Book, X, Tags } from 'lucide-vue-next'
 import { CategoryIcon } from '@/components/icon'
-import ThemeToggle from '@/components/blog-sidebar/ThemeToggle.vue'
-import GithubButton from '@/components/blog-sidebar/GithubButton.vue'
-import WriteButton from '@/components/blog-sidebar/WriteButton.vue'
-import AuthButton from '@/components/blog-sidebar/AuthButton.vue'
+import ThemeToggle from '@/components/sidebar/ThemeToggle.vue'
+import GithubButton from '@/components/sidebar/GithubButton.vue'
+import AuthButton from '@/components/sidebar/AuthButton.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const isOpen = ref(false)
