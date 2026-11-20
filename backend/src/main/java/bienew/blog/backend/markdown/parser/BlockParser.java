@@ -25,6 +25,8 @@ public enum BlockParser {
                 new TableParser(),
                 // --- 인 문장을 parse
                 new ThematicBreakParser(),
+                // ![alt](url) 인 문자을 parse
+                new ImageParser(),
                 // 그 외의 문장을 Parse
                 new ParagraphParser()
         );

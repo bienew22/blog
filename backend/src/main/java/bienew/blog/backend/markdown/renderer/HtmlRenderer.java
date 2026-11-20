@@ -174,6 +174,15 @@ public class HtmlRenderer implements ASTRenderer, ASTVisitor {
     }
 
     @Override
+    public void visit(Image image) {
+        builder.append("<img src=\"")
+                .append(image.getUrl())
+                .append("\" alt=\"")
+                .append(image.getAltText())
+                .append("\" />");
+    }
+
+    @Override
     public void visit(TableRow.TableItem tableItem) {
         tableItem.getChildren().forEach(child -> child.accept(this));
     }

@@ -7,7 +7,10 @@ import bienew.blog.backend.auth.repository.UserRepository;
 import bienew.blog.backend.category.entity.Category;
 import bienew.blog.backend.category.repository.CategoryRepository;
 import bienew.blog.backend.common.snowflake.Snowflake;
+import bienew.blog.backend.image.entity.Image;
+import bienew.blog.backend.image.repository.ImageRepository;
 import bienew.blog.backend.markdown.MarkdownConverter;
+import bienew.blog.backend.markdown.MarkdownDocument;
 import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.post.entity.Post;
 import bienew.blog.backend.tag.entity.Tag;
@@ -23,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +37,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
 
     private final Snowflake snowflake;
 
@@ -98,17 +104,26 @@ public class PostService {
         Category category = categoryRepository.findById(postCreateRequest.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + postCreateRequest.categoryId()));
 
+        // 3. Markdown 변환
+        MarkdownDocument markdownDocument = MarkdownConverter.of(postCreateRequest.contentMd()).parse();
+
+        // 4. 게시물 생성
         Post post = Post.create(
                 snowflake.nextId(),
                 postCreateRequest.title(),
                 postCreateRequest.title(),
                 postCreateRequest.contentMd(),
-                MarkdownConverter.toHTML(postCreateRequest.contentMd()),
+                markdownDocument.toHTML(),
                 "bienew22",
                 tags,
                 PostStatus.fromString(postCreateRequest.status()),
                 category
         );
+
+        // 5. 이미지 목록 처리
+        List<String> imageUrls = markdownDocument.getImageUrls();
+        imageRepository.findAllByIdIn(extractImageIdsFromImageUrls(imageUrls))
+                .forEach(image -> image.addPost(post));
 
         Post savedPost = postRepository.save(post);
         return PostDetailResponse.of(savedPost);
@@ -125,6 +140,8 @@ public class PostService {
 
         Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+
+        // 1. tag 목록 변경
         List<Tag> tags = tagRepository.findAllByTagNameIn(postUpdateRequest.tags());
 
         List<String> currentTagNames = post.getPostTags().stream()
@@ -147,14 +164,36 @@ public class PostService {
                 .filter(tag -> addedTagNames.contains(tag.getTagName()))
                 .toList());
 
-        // 카테고리 변경
+        // 2. 카테고리 변경
         Category category = categoryRepository.findById(postUpdateRequest.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + postUpdateRequest.categoryId()));
 
+        // 3. Markdown 변환
+        MarkdownDocument markdownDocument = MarkdownConverter.of(postUpdateRequest.contentMd()).parse();
+
+        // 4. 이미지 목록 처리
+        List<String> imageUrls = markdownDocument.getImageUrls();
+
+        List<Image> currentImages = imageRepository.findAllByIdIn(extractImageIdsFromImageUrls(imageUrls));
+
+        List<Image> existingImages = imageRepository.findAllByPostId(post.getId());
+
+        // 기존 이미지 중 현재 이미지에 없는 것들은 게시물과의 관계를 제거
+        existingImages.stream()
+                .filter(image -> !currentImages.contains(image))
+                .forEach(image -> image.removePost(post.getId()));
+
+        // 현재 이미지 중 기존 이미지에 없는 것들은 게시물과의 관계를 추가
+        currentImages.stream()
+                .filter(image -> !existingImages.contains(image))
+                .forEach(image -> image.addPost(post));
+
+
+        // 5. 게시물 정보 변경
         post.update(
                 postUpdateRequest.title(),
                 postUpdateRequest.contentMd(),
-                MarkdownConverter.toHTML(postUpdateRequest.contentMd()),
+                markdownDocument.toHTML(),
                 PostStatus.fromString(postUpdateRequest.status()),
                 category
         );
@@ -179,5 +218,18 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
         return user.getRole() == UserRole.ADMIN;
+    }
+
+    private List<UUID> extractImageIdsFromImageUrls(List<String> imageUrls) {
+        return imageUrls.stream()
+                .map(url -> url.substring(url.lastIndexOf('/') + 1))
+                .flatMap(url -> {
+                    try {
+                        return Stream.of(UUID.fromString(url));
+                    } catch (IllegalArgumentException e) {
+                        return Stream.empty();
+                    }
+                })
+                .toList();
     }
 }

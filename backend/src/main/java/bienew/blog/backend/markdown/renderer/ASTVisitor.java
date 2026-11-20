@@ -27,4 +27,6 @@ public interface ASTVisitor {
     void visit(TableRow.TableItem tableItem);
 
     void visit(ThematicBreak thematicBreak);
+
+    void visit(Image image);
 }

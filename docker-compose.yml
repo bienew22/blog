@@ -32,11 +32,13 @@ services:
       - ACCESS_TOKEN_LIFETIME=${ACCESS_TOKEN_LIFETIME:-15m}
       - REFRESH_TOKEN_LIFETIME=${REFRESH_TOKEN_LIFETIME:-14d}
       - DEV_AUTH_ENABLED=${DEV_AUTH_ENABLED:-false}
+      - FILE_UPLOAD_DIR=${FILE_UPLOAD_DIR:-/uploads}
     expose:
       - "8080"
     volumes:
       - ./backend:/app
       - gradle_cache:/root/.gradle
+      - ./etc/uploads:${FILE_UPLOAD_DIR:-/uploads}
     depends_on:
       postgres:
         condition: service_healthy

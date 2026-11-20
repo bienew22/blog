@@ -47,6 +47,11 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/v1/categories/**")
                         .hasRole("ADMIN")
+                        // Image Controller API 관련 권한 정리
+                        .requestMatchers(HttpMethod.GET, "/api/v1/images/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/images/**")
+                        .hasRole("ADMIN")
                         // Swagger 관련 권한 정리
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
                         .permitAll()

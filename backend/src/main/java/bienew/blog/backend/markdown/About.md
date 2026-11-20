@@ -16,7 +16,7 @@
 4.  HTML Renderer
    - AST를 기반으로 HTML 문서를 생성.
 
-- 각 구성요소는 명확하게 분리된 책임을 가짐.
+- **각 구성요소는 명확하게 분리된 책임을 가짐.**
 
 ---
 
@@ -43,6 +43,14 @@
 ### HTML Renderer
 - AST를 기반으로 HTML 문서를 생성하는 역할을 담당.
 - 각 ASTNode가 서로 다르게 렌더링할 때 Visitor 패턴 기반으로 동작을 수행.
+
+### MarkdownConverter
+- Markdown 문서를 HTML로 변환하는 최상위 클래스.
+- `MarkdownConverter.of(markdown)`를 통해 객체를 생성하고, `parse()`를 호출하여 AST를 생성 함.
+
+### MarkdownDocument
+- Markdown 문서의 AST를 포함하는 객체.
+- AST를 탐색하거나, 다양한 형태로 변환할 수 있는 메서드를 제공.
 
 ---
 
@@ -83,18 +91,31 @@
 ### 신규 Renderer를 추가할 때는 다음과 같은 규칙을 따라야 함.
 - ASTRenderer을 구현해야 함.
 - 각 노드를 다른 로직으로 렌더링할 때 ASTVisitor 도 구현해야함.
-- MarkdownRenderer에 해당 메소드를 생성해야함.
-  - `public static {type} to{name}(String markdown, ...)` 형식의 함수를 생성해야함.
+- MarkdownDocument에 다음 양식의 메소드를 생성해야함.
+  - `public {type} to{name}()` 형식의 함수를 생성해야함.
 
 ### 테스트 파일 규칙
 - 테스트 파일은 Parser 파일과 동일한 패키지에 위치해야 함.
 - Parser에서 AST를 생성하는 로직을 테스트해야함.
-  - 해당 테스트의 진입점은 `MarkdownConverter.toAST`의 함수를 호출하여 테스트해야 함.
 - AST에서 {type}으로 변환하는 로직을 테스트해야함.
-  - 해당 테스트의 진입점은 `MarkdownConverter.to{name}`의 함수를 호출하여 테스트해야 함.
 
 --- 
 
 ## 사용법
 
-- 마크다운을 변화하려고 하는 타입에 맞게 `MarkdownConverter`의 함수를 호출하면 됨.
+1. `MarkdownConverter.of(markdown)`를 호출하여 MarkdownConverter 객체를 생성.
+2. `parse()`를 호출하여 AST를 생성.
+3. `MarkdownDocument` 객체를 통해 AST를 탐색하거나, HTML로 변환할 수 있음.
+
+### 예제 코드
+```java
+String markdown = "# Hello World\nThis is a sample markdown.";
+
+MarkdownConverter converter = MarkdownConverter.of(markdown);
+
+// AST 생성
+MarkdownDocument document = converter.parse();
+
+// HTML 변환
+String html = document.toHTML();
+```
