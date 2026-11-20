@@ -10,23 +10,25 @@ import bienew.blog.backend.markdown.renderer.TreeRenderer;
 
 public class MarkdownConverter {
 
-    public static String toAST(String markdown) {
-        return convert(markdown, new TreeRenderer());
+    private final String markdown;
+
+    private MarkdownConverter(String markdown) {
+        this.markdown = markdown;
     }
 
-    public static String toHTML(String markdown) {
-        return convert(markdown, new HtmlRenderer());
+    public static MarkdownConverter of (String markdown) {
+        return new MarkdownConverter(markdown);
     }
 
-    private static String convert(String markdown, ASTRenderer renderer) {
+    public MarkdownDocument parse() {
         // 0. html escape 처리
-        markdown = markdown.replace("&", "&amp;")
+        String filteredMarkdown = markdown.replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
 
-        String[] lines = markdown
+        String[] lines = filteredMarkdown
                 .replace("\r\n", "\n")
                 .replace("\r", "")
                 .split("\n", -1);
@@ -35,7 +37,7 @@ public class MarkdownConverter {
         ASTNode rootNode = BlockParser.INSTANCE.parse(lines);
 
         // 2. ASTRenderer를 사용하여 ASTNode를 문자열로 변환
-        return renderer.render(rootNode);
+        return new MarkdownDocument(rootNode);
     }
 
 }

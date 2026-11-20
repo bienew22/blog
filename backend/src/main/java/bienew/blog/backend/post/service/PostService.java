@@ -8,6 +8,7 @@ import bienew.blog.backend.category.entity.Category;
 import bienew.blog.backend.category.repository.CategoryRepository;
 import bienew.blog.backend.common.snowflake.Snowflake;
 import bienew.blog.backend.markdown.MarkdownConverter;
+import bienew.blog.backend.markdown.MarkdownDocument;
 import bienew.blog.backend.post.domain.PostStatus;
 import bienew.blog.backend.post.entity.Post;
 import bienew.blog.backend.tag.entity.Tag;
@@ -98,17 +99,22 @@ public class PostService {
         Category category = categoryRepository.findById(postCreateRequest.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + postCreateRequest.categoryId()));
 
+        // 3. 이미지 목록 처리
+        MarkdownDocument markdownDocument = MarkdownConverter.of(postCreateRequest.contentMd()).parse();
+
         Post post = Post.create(
                 snowflake.nextId(),
                 postCreateRequest.title(),
                 postCreateRequest.title(),
                 postCreateRequest.contentMd(),
-                MarkdownConverter.toHTML(postCreateRequest.contentMd()),
+                markdownDocument.toHTML(),
                 "bienew22",
                 tags,
                 PostStatus.fromString(postCreateRequest.status()),
                 category
         );
+
+
 
         Post savedPost = postRepository.save(post);
         return PostDetailResponse.of(savedPost);
@@ -125,6 +131,8 @@ public class PostService {
 
         Post post = postRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+
+        // 1. tag 목록 변경
         List<Tag> tags = tagRepository.findAllByTagNameIn(postUpdateRequest.tags());
 
         List<String> currentTagNames = post.getPostTags().stream()
@@ -147,14 +155,20 @@ public class PostService {
                 .filter(tag -> addedTagNames.contains(tag.getTagName()))
                 .toList());
 
-        // 카테고리 변경
+        // 2. 카테고리 변경
         Category category = categoryRepository.findById(postUpdateRequest.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + postUpdateRequest.categoryId()));
 
+        // 3. Markdown 변환
+        MarkdownDocument markdownDocument = MarkdownConverter.of(postUpdateRequest.contentMd()).parse();
+
+        // 4. 이미지 목록 처리
+
+        // 5. 게시물 정보 변경
         post.update(
                 postUpdateRequest.title(),
                 postUpdateRequest.contentMd(),
-                MarkdownConverter.toHTML(postUpdateRequest.contentMd()),
+                markdownDocument.toHTML(),
                 PostStatus.fromString(postUpdateRequest.status()),
                 category
         );

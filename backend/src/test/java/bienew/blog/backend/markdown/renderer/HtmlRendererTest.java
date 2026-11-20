@@ -19,7 +19,7 @@ class HtmlRendererTest {
                 "<li><p>Item 3</p></li>\n" +
                 "</ul>";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 
@@ -43,7 +43,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 
@@ -63,7 +63,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 
@@ -87,7 +87,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 
@@ -109,7 +109,7 @@ class HtmlRendererTest {
                 "</tbody>\n" +
                 "</table>";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 
@@ -126,7 +126,7 @@ class HtmlRendererTest {
                 "<hr />\n" +
                 "<ul><li><p>world</p></li></ul>";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 
@@ -139,7 +139,7 @@ class HtmlRendererTest {
 
         String expectedHtml = "<img src=\"/api/v1/images/astr\" alt=\"alt text\" />";
 
-        String actualHtml = MarkdownConverter.toHTML(markdown);
+        String actualHtml = MarkdownConverter.of(markdown).parse().toHTML();
 
         System.out.println("result: " + actualHtml);
 

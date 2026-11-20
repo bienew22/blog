@@ -10,7 +10,7 @@ class ImageParserTest {
     void parseImage() {
         String markdown = "![alt text](https://example.com/image.png)";
 
-        String document = MarkdownConverter.toAST(markdown);
+        String document = MarkdownConverter.of(markdown).parse().toTree();
 
         System.out.println(document);
 
@@ -27,7 +27,7 @@ class ImageParserTest {
     void parseImageWithEmptyAltText() {
         String markdown = "![](/api/v1/images/astr)";
 
-        String document = MarkdownConverter.toAST(markdown);
+        String document = MarkdownConverter.of(markdown).parse().toTree();
 
         System.out.println(document);
 
@@ -41,7 +41,7 @@ class ImageParserTest {
     void parseImageWithList() {
         String markdown = "- Item 1\n- ![alt text](/api/v1/images/astr)\n- Item 3";
 
-        String document = MarkdownConverter.toAST(markdown);
+        String document = MarkdownConverter.of(markdown).parse().toTree();
 
         System.out.println(document);
 
