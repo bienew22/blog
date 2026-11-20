@@ -5,7 +5,7 @@ import { ref, onMounted, computed } from 'vue'
 import { Tag as TagIcon } from 'lucide-vue-next'
 import { fetchTagPosts, type TagPosts } from '@/api/tags'
 import type { PostSummary } from '@/api/posts'
-import TagPostCard from '@/components/blog/TagPostCard.vue'
+import TagPostCard from '@/components/card/TagPostCard.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()

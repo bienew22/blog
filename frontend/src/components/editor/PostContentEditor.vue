@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { Paperclip } from 'lucide-vue-next'
+import { apiFetch } from '@/api/client'
+import Tooltip from '../common/Tooltip.vue';
+import AttachFileButon from './AttachFileButon.vue';
 
 const content = defineModel<string>({ required: true })
+const emit = defineEmits<{
+    toast: [message: string, type: 'pending' | 'success' | 'error', duration: number]
+}>()
 
 const editor = ref<HTMLTextAreaElement | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+const attachButton = ref<HTMLButtonElement | null>(null)
 const mirror = ref<HTMLTextAreaElement | null>(null)
 const lineNumberGutter = ref<HTMLDivElement | null>(null)
 const contentLines = computed(() => content.value.split('\n'))
@@ -77,6 +86,100 @@ function scrollCaretIntoView(textarea: HTMLTextAreaElement) {
     }
 
     syncLineNumberScroll()
+}
+
+function clipboardFile(file: File): File {
+    const extensions: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/gif': 'gif',
+    }
+    const extension = extensions[file.type]
+    if (file.name.includes('.') || !extension) return file
+    return new File([file], `${file.name || 'clipboard'}.${extension}`, { type: file.type })
+}
+
+async function uploadImage(file: File): Promise<string> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiFetch('/api/v1/images', { method: 'POST', body: formData })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+    const data: unknown = await response.json()
+    if (typeof data !== 'object' || data === null || !('url' in data) ||
+        typeof data.url !== 'string' || !data.url.trim()) {
+        throw new Error('이미지 URL이 응답에 없습니다.')
+    }
+    return data.url
+}
+
+async function attachImages(files: File[]) {
+    if (!files.length) return
+    const images = files.filter((file) => file.type.startsWith('image/'))
+    const errors = files.length === images.length ? [] : ['이미지 파일만 첨부할 수 있습니다.']
+    if (!images.length) {
+        emit('toast', errors.join(' '), 'error', 3000)
+        return
+    }
+
+    emit('toast', '이미지 업로드 중...', 'pending', 2000)
+    const results = await Promise.allSettled(images.map(uploadImage))
+    const urls: string[] = []
+    results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+            urls.push(result.value)
+        } else {
+            const reason = result.reason instanceof Error ? result.reason.message : String(result.reason)
+            errors.push(`${images[index]?.name || '이미지'} 업로드 실패: ${reason}`)
+        }
+    })
+    if (errors.length) emit('toast', errors.join(' '), 'error', 3000)
+
+    const textarea = editor.value
+    if (!textarea || !urls.length) return
+    const position = textarea.selectionStart
+    const markdown = urls.map((url) => `![](${url})`).join('\n')
+    textarea.setRangeText(markdown, position, position, 'end')
+    content.value = textarea.value
+    textarea.setSelectionRange(position + 2, position + 2)
+    if (document.activeElement === fileInput.value || document.activeElement === attachButton.value) {
+        textarea.focus()
+    }
+    nextTick(() => syncLineNumberScroll())
+    emit('toast', '이미지 업로드 완료', 'success', 2000)
+}
+
+function onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement
+    const files = Array.from(input.files ?? [])
+    input.value = ''
+    void attachImages(files)
+}
+
+/**
+ * 클립보드에서 이미지 붙여넣기 처리
+ */
+function onPaste(event: ClipboardEvent) {
+    const files = Array.from(event.clipboardData?.files ?? [])
+    if (!files.some((file) => file.type.startsWith('image/'))) return
+    event.preventDefault()
+    void attachImages(files.map(clipboardFile))
+}
+
+/**
+ * 이미지 드래그 오버 이벤트 처리
+ */
+function onDragOver(event: DragEvent) {
+    if (event.dataTransfer?.types.includes('Files')) event.preventDefault()
+}
+
+/**
+ * 이미지 드래그 드롭 이벤트 처리
+ */
+function onDrop(event: DragEvent) {
+    if (!event.dataTransfer?.types.includes('Files')) return
+    event.preventDefault()
+    void attachImages(Array.from(event.dataTransfer.files))
 }
 
 /**
@@ -199,44 +302,51 @@ function handleEnter(e: KeyboardEvent) {
       <span class="text-xs text-(--color-text-secondary)">{{ content.length }}자</span>
     </div>
 
-    <div class="relative flex h-[80vh] min-h-0 w-full overflow-hidden rounded-lg border border-(--color-border) bg-(--color-surface)">
-    <div
-        ref="lineNumberGutter"
-        aria-hidden="true"
-        class="pointer-events-none h-full w-12 shrink-0 select-none overflow-hidden border-r border-(--color-border-subtle) bg-(--color-background-soft) pb-0 pt-4 text-right font-mono text-sm leading-7 text-(--color-text-muted)"
-    >
-        <div
-            v-for="(_, index) in contentLines"
-            :key="index"
-            class="pr-2"
-            :style="{ height: `${lineHeightAt(index)}px` }"
-        >
-            {{ index + 1 }}
-        </div>
+    <div role="toolbar" aria-label="본문 편집 도구" class="mb-2 flex flex-wrap items-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface) p-2">
+      <AttachFileButon @click="fileInput?.click()" />   <!-- 이미지 첨부 버튼 -->
+
+      <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="onFileChange" />
     </div>
 
-    <!-- 줄 높이 측정용 숨김 textarea (실제 입력창과 동일한 스타일로 줄바꿈을 계산) -->
-    <textarea
-        ref="mirror"
-        aria-hidden="true"
-        tabindex="-1"
-        readonly
-        wrap="soft"
-        class="my-scroll pointer-events-none invisible absolute top-0 left-12 -z-10 box-border resize-none overflow-x-hidden overflow-y-scroll whitespace-pre-wrap break-words border-0 pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7"
-    ></textarea>
+    <div class="relative flex h-[80vh] min-h-0 w-full overflow-hidden rounded-lg border border-(--color-border) bg-(--color-surface)" @dragover="onDragOver" @drop="onDrop">
+      <div
+          ref="lineNumberGutter"
+          aria-hidden="true"
+          class="pointer-events-none h-full w-12 shrink-0 select-none overflow-hidden border-r border-(--color-border-subtle) bg-(--color-background-soft) pb-0 pt-4 text-right font-mono text-sm leading-7 text-(--color-text-muted)"
+      >
+          <div
+              v-for="(_, index) in contentLines"
+              :key="index"
+              class="pr-2"
+              :style="{ height: `${lineHeightAt(index)}px` }"
+          >
+              {{ index + 1 }}
+          </div>
+      </div>
 
-    <!-- 입력 영역 -->
-    <textarea
-        ref="editor"
-        v-model="content"
-        placeholder="본문을 작성하세요"
-        wrap="soft"
-        class="my-scroll h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-x-hidden overflow-y-scroll whitespace-pre-wrap break-words bg-transparent pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7 text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
-        @scroll="syncLineNumberScroll"
-        @input="syncLineNumberScroll"
-        @keydown.tab.prevent="handleTab"
-        @keydown.enter="handleEnter"
-    ></textarea>
-</div>
+      <!-- 줄 높이 측정용 숨김 textarea (실제 입력창과 동일한 스타일로 줄바꿈을 계산) -->
+      <textarea
+          ref="mirror"
+          aria-hidden="true"
+          tabindex="-1"
+          readonly
+          wrap="soft"
+          class="my-scroll pointer-events-none invisible absolute top-0 left-12 -z-10 box-border resize-none overflow-x-hidden overflow-y-scroll whitespace-pre-wrap break-words border-0 pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7"
+      ></textarea>
+
+      <!-- 입력 영역 -->
+      <textarea
+          ref="editor"
+          v-model="content"
+          placeholder="본문을 작성하세요"
+          wrap="soft"
+          class="my-scroll h-full min-h-0 w-full min-w-0 flex-1 resize-none overflow-x-hidden overflow-y-scroll whitespace-pre-wrap break-words bg-transparent pb-0 pl-3 pr-4 pt-4 font-mono text-sm leading-7 text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
+          @scroll="syncLineNumberScroll"
+          @input="syncLineNumberScroll"
+          @paste="onPaste"
+          @keydown.tab.prevent="handleTab"
+          @keydown.enter="handleEnter"
+      ></textarea>
+    </div>
   </section>
 </template>

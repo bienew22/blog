@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { PencilLine } from 'lucide-vue-next'
-import Tooltip from './Tooltip.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 
 const router = useRouter()
 </script>

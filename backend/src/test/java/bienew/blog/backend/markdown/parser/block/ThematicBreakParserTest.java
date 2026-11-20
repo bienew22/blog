@@ -11,7 +11,7 @@ class ThematicBreakParserTest {
     void parsesThematicBreak() {
         String markdown = "---";
 
-        String document = MarkdownConverter.toAST(markdown);
+        String document = MarkdownConverter.of(markdown).parse().toTree();
 
         String expected = "Document\n" +
                 "\tThematicBreak";
@@ -25,7 +25,7 @@ class ThematicBreakParserTest {
     void doesNotParseNonThematicBreak() {
         String markdown = "----";
 
-        String document = MarkdownConverter.toAST(markdown);
+        String document = MarkdownConverter.of(markdown).parse().toTree();
 
         String expected = "Document\n" +
                 "\tParagraph\n" +
@@ -42,7 +42,7 @@ class ThematicBreakParserTest {
                 "---\n" +
                 "---";
 
-        String document = MarkdownConverter.toAST(markdown);
+        String document = MarkdownConverter.of(markdown).parse().toTree();
 
         String expected = "Document\n" +
                 "\tThematicBreak\n" +

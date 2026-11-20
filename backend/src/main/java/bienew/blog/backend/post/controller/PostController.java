@@ -106,7 +106,7 @@ public class PostController {
                 request.title() == null ? "" : request.title(),
                 "preview",
                 LocalDateTime.now(),
-                MarkdownConverter.toHTML(isContentMdEmpty ? "" : request.contentMd()),
+                MarkdownConverter.of(isContentMdEmpty ? "" : request.contentMd()).parse().toHTML(),
                 isContentMdEmpty ? "" : request.contentMd(),
                 new CategoryResponse("1", "미리보기"),
                 request.tags() == null ? List.of() : request.tags()
