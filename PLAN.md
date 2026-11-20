@@ -5,7 +5,11 @@
 - [H] ci-cd : 배포용 docker-compose 구축 (연기 : 개인 휴식)
 - [L] 관리자 페이지
 - [H] markdown to html 컴포넌트 추가 구현
-    - 개행, 인용, 사진
+    - 개행, 인용
+- [L] markdown to html 컴포넌트 추가 구현
+    - figure, figcaption을 이용하여 이미지, 표 하단 제목 기능
+    - table > caption을 이용하여 표 상단에 제목 기능
+    - { .css_name .css_name ... } 형식으로 각 블럭 컴포넌트에 css(tailwind css) 추가하는 기능 
 - [L] 에러 처리 획일화
 - [L] id 키 생성 규칙 변경 : 10진수 기준
     - YYYYMMDDHHMMSS * 100000 + {SEQ:0 ~ 99} * 1000 + {RAND:0 ~ 999}
