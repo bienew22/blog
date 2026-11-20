@@ -3,7 +3,7 @@ import { LogIn, UserRound } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import AdminMenuItems from './AdminMenuItems.vue'
-import Tooltip from './Tooltip.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 import UserMenuItems from './UserMenuItems.vue'
 
 const authStore = useAuthStore()

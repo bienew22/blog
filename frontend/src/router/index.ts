@@ -54,7 +54,11 @@ const router = createRouter({
       ? [{
           path: '/dev/post',
           name: 'dev-post',
-          component: () => import('../views/DevPostView.vue'),
+          component: () => import('../views-dev/DevPostView.vue'),
+        }, {
+          path: '/dev/test',
+          name: 'test',
+          component: () => import('../views-dev/DevTestView.vue'),
         }]
       : []),
     {

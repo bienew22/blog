@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PenLine } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
-import Tooltip from './Tooltip.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 // 관리자에게만 보이는 메뉴. 항목을 추가하려면 template에 링크/버튼을 늘리면 됩니다.
 </script>
 

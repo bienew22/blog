@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Tooltip from './Tooltip.vue'
+import Tooltip from '@/components/common/Tooltip.vue'
 import { GithubIcon } from '@/components/icon'
 
 </script>

@@ -4,7 +4,7 @@ import BlogHeader from '@/components/layout/BlogHeader.vue'
 import { ref, onMounted } from 'vue'
 import { Tags } from 'lucide-vue-next'
 import { fetchTags, type Tag } from '@/api/tags'
-import TagCard from '@/components/blog/TagCard.vue'
+import TagCard from '@/components/card/TagCard.vue'
 
 const tags = ref<Tag[]>([])
 const isLoading = ref(true)
