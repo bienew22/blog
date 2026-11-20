@@ -3,6 +3,9 @@ package bienew.blog.backend.markdown;
 import bienew.blog.backend.markdown.ast.ASTNode;
 import bienew.blog.backend.markdown.renderer.HtmlRenderer;
 import bienew.blog.backend.markdown.renderer.TreeRenderer;
+import bienew.blog.backend.markdown.utils.MarkdownImageExtractor;
+
+import java.util.List;
 
 public class MarkdownDocument {
 
@@ -18,5 +21,9 @@ public class MarkdownDocument {
 
     public String toHTML() {
         return new HtmlRenderer().render(rootNode);
+    }
+
+    public List<String> getImageUrls() {
+        return MarkdownImageExtractor.extractImageUrls(rootNode);
     }
 }

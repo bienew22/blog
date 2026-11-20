@@ -28,4 +28,11 @@ public class PostImage {
     @JoinColumn(name = "image_id")
     private Image image;
 
+
+    public static PostImage create(Post post, Image image) {
+        PostImage postImage = new PostImage();
+        postImage.post = post;
+        postImage.image = image;
+        return postImage;
+    }
 }
