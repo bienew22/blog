@@ -1,5 +1,6 @@
 package bienew.blog.backend.image.service;
 
+import bienew.blog.backend.image.dto.ImageResponse;
 import bienew.blog.backend.image.dto.ImageUploadResponse;
 import bienew.blog.backend.image.entity.Image;
 import bienew.blog.backend.image.repository.ImageRepository;
@@ -7,6 +8,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +68,24 @@ public class ImageService {
         }
 
         return ImageUploadResponse.from(image);
+    }
+
+    public ImageResponse getImage(UUID imageId) {
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
+
+
+        Resource resource = new FileSystemResource(
+                uploadPath.resolve(image.getId() + "." + image.getImageType())
+        );
+
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new IllegalArgumentException("이미지 파일을 찾을 수 없습니다.");
+        }
+
+        return ImageResponse.from(
+                ALLOWED_CONTENT_TYPES.getOrDefault(image.getImageType(), "application/octet-stream"),
+                resource);
     }
 
     private String validateAndGetExtension(MultipartFile file) {
